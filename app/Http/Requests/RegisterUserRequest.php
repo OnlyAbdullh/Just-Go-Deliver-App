@@ -27,18 +27,8 @@ class RegisterUserRequest extends FormRequest
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
             'location' => 'required|string|max:255',
-            'phone' => [
-                'required',
-                'regex:/^09\d{8}$/',
-            ],
+            'phone_number' =>'required'
         ];
     }
 
-    public function messages()
-    {
-        return [
-            'phone.required' => 'The phone number is required.',
-            'phone.regex' => 'The phone number must be a valid Syrian mobile number (e.g., 09XXXXXXXX).',
-        ];
-    }
 }

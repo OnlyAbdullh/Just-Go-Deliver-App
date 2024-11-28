@@ -19,10 +19,13 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('location', 255);
+            $table->string('phone_number',10)->unique();
             $table->string('image', 2048)->nullable();
             $table->enum('role', ['user', 'admin'])->default('user');
             $table->index('role');
             $table->text('fcm_token')->nullable();
+            $table->string('refresh_token',512)->nullable();
+            $table->timestamp('refresh_token_expires_at')->nullable();
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
