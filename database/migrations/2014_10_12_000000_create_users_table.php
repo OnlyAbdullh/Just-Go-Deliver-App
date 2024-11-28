@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('location', 255);
             $table->string('image', 2048)->nullable();
             $table->enum('role', ['user', 'admin'])->default('user');
-            $table->index('role'); //  faster role-based queries
-            $table->string('fcm_token')->nullable();
+            $table->index('role');
+            $table->text('fcm_token')->nullable();
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
