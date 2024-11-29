@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Str;
@@ -31,20 +32,52 @@ class UserRepository implements UserRepositoryInterface
 
         return Crypt::encryptString($refreshToken);
     }
-    public function findByRefreshToken(string $refreshToken): ?User
+    public function saveRefreshToken(User $user, string $deviceId, string $refreshToken, $expiresAt): void
     {
-        //$decryptedToken = Crypt::decryptString($refreshToken);
+        DB::table('user_refresh_tokens')->updateOrInsert(
+            [
+                'user_id' => $user->id,
+                'device_id' => $deviceId,
+            ],
+            [
+                'refresh_token' => $refreshToken,
+                'expires_at' => $expiresAt,
+                'updated_at' => now(),
+            ]
+        );
+    }
 
-        return User::where('refresh_token', $refreshToken)
-            ->where('refresh_token_expires_at', '>', Carbon::now())
+    public function findRefreshToken(string $refreshToken, string $deviceId): ?object
+    {
+        $decryptedToken = Crypt::decryptString($refreshToken);
+
+        return DB::table('user_refresh_tokens')
+            ->where('refresh_token', $decryptedToken)
+            ->where('device_id', $deviceId)
+            ->where('expires_at', '>', now())
             ->first();
     }
-    public function saveRefreshToken(User $user, ?string $refreshToken, $expiresAt): void
+
+    public function deleteRefreshToken(string $deviceId, int $userId): void
     {
-       // Log::info('Saving refresh token', ['user_id' => $user->id, 'refresh_token' => $refreshToken]);
-        $user->update([
-            'refresh_token' => $refreshToken,
-            'refresh_token_expires_at' => $expiresAt,
-        ]);
+        DB::table('user_refresh_tokens')
+            ->where('device_id', $deviceId)
+            ->where('user_id', $userId)
+            ->delete();
     }
+    public function deleteAllRefreshTokens(int $userId): void
+    {
+        DB::table('user_refresh_tokens')
+            ->where('user_id', $userId)
+            ->delete();
+    }
+    public function findRefreshTokenByDevice($userId, $deviceId)
+    {
+        return DB::table('user_refresh_tokens')
+            ->where('user_id', $userId)
+            ->where('device_id', $deviceId)
+            ->where('expires_at', '>', Carbon::now())
+            ->first();
+    }
+
 }

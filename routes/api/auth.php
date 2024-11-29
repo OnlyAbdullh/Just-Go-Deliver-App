@@ -20,13 +20,11 @@ Route::post('register', [UserController::class, 'register']); // Register a new 
 Route::post('login', [UserController::class, 'login']);       // Login and get tokens
 Route::post('refresh', [UserController::class, 'refresh']);   // Refresh access token
 
-Route::group([
-    'middleware' => ['auth:api'], // Protect these routes with JWT middleware
-], function () {
-    Route::get('logout', [UserController::class, 'logout']);  // Logout and invalidate tokens
+Route::group(['middleware' => 'auth.jwt'], function () {
+    Route::post('logout', [UserController::class, 'logout']);
     Route::get('protected-resource', function () {
         return response()->json([
             'message' => 'You have accessed a protected resource!'
         ]);
-    }); // Example of a protected resource
+    });
 });

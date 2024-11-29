@@ -32,35 +32,46 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only(['email', 'password']);
-        $tokens = $this->userService->login($credentials);
+        $deviceId = $request->header('Device-ID');
 
-        if ($tokens) {
+        if (!$deviceId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Device ID is required',
+            ], 400);
+        }
+
+        $result = $this->userService->login($credentials, $deviceId);
+
+        if ($result['status']) {
             return response()->json([
                 'status' => true,
                 'message' => 'User logged in successfully',
-                'access_token' => $tokens['access_token'],
-                'refresh_token' => $tokens['refresh_token']
+                'access_token' => $result['access_token'],
+                'refresh_token' => $result['refresh_token']
             ]);
         }
 
         return response()->json([
             'status' => false,
-            'message' => 'Invalid credentials'
-        ], 401);
+            'message' => $result['message']
+        ], $result['status_code']);
     }
+
 
     public function refresh(Request $request)
     {
         $refreshToken = $request->header('Refresh-Token');
+        $deviceId = $request->header('Device-ID');
 
-        if (!$refreshToken) {
+        if (!$refreshToken || !$deviceId) {
             return response()->json([
                 'status' => false,
-                'message' => 'Refresh token is missing',
+                'message' => 'Refresh token or Device ID is missing',
             ], 400);
         }
 
-        $tokens = $this->userService->refreshToken($refreshToken);
+        $tokens = $this->userService->refreshToken($refreshToken, $deviceId);
 
         if ($tokens) {
             return response()->json([
@@ -77,9 +88,10 @@ class UserController extends Controller
         ], 401);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        $this->userService->logout();
+        $deviceId = $request->header('Device-ID');
+        $this->userService->logout($deviceId);
 
         return response()->json([
             "status" => true,

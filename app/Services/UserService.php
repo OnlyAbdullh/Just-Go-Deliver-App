@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -22,27 +23,36 @@ class UserService
         return $this->userRepository->createUser($data);
     }
 
-    public function logout()
+    public function logout(string $deviceId)
     {
         $user = auth()->user();
-        $this->userRepository->saveRefreshToken($user, null, null);
-        auth()->logout();
-        return response()->json([
-            'status' => true,
-            'message' => 'Logged out successfully',
-        ]);
+        $this->userRepository->deleteRefreshToken($deviceId, $user->id);
+       // auth()->logout();حذفتو لانو عم يحذف كل التوكين من كل الاجهزة
     }
 
-    public function login(array $credentials)
+
+    public function login(array $credentials, string $deviceId)
     {
         $user = $this->userRepository->findByEmail($credentials['email']);
 
         if ($user && Hash::check($credentials['password'], $user->password)) {
 
-            $accessToken = $this->userRepository->createAccessToken($user);
+            // Check if the user is already logged in on this device by looking for the device's refresh token
+            $existingRefreshToken = $this->userRepository->findRefreshTokenByDevice($user->id, $deviceId);
 
-            $refreshToken = $this->userRepository->createRefreshToken($user);
-            $this->userRepository->saveRefreshToken($user, $refreshToken, Carbon::now()->addWeeks(2));
+            if ($existingRefreshToken) {
+                return [
+                    'status' => false,
+                    'message' => 'You have already logged in on this device.',
+                    'status_code' => 409
+                ];
+            }
+
+            $accessToken = $this->userRepository->createAccessToken($user);
+            $refreshToken = $this->userRepository->createRefreshToken();
+
+            $this->userRepository->saveRefreshToken($user, $deviceId, $refreshToken, Carbon::now()->addWeeks(2));
+
             return [
                 'access_token' => $accessToken,
                 'refresh_token' => $refreshToken,
@@ -50,24 +60,27 @@ class UserService
                 'expires_in' => 15 * 60,
             ];
         }
-
-        return null;
+        return [
+            'status' => false,
+            'message' => 'Invalid credentials',
+            'status_code' => 401
+        ];
     }
 
-
-    public function refreshToken(string $refreshToken): array
+    public function refreshToken(string $refreshToken, string $deviceId): array
     {
-        $user = $this->userRepository->findByRefreshToken($refreshToken);
+        $refreshTokenRecord = $this->userRepository->findRefreshToken($refreshToken, $deviceId);
 
-        if (!$user) {
+        if (!$refreshTokenRecord) {
             throw new \Exception('Invalid or expired refresh token', 401);
         }
 
-        $accessToken = JWTAuth::claims(['exp' => Carbon::now()->addMinutes(15)->timestamp])->fromUser($user);
+        $user = User::find($refreshTokenRecord->user_id);
+        $accessToken = $this->userRepository->createAccessToken($user);
 
         return [
             'access_token' => $accessToken,
-            'refresh_token' => $refreshToken,
+            'refresh_token' => $refreshToken,  //ما عم حدثو
             'token_type' => 'bearer',
             'expires_in' => 15 * 60,
         ];

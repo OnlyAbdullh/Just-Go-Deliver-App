@@ -24,8 +24,6 @@ return new class extends Migration
             $table->enum('role', ['user', 'admin'])->default('user');
             $table->index('role');
             $table->text('fcm_token')->nullable();
-            $table->string('refresh_token',512)->nullable();
-            $table->timestamp('refresh_token_expires_at')->nullable();
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
