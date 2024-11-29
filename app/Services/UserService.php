@@ -64,13 +64,10 @@ class UserService
         }
 
         $accessToken = JWTAuth::claims(['exp' => Carbon::now()->addMinutes(15)->timestamp])->fromUser($user);
-        $newRefreshToken = hash('sha256', Str::random(64));
-
-        $this->userRepository->saveRefreshToken($user, $newRefreshToken, Carbon::now()->addWeeks(2));
 
         return [
             'access_token' => $accessToken,
-            'refresh_token' => $newRefreshToken,
+            'refresh_token' => $refreshToken,
             'token_type' => 'bearer',
             'expires_in' => 15 * 60,
         ];

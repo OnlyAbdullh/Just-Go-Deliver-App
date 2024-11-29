@@ -60,7 +60,7 @@ class UserController extends Controller
             ], 400);
         }
 
-        $tokens = $this->userService->refresh($refreshToken);
+        $tokens = $this->userService->refreshToken($refreshToken);
 
         if ($tokens) {
             return response()->json([

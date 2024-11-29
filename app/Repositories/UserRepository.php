@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Crypt;
@@ -32,14 +33,15 @@ class UserRepository implements UserRepositoryInterface
     }
     public function findByRefreshToken(string $refreshToken): ?User
     {
-        $decryptedToken = Crypt::decryptString($refreshToken);
+        //$decryptedToken = Crypt::decryptString($refreshToken);
 
-        return User::where('refresh_token', $decryptedToken)
+        return User::where('refresh_token', $refreshToken)
             ->where('refresh_token_expires_at', '>', Carbon::now())
             ->first();
     }
     public function saveRefreshToken(User $user, ?string $refreshToken, $expiresAt): void
     {
+       // Log::info('Saving refresh token', ['user_id' => $user->id, 'refresh_token' => $refreshToken]);
         $user->update([
             'refresh_token' => $refreshToken,
             'refresh_token_expires_at' => $expiresAt,

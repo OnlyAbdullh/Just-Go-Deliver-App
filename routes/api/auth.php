@@ -16,11 +16,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::post('register', [UserController::class, 'register']);
-Route::post('login', [UserController::class, 'login']);
+Route::post('register', [UserController::class, 'register']); // Register a new user
+Route::post('login', [UserController::class, 'login']);       // Login and get tokens
+Route::post('refresh', [UserController::class, 'refresh']);   // Refresh access token
 
 Route::group([
-    "middleware" => ["auth:api"]
+    'middleware' => ['auth:api'], // Protect these routes with JWT middleware
 ], function () {
-    Route::get('logout', [UserController::class, 'logout']);
+    Route::get('logout', [UserController::class, 'logout']);  // Logout and invalidate tokens
+    Route::get('protected-resource', function () {
+        return response()->json([
+            'message' => 'You have accessed a protected resource!'
+        ]);
+    }); // Example of a protected resource
 });
