@@ -56,4 +56,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+    public function refreshTokens()
+    {
+        return $this->hasMany(UserRefreshToken::class, 'user_id');
+    }
 }
