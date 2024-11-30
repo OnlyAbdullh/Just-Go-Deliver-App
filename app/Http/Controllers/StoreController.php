@@ -63,7 +63,5 @@ class StoreController extends Controller
         $store = $this->storeSrevice->deleteStore($store);
         return JsonResponseHelper::successResponse('store deleted successfully', $store, 200);
     }
-
-
-
+    
 }
