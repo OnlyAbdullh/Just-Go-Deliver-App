@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'auth.jwt' => \App\Http\Middleware\AuthenticateWithJWT::class,
+        'blacklist' => \App\Http\Middleware\CheckBlacklistedToken::class,
     ];
 }

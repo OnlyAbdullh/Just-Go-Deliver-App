@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Models\TokenBlacklist;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
@@ -54,6 +55,7 @@ class UserService
             $this->userRepository->saveRefreshToken($user, $deviceId, $refreshToken, Carbon::now()->addWeeks(2));
 
             return [
+                'status' => true,
                 'access_token' => $accessToken,
                 'refresh_token' => $refreshToken,
                 'token_type' => 'bearer',
@@ -73,6 +75,14 @@ class UserService
 
         if (!$refreshTokenRecord) {
             throw new \Exception('Invalid or expired refresh token', 401);
+        }
+
+        $currentToken = JWTAuth::getToken();
+        if ($currentToken) {
+            TokenBlacklist::create([
+                'token' => $currentToken,
+                'expires_at' => now()->addMinutes(config('jwt.ttl')),
+            ]);
         }
 
         $user = User::find($refreshTokenRecord->user_id);

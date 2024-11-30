@@ -20,7 +20,7 @@ Route::post('register', [UserController::class, 'register']); // Register a new 
 Route::post('login', [UserController::class, 'login']);       // Login and get tokens
 Route::post('refresh', [UserController::class, 'refresh']);   // Refresh access token
 
-Route::group(['middleware' => 'auth.jwt'], function () {
+Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
     Route::post('logout', [UserController::class, 'logout']);
     Route::get('protected-resource', function () {
         return response()->json([
@@ -28,3 +28,4 @@ Route::group(['middleware' => 'auth.jwt'], function () {
         ]);
     });
 });
+

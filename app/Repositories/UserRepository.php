@@ -49,10 +49,10 @@ class UserRepository implements UserRepositoryInterface
 
     public function findRefreshToken(string $refreshToken, string $deviceId): ?object
     {
-        $decryptedToken = Crypt::decryptString($refreshToken);
+       // $decryptedToken = Crypt::decryptString($refreshToken);
 
         return DB::table('user_refresh_tokens')
-            ->where('refresh_token', $decryptedToken)
+            ->where('refresh_token', $refreshToken)
             ->where('device_id', $deviceId)
             ->where('expires_at', '>', now())
             ->first();
