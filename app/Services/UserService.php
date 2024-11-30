@@ -29,6 +29,8 @@ class UserService
         $user = auth()->user();
         $this->userRepository->deleteRefreshToken($deviceId, $user->id);
        // auth()->logout();حذفتو لانو عم يحذف كل التوكين من كل الاجهزة
+        auth()->logout();
+
     }
 
 
@@ -75,14 +77,6 @@ class UserService
 
         if (!$refreshTokenRecord) {
             throw new \Exception('Invalid or expired refresh token', 401);
-        }
-
-        $currentToken = JWTAuth::getToken();
-        if ($currentToken) {
-            TokenBlacklist::create([
-                'token' => $currentToken,
-                'expires_at' => now()->addMinutes(config('jwt.ttl')),
-            ]);
         }
 
         $user = User::find($refreshTokenRecord->user_id);

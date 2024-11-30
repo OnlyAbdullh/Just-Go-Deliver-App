@@ -22,7 +22,8 @@ class UserRepository implements UserRepositoryInterface
     }
     public function createAccessToken(User $user): string
     {
-        return JWTAuth::claims(['exp' => Carbon::now()->addMinutes(15)->timestamp])->fromUser($user);
+      //  return JWTAuth::claims(['exp' => Carbon::now()->addMinutes(15)->timestamp])->fromUser($user);
+        return JWTAuth::fromUser($user);
     }
     public function createRefreshToken(): string
     {
