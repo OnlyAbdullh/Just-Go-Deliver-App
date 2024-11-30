@@ -72,13 +72,20 @@ class UserRepository implements UserRepositoryInterface
             ->where('user_id', $userId)
             ->delete();
     }
-    public function findRefreshTokenByDevice($userId, $deviceId)
+    public function findRefreshTokenByDevice($userId, $deviceId): ?object
     {
         return DB::table('user_refresh_tokens')
             ->where('user_id', $userId)
             ->where('device_id', $deviceId)
             ->where('expires_at', '>', Carbon::now())
             ->first();
+    }
+    public function deviceExists(string $deviceId, int $userId): bool
+    {
+        return DB::table('user_refresh_tokens')
+            ->where('device_id', $deviceId)
+            ->where('user_id', $userId)
+            ->exists();
     }
 
 }

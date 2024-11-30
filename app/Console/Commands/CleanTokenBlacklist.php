@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\TokenBlacklist;
 use Illuminate\Console\Command;
 
 class CleanTokenBlacklist extends Command

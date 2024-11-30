@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\TokenBlacklist;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
@@ -27,8 +28,18 @@ class UserService
     public function logout(string $deviceId)
     {
         $user = auth()->user();
+        $deviceExists = $this->userRepository->deviceExists($deviceId, $user->id);
+        if (!$deviceExists) {
+            throw new \Exception('Device ID not found', 404);
+        }
+        $currentToken = JWTAuth::getToken();
+        DB::table('token_blacklist')->insert([
+            'token' =>   $currentToken,
+            'expires_at' => Carbon::now()->addMinutes(config('jwt.ttl')),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
         $this->userRepository->deleteRefreshToken($deviceId, $user->id);
-       // auth()->logout();حذفتو لانو عم يحذف كل التوكين من كل الاجهزة
         auth()->logout();
 
     }
@@ -80,6 +91,11 @@ class UserService
         }
 
         $user = User::find($refreshTokenRecord->user_id);
+        $deviceExists = $this->userRepository->deviceExists($deviceId, $user->id);
+
+        if (!$deviceExists) {
+            throw new \Exception('Device ID not found', 404);
+        }
         $accessToken = $this->userRepository->createAccessToken($user);
 
         return [

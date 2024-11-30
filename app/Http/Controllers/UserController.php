@@ -88,14 +88,30 @@ class UserController extends Controller
         ], 401);
     }
 
+
     public function logout(Request $request)
     {
         $deviceId = $request->header('Device-ID');
-        $this->userService->logout($deviceId);
 
-        return response()->json([
-            "status" => true,
-            "message" => "User logged out successfully"
-        ]);
+        if (!$deviceId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Device ID is required'
+            ], 400);
+        }
+
+        try {
+            $this->userService->logout($deviceId);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User logged out successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], $e->getCode());
+        }
     }
 }
