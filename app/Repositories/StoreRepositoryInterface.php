@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Store;
 use Illuminate\Http\UploadedFile;
 
 interface StoreRepositoryInterface{
@@ -9,5 +10,11 @@ interface StoreRepositoryInterface{
 
     public function store(array $data);
 
-    public function uploadLogo(UploadedFile $file, string $directory, string $customName, string $disk = 'public');
+    public function uploadLogo(UploadedFile $file, string $directory, string $disk = 'public');
+
+    public function update(Store $store,array $data);
+
+    public function findById(int $id);
+
+    public function delete(Store $store);
 }

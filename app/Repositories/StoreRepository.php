@@ -19,10 +19,24 @@ class StoreRepository implements StoreRepositoryInterface
         return Store::create($data);
     }
 
-    public function uploadLogo(UploadedFile $file, string $directory, string $customName, string $disk = 'public'): bool|string
+    public function uploadLogo(UploadedFile $file, string $directory, string $disk = 'public'): bool|string
     {
-        $fileName = $customName . '.' . $file->getClientOriginalExtension();
-        return $file->storeAs($directory, $fileName, $disk);
+        return $file->store($directory, $disk);
+    }
 
+    public function update(Store $store ,array $data):Store
+    {
+         $store->update($data);
+
+         return $store;
+    }
+
+    public function findById(int $id)
+    {
+        return Store::where('id', $id)->first();
+    }
+
+    public function delete(Store $store): bool{
+        return $store->delete();
     }
 }

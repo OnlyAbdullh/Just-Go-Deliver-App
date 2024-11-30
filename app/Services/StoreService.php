@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Resources\StoreResource;
 use App\Models\Store;
 use App\Repositories\StoreRepository;
+use Illuminate\Support\Facades\Storage;
 
 class StoreService
 {
@@ -29,7 +30,7 @@ class StoreService
 
     public function createStore(array $data): Store
     {
-        $imagePath = $this->storeRepository->uploadLogo($data['logo'], 'stores', $data['name']);
+        $imagePath = $this->storeRepository->uploadLogo($data['logo'], 'stores');
 
         $storeData = [
             'user_id' => $data['user_id'],
@@ -44,5 +45,29 @@ class StoreService
 
         return $this->storeRepository->store($storeData);
     }
+
+    public function updateStore(int $storeId, array $data)
+    {
+
+        $store = $this->storeRepository->findById($storeId);
+
+        if(isset($data['logo'])){
+            if((!empty($store->logo)) && Storage::disk('public')->exists($store->logo)){
+                Storage::disk('public')->delete($store->logo);
+            }
+
+            $imagePath = $this->storeRepository->uploadLogo($data['logo'], 'stores');
+
+            $data['logo'] = $imagePath;
+        }
+
+        return $this->storeRepository->update($store, $data);
+    }
+
+    public function deleteStore(Store $store): bool
+    {
+        return $this->storeRepository->delete($store);
+    }
+
 
 }

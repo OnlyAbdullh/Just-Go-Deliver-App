@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Helper\JsonResponseHelper;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -27,4 +28,11 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    /*public function render($request, Throwable $e)
+    {
+        $modelName = class_basename($e->getModel());
+
+        return JsonResponseHelper::errorResponse('{$modelName} not found}', [], 404);
+    }*/
 }

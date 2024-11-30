@@ -8,7 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Helper\JsonResponseHelper;
 
-class StoreRequest extends FormRequest
+class CreateStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|unique:users,id',
+            'user_id' => 'required|exists:users,id|unique:stores,user_id',
             'logo'=>'required|image|mimes:jpg,png,jpeg',
             'location'=>'sometimes|string',
             'description'=>'required',

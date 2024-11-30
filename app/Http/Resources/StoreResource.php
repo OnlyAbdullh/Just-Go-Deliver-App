@@ -18,8 +18,11 @@ class StoreResource extends JsonResource
         $imagePath = $this->logo;
 
         $imageUrl = Storage::url($imagePath);
+
+        $manager = $this->user;
         return [
-            'manager' => $this->user->first_name . ' ' . $this->user->last_name,
+            'id' => $this->id,
+            'manager' => $manager->first_name . ' ' . $manager->last_name,
             'name' => $this->name,
             'image_url' => asset($imageUrl),
             'location' => $this->when(!empty($this->location), $this->location),

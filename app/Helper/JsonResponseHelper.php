@@ -9,19 +9,35 @@ class JsonResponseHelper
 
     public static function successResponse($message = '', $data = [], $statusCode = 200): JsonResponse
     {
-        return response()->json([
-            'message' => $message,
-            'data' => $data,
-            'status_code' => $statusCode
-        ], $statusCode);
+        $responseData = [];
+
+        if (!empty($message)) {
+            $responseData['message'] = $message;
+        }
+
+        if (!empty($data)) {
+            $responseData['data'] = $data;
+        }
+
+        $responseData['status_code'] = $statusCode;
+
+        return response()->json($responseData, $statusCode);
     }
 
     public static function errorResponse($message = '', $errors = [], $statusCode = 400): JsonResponse{
-        return response()->json([
-            'message' => $message,
-            'errors' => $errors,
-            'status_code' => $statusCode
-        ], $statusCode);
+        $responseData = [];
+
+        if (!empty($message)) {
+            $responseData['message'] = $message;
+        }
+
+        if (!empty($errors)) {
+            $responseData['errors'] = $errors;
+        }
+
+        $responseData['status_code'] = $statusCode;
+
+        return response()->json($responseData, $statusCode);
     }
 
 }
