@@ -1,30 +1,32 @@
 <?php
-namespace App\Repositories;
 
 namespace App\Repositories;
 
 use App\Models\User;
+use App\Repositories\Contracts\UserRepositoryInterface;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 class UserRepository implements UserRepositoryInterface
 {
-    public function createUser(array $data):  User
+    public function createUser(array $data): User
     {
         return User::create($data);
     }
-    public function findByEmail(string $email): ? User
+
+    public function findByEmail(string $email): ?User
     {
         return User::where('email', $email)->first();
     }
+
     public function createAccessToken(User $user): string
     {
-      //  return JWTAuth::claims(['exp' => Carbon::now()->addMinutes(15)->timestamp])->fromUser($user);
+        //  return JWTAuth::claims(['exp' => Carbon::now()->addMinutes(15)->timestamp])->fromUser($user);
         return JWTAuth::fromUser($user);
     }
+
     public function createRefreshToken(): string
     {
         $randomBytes = random_bytes(128);
@@ -33,6 +35,7 @@ class UserRepository implements UserRepositoryInterface
 
         return Crypt::encryptString($refreshToken);
     }
+
     public function saveRefreshToken(User $user, string $deviceId, string $refreshToken, $expiresAt): void
     {
         DB::table('user_refresh_tokens')->updateOrInsert(
@@ -50,8 +53,6 @@ class UserRepository implements UserRepositoryInterface
 
     public function findRefreshToken(string $refreshToken, string $deviceId): ?object
     {
-       // $decryptedToken = Crypt::decryptString($refreshToken);
-
         return DB::table('user_refresh_tokens')
             ->where('refresh_token', $refreshToken)
             ->where('device_id', $deviceId)
@@ -66,12 +67,7 @@ class UserRepository implements UserRepositoryInterface
             ->where('user_id', $userId)
             ->delete();
     }
-    public function deleteAllRefreshTokens(int $userId): void
-    {
-        DB::table('user_refresh_tokens')
-            ->where('user_id', $userId)
-            ->delete();
-    }
+
     public function findRefreshTokenByDevice($userId, $deviceId): ?object
     {
         return DB::table('user_refresh_tokens')
@@ -80,6 +76,7 @@ class UserRepository implements UserRepositoryInterface
             ->where('expires_at', '>', Carbon::now())
             ->first();
     }
+
     public function deviceExists(string $deviceId, int $userId): bool
     {
         return DB::table('user_refresh_tokens')

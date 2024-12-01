@@ -1,5 +1,5 @@
 <?php
-namespace App\Repositories;
+namespace App\Repositories\Contracts;
 
 use App\Models\User;
 
@@ -18,8 +18,6 @@ interface UserRepositoryInterface
     public function findRefreshToken(string $refreshToken, string $deviceId): ?object;
 
     public function deleteRefreshToken(string $deviceId, int $userId): void;
-
-    public function deleteAllRefreshTokens(int $userId): void;
 
     public function findRefreshTokenByDevice($userId, $deviceId): ?object;
 

@@ -1,15 +1,13 @@
 <?php
 namespace App\Services;
 
-use App\Models\TokenBlacklist;
 use App\Models\User;
-use App\Repositories\UserRepositoryInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+
 class UserService
 {
     protected $userRepository;
@@ -66,7 +64,8 @@ class UserService
             $refreshToken = $this->userRepository->createRefreshToken();
 
             $this->userRepository->saveRefreshToken($user, $deviceId, $refreshToken, Carbon::now()->addWeeks(2));
-
+            // Send OTP after successful login
+            app(OTPService::class)->sendOTP($user);  // You can use dependency injection or the app() helper
             return [
                 'status' => true,
                 'access_token' => $accessToken,

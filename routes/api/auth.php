@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OTPController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,9 +17,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::post('register', [UserController::class, 'register']); // Register a new user
-Route::post('login', [UserController::class, 'login']);       // Login and get tokens
-Route::post('refresh', [UserController::class, 'refresh']);   // Refresh access token
+Route::post('register', [UserController::class, 'register']);
+Route::post('login', [UserController::class, 'login']);
+Route::post('refresh', [UserController::class, 'refresh']);
+
+Route::post('send-otp', [OTPController::class, 'sendOTP']);
+Route::post('validate-otp', [OTPController::class, 'validateOTP']);
 
 Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
     Route::post('logout', [UserController::class, 'logout']);
