@@ -16,9 +16,13 @@ class StoreService
         $this->storeRepository = $storeRepository;
     }
 
-    public function getAllStores($page, $items): array
+    public function getAllStores($page, $items): array|bool
     {
         $stores = $this->storeRepository->all_with_pagination($page, $items);
+
+        if (!$stores) {
+            return false;
+        }
 
         $hasMorePages = $stores->hasMorePages();
 
@@ -51,8 +55,8 @@ class StoreService
 
         $store = $this->storeRepository->findById($storeId);
 
-        if(isset($data['logo'])){
-            if((!empty($store->logo)) && Storage::disk('public')->exists($store->logo)){
+        if (isset($data['logo'])) {
+            if ((!empty($store->logo)) && Storage::disk('public')->exists($store->logo)) {
                 Storage::disk('public')->delete($store->logo);
             }
 
@@ -68,6 +72,4 @@ class StoreService
     {
         return $this->storeRepository->delete($store);
     }
-
-
 }

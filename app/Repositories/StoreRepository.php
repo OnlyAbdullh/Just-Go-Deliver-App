@@ -9,9 +9,14 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class StoreRepository implements StoreRepositoryInterface
 {
 
-    public function all_with_pagination($page, $items): LengthAwarePaginator
+    public function all_with_pagination($page, $items)
     {
-        return Store::with('user')->paginate($items, ['*'], 'page', $page);
+        $stores =  Store::with('user')->paginate($items, ['*'], 'page', $page);
+
+        if ($stores->isEmpty()) {
+            return false;
+        }
+        return $stores;
     }
 
     public function store(array $data)
@@ -24,11 +29,11 @@ class StoreRepository implements StoreRepositoryInterface
         return $file->store($directory, $disk);
     }
 
-    public function update(Store $store ,array $data):Store
+    public function update(Store $store, array $data): Store
     {
-         $store->update($data);
+        $store->update($data);
 
-         return $store;
+        return $store;
     }
 
     public function findById(int $id)
@@ -36,7 +41,8 @@ class StoreRepository implements StoreRepositoryInterface
         return Store::where('id', $id)->first();
     }
 
-    public function delete(Store $store): bool{
+    public function delete(Store $store): bool
+    {
         return $store->delete();
     }
 }

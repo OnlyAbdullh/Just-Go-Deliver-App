@@ -11,6 +11,7 @@ class JsonResponseHelper
     {
         $responseData = [];
 
+        $responseData ['successful'] = true;
         if (!empty($message)) {
             $responseData['message'] = $message;
         }
@@ -26,6 +27,8 @@ class JsonResponseHelper
 
     public static function errorResponse($message = '', $errors = [], $statusCode = 400): JsonResponse{
         $responseData = [];
+
+        $responseData ['successful'] = false;
 
         if (!empty($message)) {
             $responseData['message'] = $message;
