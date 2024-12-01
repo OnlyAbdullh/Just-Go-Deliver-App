@@ -3,9 +3,10 @@
 namespace App\Providers;
 
 use App\Repositories\Contracts\OTPRepositoryInterface;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\AuthRepositoryInterface;
 use App\Repositories\OTPRepository;
-use App\Repositories\UserRepository;
+use App\Repositories\AuthRepository;
+use App\Services\OTPService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,8 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Bind the UserRepositoryInterface to UserRepository
-        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        // Bind the AuthRepositoryInterface to AuthRepository
+        $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
         $this->app->bind(OTPRepositoryInterface::class, OTPRepository::class);
     }
 

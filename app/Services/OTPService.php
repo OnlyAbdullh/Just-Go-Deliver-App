@@ -1,11 +1,15 @@
 <?php
+
 namespace App\Services;
 
 use App\Repositories\OTPRepository;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OTPMail;
+use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class OTPService
 {
@@ -18,22 +22,30 @@ class OTPService
 
     public function sendOTP(string $email): void
     {
-        $user = User::where('email', $email)->firstOrFail();
+        //  $otp = Str::padLeft(rand(0, 999999), 6, '0');
+        $otp = strval(rand(100000, 999999));
 
-        $otp = random_int(100000, 999999);
         $expiresAt = Carbon::now()->addMinutes(5);
 
-        $this->otpRepository->store($user->id, $otp, $expiresAt);
+        session(['otp' => (string)$otp, 'otp_expiry' => $expiresAt]);
 
-        Mail::to($user->email)->send(new OTPMail($otp));
+        Mail::to($email)->send(new OTPMail($otp));
     }
 
-    public function validateOTP(string $email, string $inputOtp): bool
+
+    public function validateOTP($inputOtp, string $email): bool
     {
-        $user = User::where('email', $email)->firstOrFail();
+        $sessionOtp = session('otp');
+        $otpExpiry = session('otp_expiry');
 
-        $storedOtp = $this->otpRepository->getValidOTP($user->id);
-
-        return $storedOtp && $storedOtp->otp === $inputOtp;
+        if (!$sessionOtp || Carbon::now()->isAfter($otpExpiry)) {
+            return false;
+        }
+       // \Log::info($sessionOtp);
+       // \Log::info($inputOtp);
+        if (trim((string)$sessionOtp) !== trim((string)$inputOtp)) {
+            return false;
+        }
+        return true;
     }
 }

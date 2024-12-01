@@ -1,14 +1,16 @@
 @component('mail::message')
-    # Your One-Time Password (OTP)
+    # Verify Your Action with OTP
 
-    Use the following OTP to complete your action:
+    Hello,
+
+    To proceed with your request, please use the following One-Time Password (OTP):
 
     **{{ $otp }}**
 
-    This OTP will expire in 10 minutes.
+    This OTP is valid for the next **5 minutes**. If you didn’t request this code, no action is needed.
 
-    If you did not request this, please ignore this email.
+    Thank you for choosing {{ config('app.name') }}.
 
-    Thanks,
-    {{ config('app.name') }}
+    Best regards,
+    The {{ config('app.name') }} Team
 @endcomponent

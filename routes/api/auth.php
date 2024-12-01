@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\OTPController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,15 +17,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::post('register', [UserController::class, 'register']);
-Route::post('login', [UserController::class, 'login']);
-Route::post('refresh', [UserController::class, 'refresh']);
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+Route::post('refresh', [AuthController::class, 'refresh']);
 
 Route::post('send-otp', [OTPController::class, 'sendOTP']);
 Route::post('validate-otp', [OTPController::class, 'validateOTP']);
 
 Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
-    Route::post('logout', [UserController::class, 'logout']);
+    Route::post('logout', [AuthController::class, 'logout']);
     Route::get('protected-resource', function () {
         return response()->json([
             'message' => 'You have accessed a protected resource!'

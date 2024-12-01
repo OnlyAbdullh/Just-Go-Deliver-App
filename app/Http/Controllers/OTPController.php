@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Services\AuthService;
 use App\Services\OTPService;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -10,36 +11,58 @@ use App\Models\User;
 class OTPController extends Controller
 {
     protected $otpService;
+    protected $authService;
 
-    public function __construct(OTPService $otpService)
+    public function __construct(OTPService $otpService, AuthService $authService)
     {
         $this->otpService = $otpService;
+        $this->authService = $authService;
     }
 
-    public function sendOTP(Request $request)
+    public function sendOTP(string $email)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
+        $registrationData = session('registration_data');
 
-        $this->otpService->sendOTP($request->email);
+        if (!$registrationData) {
+            return response()->json([
+                'message' => 'Session expired. Please register again.'
+            ], 422);
+        }
 
-        return response()->json(['message' => 'OTP sent successfully to your email.']);
+        $this->otpService->sendOTP($email);
+
+        // Update session expiry
+        session(['otp_expiry' => now()->addMinutes(5)]);
+
+        return response()->json(['message' => 'OTP resent successfully.']);
     }
+
 
     public function validateOTP(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-            'otp' => 'required|digits:6',
-        ]);
+        $inputOtp = $request->input('otp');
+        //\Log::info($inputOtp);
+        $registrationData = session('registration_data');
+        // \Log::info($registrationData);
 
-        $isValid = $this->otpService->validateOTP($request->email, $request->otp);
-
-        if (!$isValid) {
-            return response()->json(['message' => 'Invalid or expired OTP.'], 422);
+        if (!$registrationData) {
+            return response()->json([
+                'message' => 'Session expired. Please register again.'
+            ], 422);
         }
 
-        return response()->json(['message' => 'OTP validated successfully.']);
+        $isValid = $this->otpService->validateOTP($inputOtp, $registrationData['email']);
+
+        if (!$isValid) {
+            return response()->json(['message' => 'here: Invalid or expired OTP.'], 422);
+        }
+
+        $this->authService->completeRegistration($registrationData);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Registration completed successfully.',
+        ]);
     }
+
 }

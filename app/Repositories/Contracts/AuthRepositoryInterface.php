@@ -3,7 +3,7 @@ namespace App\Repositories\Contracts;
 
 use App\Models\User;
 
-interface UserRepositoryInterface
+interface AuthRepositoryInterface
 {
     public function createUser(array $data): User;
 

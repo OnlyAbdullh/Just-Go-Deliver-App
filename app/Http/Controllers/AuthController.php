@@ -2,31 +2,47 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RegisterUserRequest;
-use App\Models\User;
+use App\Services\AuthService;
 use App\Services\OTPService;
-use App\Services\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
-class UserController extends Controller
+class AuthController extends Controller
 {
     protected $userService;
+    protected $otpService;
 
-    public function __construct(UserService $userService)
+    public function __construct(AuthService $userService, OTPService $otpService)
     {
         $this->userService = $userService;
+        $this->otpService = $otpService;
     }
 
-    public function register(RegisterUserRequest $request)
+    public function register(Request $request)
     {
-        $user = $this->userService->register($request->validated());
+        $validatedData = $request->validate([
+            'email' => 'required|email|unique:users,email',
+        ]);
+
+        $registrationData = [
+            'first_name' => $request->input('first_name'),
+            'last_name' => $request->input('last_name'),
+            'email' => $request->input('email'),
+            'password' => $request->input('password'),
+            'location' => $request->input('location'),
+            'phone_number' => $request->input('phone_number'),
+        ];
+      //  \Log::info('Before  ', session()->all());
+
+        session([
+            'registration_data' => $registrationData,
+            'otp_expiry' => now()->addMinutes(5)
+        ]);
+       // \Log::info('After ', session()->all());
+        $this->otpService->sendOTP($validatedData['email']);
 
         return response()->json([
             "status" => true,
-            "message" => "User registered successfully",
-            "user" => $user
+            "message" => "Registration initiated. OTP sent to your email.",
         ]);
     }
 
@@ -49,7 +65,8 @@ class UserController extends Controller
                 'status' => true,
                 'message' => 'User logged in successfully',
                 'access_token' => $result['access_token'],
-                'refresh_token' => $result['refresh_token']
+                'refresh_token' => $result['refresh_token'],
+                'user' => $result['user'],
             ]);
         }
 

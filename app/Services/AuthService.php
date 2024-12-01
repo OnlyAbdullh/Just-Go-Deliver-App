@@ -2,25 +2,54 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\AuthRepositoryInterface;
+use App\Repositories\OTPRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class UserService
+class AuthService
 {
     protected $userRepository;
+    protected $otpRepository;
 
-    public function __construct(UserRepositoryInterface $userRepository)
+
+
+    public function __construct(AuthRepositoryInterface $userRepository,OTPRepository $otpRepository)
     {
         $this->userRepository = $userRepository;
+        $this->otpRepository = $otpRepository;
     }
 
     public function register(array $data)
     {
         $data['password'] = Hash::make($data['password']);
         return $this->userRepository->createUser($data);
+    }
+    public function completeRegistration($registrationData)
+    {
+        if (!$registrationData) {
+            return response()->json([
+                "status" => false,
+                "message" => "Session expired. Please register again.",
+            ], 422);
+        }
+
+        $user=$this->register($registrationData);
+
+        $sessionOtp = session('otp');
+        $otpExpiry = session('otp_expiry');
+        $this->otpRepository->store($user->id, $sessionOtp, $otpExpiry);
+
+        session()->forget('registration_data');
+        session()->forget('otp');
+        session()->forget('otp_expiry');
+
+        return response()->json([
+            "status" => true,
+            "message" => "User registered successfully.",
+        ]);
     }
 
     public function logout(string $deviceId)
@@ -64,14 +93,13 @@ class UserService
             $refreshToken = $this->userRepository->createRefreshToken();
 
             $this->userRepository->saveRefreshToken($user, $deviceId, $refreshToken, Carbon::now()->addWeeks(2));
-            // Send OTP after successful login
-            app(OTPService::class)->sendOTP($user);  // You can use dependency injection or the app() helper
             return [
                 'status' => true,
                 'access_token' => $accessToken,
                 'refresh_token' => $refreshToken,
                 'token_type' => 'bearer',
                 'expires_in' => 15 * 60,
+                'user'=>$user
             ];
         }
         return [

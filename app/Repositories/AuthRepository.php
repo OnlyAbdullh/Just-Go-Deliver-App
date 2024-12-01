@@ -3,13 +3,13 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\AuthRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class UserRepository implements UserRepositoryInterface
+class AuthRepository implements AuthRepositoryInterface
 {
     public function createUser(array $data): User
     {
