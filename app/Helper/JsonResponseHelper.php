@@ -11,7 +11,7 @@ class JsonResponseHelper
     {
         $responseData = [];
 
-        $responseData ['successful'] = true;
+        $responseData['successful'] = true;
         if (!empty($message)) {
             $responseData['message'] = $message;
         }
@@ -25,10 +25,11 @@ class JsonResponseHelper
         return response()->json($responseData, $statusCode);
     }
 
-    public static function errorResponse($message = '', $errors = [], $statusCode = 400): JsonResponse{
+    public static function errorResponse($message = '', $errors = [], $statusCode = 400): JsonResponse
+    {
         $responseData = [];
 
-        $responseData ['successful'] = false;
+        $responseData['successful'] = false;
 
         if (!empty($message)) {
             $responseData['message'] = $message;
@@ -42,5 +43,4 @@ class JsonResponseHelper
 
         return response()->json($responseData, $statusCode);
     }
-
 }
