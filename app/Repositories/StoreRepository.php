@@ -9,9 +9,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class StoreRepository implements StoreRepositoryInterface
 {
 
-    public function all_with_pagination($page, $items)
+    public function all_with_pagination( $items)
     {
-        $stores =  Store::with('user')->paginate($items, ['*'], 'page', $page);
+        $stores =  Store::with('user')->paginate($items);
 
         if ($stores->isEmpty()) {
             return false;

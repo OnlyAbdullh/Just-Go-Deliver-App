@@ -29,7 +29,7 @@ class CreateStoreRequest extends FormRequest
             'user_id' => 'required|exists:users,id|unique:stores,user_id',
             'logo'=>'required|image|mimes:jpg,png,jpeg',
             'location'=>'sometimes|string',
-            'description'=>'required',
+            'description'=>'sometimes',
             'name'=>'required'
         ];
     }
@@ -41,7 +41,7 @@ class CreateStoreRequest extends FormRequest
             ->toArray();
 
         throw new HttpResponseException(
-            JsonResponseHelper::errorResponse('Validation Error',$errors)
+            JsonResponseHelper::errorResponse(__('messages.validation_error'),$errors)
         );
     }
 }

@@ -75,16 +75,15 @@ class StoreController extends Controller
     public function index(Request $request): JsonResponse
     {
 
-        $page = $request->query('page', 1);
         $itemsPerPage = $request->query('items', 10);
 
-        $data = $this->storeSrevice->getAllStores($page, $itemsPerPage);
+        $data = $this->storeSrevice->getAllStores($itemsPerPage);
 
         if (!$data) {
-            return   JsonResponseHelper::errorResponse('There are no stores available', [], 404);
+            return   JsonResponseHelper::errorResponse(__('messages.no_stores_available'), [], 404);
         }
 
-        return JsonResponseHelper::successResponse('stores fetched successfully', $data);
+        return JsonResponseHelper::successResponse(__('messages.stores_fetched'), $data);
     }
 
 
@@ -164,7 +163,7 @@ class StoreController extends Controller
     {
         $store = $this->storeSrevice->createStore($request->validated());
 
-        return JsonResponseHelper::successResponse('store created successfully', StoreResource::make($store), 201);
+        return JsonResponseHelper::successResponse(__('messages.stores_created'), StoreResource::make($store), 201);
     }
 
     /**
@@ -249,12 +248,15 @@ class StoreController extends Controller
      * )
      */
 
-    public function update(UpdateStoreRequest $request, Store $store): JsonResponse
+    public function update(UpdateStoreRequest $request, $storeId): JsonResponse
     {
 
-        $store = $this->storeSrevice->updateStore($store->id, $request->validated());
+        $store = $this->storeSrevice->updateStore($storeId, $request->validated());
 
-        return JsonResponseHelper::successResponse('store updated successfully', $store, 200);
+        if (!$store) {
+            return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 404);
+        }
+        return JsonResponseHelper::successResponse(__('messages.store_updated'), $store, 200);
     }
 
     /**
@@ -293,9 +295,13 @@ class StoreController extends Controller
      * )
      */
 
-    public function show(Store $store): JsonResponse
+    public function show(int $storeId): JsonResponse
     {
-        return JsonResponseHelper::successResponse('store displayed successfully', StoreResource::make($store), 200);
+        $store = $this->storeSrevice->showStore($storeId);
+        if (!$store) {
+            return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 404);
+        }
+        return JsonResponseHelper::successResponse(__('messages.store_displayed'), StoreResource::make($store), 200);
     }
 
     /**
@@ -344,9 +350,13 @@ class StoreController extends Controller
      * )
      */
 
-    public function destroy(Store $store): JsonResponse
+    public function destroy(int $storeId): JsonResponse
     {
-        $store = $this->storeSrevice->deleteStore($store);
-        return JsonResponseHelper::successResponse('store deleted successfully', $store, 200);
+        $store = $this->storeSrevice->deleteStore($storeId);
+
+        if (!$store) {
+            return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 404);
+        }
+        return JsonResponseHelper::successResponse(__('message'), $store, 200);
     }
 }

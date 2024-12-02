@@ -6,7 +6,7 @@ use App\Models\Store;
 use Illuminate\Http\UploadedFile;
 
 interface StoreRepositoryInterface{
-    public function all_with_pagination($page,$items);
+    public function all_with_pagination($items);
 
     public function store(array $data);
 

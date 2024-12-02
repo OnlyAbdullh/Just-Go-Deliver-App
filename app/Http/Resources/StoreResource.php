@@ -33,13 +33,15 @@ class StoreResource extends JsonResource
         $imageUrl = Storage::url($imagePath);
 
         $manager = $this->user;
-        return [
+        return collect([
             'id' => $this->id,
             'manager' => $manager->first_name . ' ' . $manager->last_name,
             'name' => $this->name,
-            'image_url' => asset($imageUrl),
-            'location' => $this->when(!empty($this->location), $this->location),
-            'description' => $this->description
-        ];
+            'image_url' => $this->logo ? asset($imageUrl) : null,
+            'location' => $this->location,
+            'description' => $this->description,
+        ])->filter(function ($value) {
+            return !is_null($value);
+        })->toArray();
     }
 }

@@ -16,12 +16,12 @@ class StoreService
         $this->storeRepository = $storeRepository;
     }
 
-    public function getAllStores($page, $items): array|bool
+    public function getAllStores($items): array|null
     {
-        $stores = $this->storeRepository->all_with_pagination($page, $items);
+        $stores = $this->storeRepository->all_with_pagination($items);
 
         if (!$stores) {
-            return false;
+            return null;
         }
 
         $hasMorePages = $stores->hasMorePages();
@@ -38,7 +38,6 @@ class StoreService
 
         $storeData = [
             'user_id' => $data['user_id'],
-            'description' => $data['description'],
             'name' => $data['name'],
             'logo' => $imagePath
         ];
@@ -46,15 +45,21 @@ class StoreService
         if (!empty($data['location'])) {
             $storeData['location'] = $data['location'];
         }
+        if (!empty($data['description'])) {
+            $storeData['description'] = $data['description'];
+        }
 
         return $this->storeRepository->store($storeData);
     }
 
-    public function updateStore(int $storeId, array $data)
+    public function updateStore(int $storeId, array $data): Store|null
     {
 
         $store = $this->storeRepository->findById($storeId);
 
+        if (!$store) {
+            return null;
+        }
         if (isset($data['logo'])) {
             if ((!empty($store->logo)) && Storage::disk('public')->exists($store->logo)) {
                 Storage::disk('public')->delete($store->logo);
@@ -68,8 +73,24 @@ class StoreService
         return $this->storeRepository->update($store, $data);
     }
 
-    public function deleteStore(Store $store): bool
+    public function deleteStore(int $storeId): bool|null
     {
+        $store = $this->storeRepository->findById($storeId);
+
+        if (!$store) {
+            return null;
+        }
         return $this->storeRepository->delete($store);
+    }
+
+    public function showStore($storeId)
+    {
+        $store = $this->storeRepository->findById($storeId);
+
+        if (!$store) {
+            return null;
+        }
+
+        return $store;
     }
 }

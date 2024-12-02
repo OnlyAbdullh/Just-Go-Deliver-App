@@ -19,8 +19,9 @@ class StoreFactory extends Factory
         return  [
             'user_id' => User::factory(),
             'name' => $this->faker->company,
-            'logo' => 'logos/' . $this->faker->image('public/storage/logos', 400, 400, null, false),
+            'logo' => $this->faker->image('public/storage/stores', 400, 400, null, false),
             'description' => $this->faker->sentence(10),
+            //'location'=>$this->fake()->location,
         ];
     }
 }
