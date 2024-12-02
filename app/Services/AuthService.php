@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\User;
@@ -15,8 +16,7 @@ class AuthService
     protected $otpRepository;
 
 
-
-    public function __construct(AuthRepositoryInterface $userRepository,OTPRepository $otpRepository)
+    public function __construct(AuthRepositoryInterface $userRepository, OTPRepository $otpRepository)
     {
         $this->userRepository = $userRepository;
         $this->otpRepository = $otpRepository;
@@ -27,6 +27,7 @@ class AuthService
         $data['password'] = Hash::make($data['password']);
         return $this->userRepository->createUser($data);
     }
+
     public function completeRegistration($registrationData)
     {
         if (!$registrationData) {
@@ -36,7 +37,7 @@ class AuthService
             ], 422);
         }
 
-        $user=$this->register($registrationData);
+        $user = $this->register($registrationData);
 
         $sessionOtp = session('otp');
         $otpExpiry = session('otp_expiry');
@@ -46,10 +47,6 @@ class AuthService
         session()->forget('otp');
         session()->forget('otp_expiry');
 
-        return response()->json([
-            "status" => true,
-            "message" => "User registered successfully.",
-        ]);
     }
 
     public function logout(string $deviceId)
@@ -61,7 +58,7 @@ class AuthService
         }
         $currentToken = JWTAuth::getToken();
         DB::table('token_blacklist')->insert([
-            'token' =>   $currentToken,
+            'token' => $currentToken,
             'expires_at' => Carbon::now()->addMinutes(config('jwt.ttl')),
             'created_at' => now(),
             'updated_at' => now(),
@@ -83,7 +80,7 @@ class AuthService
 
             if ($existingRefreshToken) {
                 return [
-                    'status' => false,
+                    'successful' => false,
                     'message' => 'You have already logged in on this device.',
                     'status_code' => 409
                 ];
@@ -94,16 +91,16 @@ class AuthService
 
             $this->userRepository->saveRefreshToken($user, $deviceId, $refreshToken, Carbon::now()->addWeeks(2));
             return [
-                'status' => true,
+                'successful' => true,
                 'access_token' => $accessToken,
                 'refresh_token' => $refreshToken,
                 'token_type' => 'bearer',
                 'expires_in' => 15 * 60,
-                'user'=>$user
+                'user' => $user,
             ];
         }
         return [
-            'status' => false,
+            'successful' => false,
             'message' => 'Invalid credentials',
             'status_code' => 401
         ];
@@ -116,8 +113,8 @@ class AuthService
         if (!$refreshTokenRecord) {
             throw new \Exception('Invalid or expired refresh token', 401);
         }
-
         $user = User::find($refreshTokenRecord->user_id);
+
         $deviceExists = $this->userRepository->deviceExists($deviceId, $user->id);
 
         if (!$deviceExists) {
@@ -127,10 +124,8 @@ class AuthService
 
         return [
             'access_token' => $accessToken,
-            'refresh_token' => $refreshToken,  //ما عم حدثو
-            'token_type' => 'bearer',
-            'expires_in' => 15 * 60,
         ];
     }
+
 
 }

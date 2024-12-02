@@ -33,19 +33,31 @@ class OTPService
     }
 
 
-    public function validateOTP($inputOtp, string $email): bool
+    public function validateOTP(string $inputOtp): array
     {
         $sessionOtp = session('otp');
         $otpExpiry = session('otp_expiry');
 
         if (!$sessionOtp || Carbon::now()->isAfter($otpExpiry)) {
-            return false;
+            return [
+                'successful' => false,
+                'message' => 'OTP has expired, please Resend it',
+                'status_code' => 401,
+            ];
         }
-       // \Log::info($sessionOtp);
-       // \Log::info($inputOtp);
-        if (trim((string)$sessionOtp) !== trim((string)$inputOtp)) {
-            return false;
+
+        if (trim((string)$sessionOtp) !== trim($inputOtp)) {
+            return [
+                'successful' => false,
+                'message' => 'Invalid OTP.',
+                'status_code' => 400,
+            ];
         }
-        return true;
+
+        return [
+            'successful' => true,
+            'message' => 'OTP is valid.',
+            'status_code' => 200,
+        ];
     }
 }

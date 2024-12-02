@@ -4,7 +4,6 @@ use App\Http\Controllers\OTPController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,15 +20,11 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('refresh', [AuthController::class, 'refresh']);
 
-Route::post('send-otp', [OTPController::class, 'sendOTP']);
-Route::post('validate-otp', [OTPController::class, 'validateOTP']);
 
 Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('protected-resource', function () {
-        return response()->json([
-            'message' => 'You have accessed a protected resource!'
-        ]);
-    });
 });
-
+Route::get('/api/documentation', function () {
+    \Illuminate\Support\Facades\Artisan::call('l5-swagger:generate');
+    return redirect('/swagger-ui');
+});
