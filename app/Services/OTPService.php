@@ -27,7 +27,7 @@ class OTPService
 
         $expiresAt = Carbon::now()->addMinutes(5);
 
-        session(['otp' => (string)$otp, 'otp_expiry' => $expiresAt]);
+        session(['otp' => $otp, 'otp_expiry' => $expiresAt]);
 
         Mail::to($email)->send(new OTPMail($otp));
     }
