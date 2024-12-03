@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RolePermessionSeeder::class,
-            UserSeeder::class
+           // UserSeeder::class
         ]);
         // \App\Models\User::factory(10)->create();
 

@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use App\Services\RoleService;
 use Illuminate\Support\Facades\Gate;
-use App\Helper\JsonResponseHelper;
+use App\Helpers\ApiResponse;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -85,16 +85,16 @@ class RoleController extends Controller
     {
 
         if (!Gate::allows('assign-role', User::class)) {
-            return JsonResponseHelper::errorResponse('Only manager can assign roles', [], 403);
+            return ApiResponse::errorResponse('Only manager can assign roles', [], 403);
         }
 
         $result =  $this->roleService->assignRoleForUser($request->user_id, $request->role);
 
         if (!$result) {
-            return JsonResponseHelper::errorResponse('User not found', [], 404);
+            return ApiResponse::errorResponse('User not found', [], 404);
         }
 
-        return JsonResponseHelper::successResponse('Role assigned successfully', 200);
+        return ApiResponse::successResponse('Role assigned successfully', 200);
     }
 
     /**
@@ -158,12 +158,12 @@ class RoleController extends Controller
     public function delete(RoleRequest $request)
     {
         if (!Gate::allows('revokeRole', User::class)) {
-            return JsonResponseHelper::errorResponse('Only manager can revoke roles', [], 403);
+            return ApiResponse::errorResponse('Only manager can revoke roles', [], 403);
         }
         $result =  $this->roleService->revokeRoleForUser($request->user_id, $request->role);
         if (!$result) {
-            return JsonResponseHelper::errorResponse('User not found', [], 404);
+            return ApiResponse::errorResponse('User not found', [], 404);
         }
-        return JsonResponseHelper::successResponse('Role revoke successfully', 200);
+        return ApiResponse::successResponse('Role revoke successfully', 200);
     }
 }

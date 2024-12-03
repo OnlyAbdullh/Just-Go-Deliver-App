@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Helper\JsonResponseHelper;
+use App\Helpers\ApiResponse;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -38,7 +38,7 @@ class RoleRequest extends FormRequest
             ->toArray();
 
         throw new HttpResponseException(
-            JsonResponseHelper::errorResponse('Validation Errors',$errors)
+            ApiResponse::errorResponse('Validation Errors',$errors)
         );
     }
 }
