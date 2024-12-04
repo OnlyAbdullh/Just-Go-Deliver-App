@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\SendOtpEmailJob;
 use App\Repositories\OTPRepository;
 use App\Models\User;
 use Carbon\Carbon;
@@ -25,11 +26,10 @@ class OTPService
         //  $otp = Str::padLeft(rand(0, 999999), 6, '0');
         $otp = strval(rand(100000, 999999));
 
-        $expiresAt = Carbon::now()->addMinutes(5);
+        $expiresAt = Carbon::now()->addMinutes(2);
 
         session(['otp' => $otp, 'otp_expiry' => $expiresAt]);
-
-        Mail::to($email)->send(new OTPMail($otp));
+        SendOtpEmailJob::dispatch($email, $otp);
     }
 
 

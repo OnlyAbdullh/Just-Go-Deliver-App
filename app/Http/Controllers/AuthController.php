@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\JsonResponseHelper;
 use App\Services\AuthService;
 use App\Services\OTPService;
 use Illuminate\Http\Request;
 use App\Helpers\ApiResponse;
-
+use App\Jobs\SendOtpEmailJob;
 
 class AuthController extends Controller
 {
@@ -75,11 +76,11 @@ class AuthController extends Controller
 
         session([
             'registration_data' => $registrationData,
-            'otp_expiry' => now()->addMinutes(5)
+            'otp_expiry' => now()->addMinutes(2)
         ]);
         // \Log::info('After ', session()->all());
         $this->otpService->sendOTP($validatedData['email']);
-        return ApiResponse::successResponse('Registration initiated. OTP sent to your email.');
+        return JsonResponseHelper::successResponse('Registration initiated. OTP sent to your email.');
     }
 
     /**
@@ -143,7 +144,7 @@ class AuthController extends Controller
         $result = $this->userService->login($credentials, $deviceId);
 
         if ($result['successful']) {
-            return ApiResponse::successResponse(
+            return JsonResponseHelper::successResponse(
                 'User logged in successfully',
                 [
                     'access_token' => $result['access_token'],
@@ -153,7 +154,7 @@ class AuthController extends Controller
             );
         }
 
-        return ApiResponse::errorResponse(
+        return JsonResponseHelper::errorResponse(
             $result['message'],
             [],
             $result['status_code']
@@ -234,10 +235,10 @@ class AuthController extends Controller
 
         try {
             $tokens = $this->userService->refreshToken($refreshToken, $deviceId);
-            return ApiResponse::successResponse('Access token refreshed successfully.', ['access_token' => $tokens['access_token'], 'expires_in' => '15 m']);
+            return JsonResponseHelper::successResponse('Access token refreshed successfully.', ['access_token' => $tokens['access_token'], 'expires_in' => '15 m']);
 
         } catch (\Exception $e) {
-            return ApiResponse::errorResponse($e->getMessage(), [], $e->getCode());
+            return JsonResponseHelper::errorResponse($e->getMessage(), [], $e->getCode());
         }
     }
 
@@ -292,10 +293,10 @@ class AuthController extends Controller
 
         try {
             $this->userService->logout($deviceId);
-            return ApiResponse::successResponse('User logged out successfully.');
+            return JsonResponseHelper::successResponse('User logged out successfully.');
 
         } catch (\Exception $e) {
-            return ApiResponse::errorResponse(
+            return JsonResponseHelper::errorResponse(
                 $e->getMessage(),
                 [],
                 404

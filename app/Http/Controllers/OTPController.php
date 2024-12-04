@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 
+use App\Helpers\JsonResponseHelper;
 use App\Helpers\ApiResponse;
 use App\Services\AuthService;
 use App\Services\OTPService;
 use Illuminate\Http\Request;
 use App\Models\User;
-
+use App\Jobs\SendOtpEmailJob;
 class OTPController extends Controller
 {
     protected $otpService;
@@ -66,7 +67,7 @@ class OTPController extends Controller
         $registrationData = session('registration_data');
 
         if (!$registrationData) {
-            return ApiResponse::errorResponse(
+            return JsonResponseHelper::errorResponse(
                 'Session expired. Please register again.',
                 [],
                 422
@@ -77,7 +78,7 @@ class OTPController extends Controller
 
         session(['otp_expiry' => now()->addMinutes(5)]);
 
-        return ApiResponse::successResponse('OTP resent successfully.');
+        return JsonResponseHelper::successResponse('OTP resent successfully.');
     }
     /**
      * @OA\Post(
@@ -135,7 +136,7 @@ class OTPController extends Controller
         $registrationData = session('registration_data');
 
         if (!$registrationData) {
-            return ApiResponse::errorResponse(
+            return JsonResponseHelper::errorResponse(
                 'Session expired. Please register again.',
                 [],
                 422
@@ -146,7 +147,7 @@ class OTPController extends Controller
 
         if (!$otpValidationResult['successful']) {
 
-            return ApiResponse::errorResponse(
+            return JsonResponseHelper::errorResponse(
                 $otpValidationResult['message'],
                 [],
                 $otpValidationResult['status_code']
@@ -155,7 +156,7 @@ class OTPController extends Controller
 
         $this->authService->completeRegistration($registrationData);
 
-        return ApiResponse::successResponse('Registration completed successfully.');
+        return JsonResponseHelper::successResponse('Registration completed successfully.');
     }
 
 }

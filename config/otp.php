@@ -28,10 +28,10 @@ return [
      | implement "Fouladgar\OTP\Contracts\NotifiableRepositoryInterface" interface.
      |
      */
-    'user_providers'   => [
+    'user_providers' => [
         'users' => [
-            'table'      => 'users',
-            'model'      => App\Models\User::class,
+            'table' => 'users',
+            'model' => App\Models\User::class,
             'repository' => Fouladgar\OTP\NotifiableRepository::class,
         ],
 
@@ -50,7 +50,7 @@ return [
      | mobile number reside in.
      |
      */
-    'mobile_column'    => 'mobile',
+    'mobile_column' => 'mobile',
 
     /*
      |--------------------------------------------------------------------------
@@ -61,7 +61,7 @@ return [
      | This table will held all information about created OTP tokens for users.
      |
      */
-    'token_table'      => 'otp_tokens',
+    'token_table' => 'otp_tokens',
 
     /*
      |--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ return [
      | Here you can specify length of OTP tokens which will send to users.
      |
      */
-    'token_length'     => env('OTP_TOKEN_LENGTH', 6),
+    'token_length' => env('OTP_TOKEN_LENGTH', 6),
 
     /*
      |--------------------------------------------------------------------------
@@ -81,7 +81,7 @@ return [
      | Here you can specify lifetime of OTP tokens (in minutes) which will send to users.
      |
      */
-    'token_lifetime'   => env('OTP_TOKEN_LIFE_TIME', 5),
+    'token_lifetime' => env('OTP_TOKEN_LIFE_TIME', 2),
 
     /*
    |--------------------------------------------------------------------------
@@ -91,7 +91,7 @@ return [
    | Here you can specify prefix of OTP tokens for adding to cache.
    |
    */
-    'prefix'           => 'otp_',
+    'prefix' => 'otp_',
 
     /*
      |--------------------------------------------------------------------------
@@ -102,7 +102,7 @@ return [
      | for sending SMS to users. You may use your own sms channel, so this is not a required option anymore.
      |
      */
-    'sms_client'       => '',
+    'sms_client' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -115,7 +115,7 @@ return [
     | Supported drivers: "cache", "database"
     |
     */
-    'token_storage'    => env('OTP_TOKEN_STORAGE', 'database'),
+    'token_storage' => env('OTP_TOKEN_STORAGE', 'database'),
 
     /*
     |--------------------------------------------------------------------------
@@ -126,5 +126,5 @@ return [
     | If you use default channel you must set "sms_client". Otherwise you don't need that.
     |
     */
-    'channel'          => Fouladgar\OTP\Notifications\Channels\OTPSMSChannel::class,
+    'channel' => Fouladgar\OTP\Notifications\Channels\OTPSMSChannel::class,
 ];
