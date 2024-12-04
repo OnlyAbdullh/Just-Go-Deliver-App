@@ -996,6 +996,579 @@
                     }
                 ]
             }
+        },
+        "/api/stores": {
+            "get": {
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Fetch paginated list of stores",
+                "description": "Retrieve a paginated list of stores with their details, including manager, name, image URL, location, and description.",
+                "operationId": "getStores",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to fetch",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "items",
+                        "in": "query",
+                        "description": "The number of items to display per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Stores fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Stores fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "stores": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/StoreResource"
+                                                    }
+                                                },
+                                                "hasMorePages": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No stores available",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "There are no stores available"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Create a new store",
+                "description": "Creates a new store with the given details. The user must provide valid data, including a logo image, via multipart/form-data.",
+                "operationId": "5562ee6fb25788924172167093719fe9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "logo",
+                                    "description",
+                                    "name"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "description": "ID of the user creating the store",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "logo": {
+                                        "description": "Image file for the store logo (jpg, png, jpeg)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "location": {
+                                        "description": "Location of the store",
+                                        "type": "string",
+                                        "example": "123 Main St, City, Country"
+                                    },
+                                    "description": {
+                                        "description": "Description of the store",
+                                        "type": "string",
+                                        "example": "A description of the store"
+                                    },
+                                    "name": {
+                                        "description": "Name of the store",
+                                        "type": "string",
+                                        "example": "My Store"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Store created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "store created successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/StoreResource"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 201
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation Error"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": [
+                                                {
+                                                    "type": "string",
+                                                    "example": "The user_id field is required.",
+                                                    "property": null
+                                                }
+                                            ]
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/stores/{store}": {
+            "get": {
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Get a specific store",
+                "description": "Retrieve details of a specific store by its ID.",
+                "operationId": "a9949c633f955f3c2892647c05d80ac5",
+                "parameters": [
+                    {
+                        "name": "store",
+                        "in": "path",
+                        "description": "ID of the store to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Store retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "store displayed successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/StoreResource"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Store not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Store not found."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Update an existing store",
+                "description": "Update details of an existing store. Only authorized users can update their own stores. The request supports partial updates, including an optional logo file upload.",
+                "operationId": "7dac60706528cc7c2bb0a5fe224f2aed",
+                "parameters": [
+                    {
+                        "name": "store",
+                        "in": "path",
+                        "description": "ID of the store to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "logo": {
+                                        "description": "Optional image file for the store logo (jpg, png, jpeg)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "location": {
+                                        "description": "Optional location of the store",
+                                        "type": "string",
+                                        "example": "123 Main St, City, Country"
+                                    },
+                                    "description": {
+                                        "description": "Optional description of the store",
+                                        "type": "string",
+                                        "example": "A description of the store"
+                                    },
+                                    "name": {
+                                        "description": "Optional name of the store",
+                                        "type": "string",
+                                        "example": "My Updated Store"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Store updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "store updated successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/StoreResource"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - User not authorized to update this store",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are not authorized to update this store."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 403
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation Error"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": [
+                                                {
+                                                    "type": "string",
+                                                    "example": "The logo must be an image.",
+                                                    "property": null
+                                                }
+                                            ]
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 422
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Delete a specific store",
+                "description": "Delete a store by its ID.",
+                "operationId": "d85a9563ceec3d622401123020ca99f6",
+                "parameters": [
+                    {
+                        "name": "store",
+                        "in": "path",
+                        "description": "ID of the store to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Store deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "store deleted successfully"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Store not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Store not found."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to delete the store",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are not authorized to delete this store."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 403
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "StoreResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "manager": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "My Store"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "http://127.0.0.1:8000/storage/stores/TFmQ589RA4AdMS6thfgp1suFcmv3TsWvEvPNNyUF.jpg"
+                    },
+                    "location": {
+                        "type": "string",
+                        "example": "123 Main St, City, Country",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "A description of the store"
+                    }
+                },
+                "type": "object"
+            }
         }
     },
     "tags": [
@@ -1010,6 +1583,10 @@
         {
             "name": "Roles",
             "description": "Roles"
+        },
+        {
+            "name": "Stores",
+            "description": "Stores"
         }
     ]
 }

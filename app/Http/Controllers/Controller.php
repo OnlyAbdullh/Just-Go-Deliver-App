@@ -13,10 +13,6 @@ use Illuminate\Routing\Controller as BaseController;
  *     version="1.0.0",
  *     description="API documentation for Just-Go-Deliver-App"
  * )
- * @OA\Server(
- *     url="http://localhost:8000/api",
- *     description="Local development server"
- * )
  */
 
 class Controller extends BaseController

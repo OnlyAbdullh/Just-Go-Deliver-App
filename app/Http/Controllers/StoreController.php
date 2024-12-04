@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Helper\JsonResponseHelper;
+use App\Helpers\JsonResponseHelper;
 use App\Http\Requests\CreateStoreRequest;
 use App\Http\Requests\UpdateStoreRequest;
 use App\Http\Resources\StoreResource;
-use App\Models\Store;
+use App\Models\User;
 use App\Services\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class StoreController extends Controller
 {
@@ -161,6 +162,9 @@ class StoreController extends Controller
 
     public function store(CreateStoreRequest $request): JsonResponse
     {
+        if (!Gate::allows('createStore', User::class)) {
+            return JsonResponseHelper::successResponse('Only store admin can craete store', [], 401);
+        }
         $store = $this->storeSrevice->createStore($request->validated());
 
         return JsonResponseHelper::successResponse(__('messages.stores_created'), StoreResource::make($store), 201);
@@ -250,7 +254,9 @@ class StoreController extends Controller
 
     public function update(UpdateStoreRequest $request, $storeId): JsonResponse
     {
-
+        if (!Gate::allows('updateStore', User::class)) {
+            return JsonResponseHelper::successResponse('Only store admin can update store', [], 401);
+        }
         $store = $this->storeSrevice->updateStore($storeId, $request->validated());
 
         if (!$store) {
@@ -297,6 +303,7 @@ class StoreController extends Controller
 
     public function show(int $storeId): JsonResponse
     {
+
         $store = $this->storeSrevice->showStore($storeId);
         if (!$store) {
             return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 404);
@@ -352,6 +359,9 @@ class StoreController extends Controller
 
     public function destroy(int $storeId): JsonResponse
     {
+        if (!Gate::allows('deleteStore', User::class)) {
+            return JsonResponseHelper::successResponse('Only store admin can delete store', [], 401);
+        }
         $store = $this->storeSrevice->deleteStore($storeId);
 
         if (!$store) {

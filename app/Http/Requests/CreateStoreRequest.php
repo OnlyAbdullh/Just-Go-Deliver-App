@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use App\Helper\JsonResponseHelper;
+use App\Helpers\JsonResponseHelper;
 
 class CreateStoreRequest extends FormRequest
 {

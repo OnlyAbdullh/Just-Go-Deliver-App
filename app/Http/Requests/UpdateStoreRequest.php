@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Helper\JsonResponseHelper;
+use App\Helpers\JsonResponseHelper;
 use App\Models\Store;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class UpdateStoreRequest extends FormRequest
@@ -32,7 +33,7 @@ class UpdateStoreRequest extends FormRequest
             'name'=>'sometimes',
         ];
     }
-    protected function failedAuthorization()
+    protected function failedAuthorization():JsonResponse
     {
         return JsonResponseHelper::errorResponse('You are not authorized to update this store.',[],403);
     }
