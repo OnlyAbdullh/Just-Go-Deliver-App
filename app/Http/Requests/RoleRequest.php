@@ -27,7 +27,7 @@ class RoleRequest extends FormRequest
     {
         return [
             'role'=>'required|exists:roles,name',
-            'user_id'=>'required|exists:users,id'
+            'user_id'=>'required'
         ];
     }
 
@@ -38,7 +38,7 @@ class RoleRequest extends FormRequest
             ->toArray();
 
         throw new HttpResponseException(
-            ApiResponse::errorResponse('Validation Errors',$errors)
+            ApiResponse::errorResponse(__('messages.validation_errors'),$errors)
         );
     }
 }

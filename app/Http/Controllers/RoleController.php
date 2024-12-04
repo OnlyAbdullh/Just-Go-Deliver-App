@@ -85,16 +85,18 @@ class RoleController extends Controller
     {
 
         if (!Gate::allows('assign-role', User::class)) {
-            return ApiResponse::errorResponse('Only manager can assign roles', [], 403);
+            return ApiResponse::errorResponse(__('messages.only_manager_can_assign_roles'), [], 403);
         }
-
         $result =  $this->roleService->assignRoleForUser($request->user_id, $request->role);
 
-        if (!$result) {
-            return ApiResponse::errorResponse('User not found', [], 404);
+        if($result === 'has role'){
+            return ApiResponse::successResponse(__('messages.role_already_assigned'));
+        }
+        else if (!$result) {
+            return ApiResponse::errorResponse(__('messages.user_not_found'), [], 404);
         }
 
-        return ApiResponse::successResponse('Role assigned successfully', 200);
+        return ApiResponse::successResponse(__('messages.role_assign_success'));
     }
 
     /**
@@ -158,12 +160,17 @@ class RoleController extends Controller
     public function delete(RoleRequest $request)
     {
         if (!Gate::allows('revokeRole', User::class)) {
-            return ApiResponse::errorResponse('Only manager can revoke roles', [], 403);
+            return ApiResponse::errorResponse(__('messages.only_manager_can_revoke_roles'), [], 403);
         }
+
         $result =  $this->roleService->revokeRoleForUser($request->user_id, $request->role);
-        if (!$result) {
-            return ApiResponse::errorResponse('User not found', [], 404);
+        
+        if($result === 'has not role'){
+            return ApiResponse::successResponse(__('messages.role_already_revoked'));
         }
-        return ApiResponse::successResponse('Role revoke successfully', 200);
+        else if (!$result) {
+            return ApiResponse::errorResponse(__('messages.user_not_found'), [], 404);
+        }
+        return ApiResponse::successResponse(__('messages.role_revoke_success'));
     }
 }

@@ -7,4 +7,6 @@ return [
     'only_manager_can_revoke_roles' => 'فقط المدير يمكنه إلغاء الأدوار',
     'role_assign_success' => 'تم تعيين الدور بنجاح',
     'only_manager_can_assign_roles' => 'فقط المدير يمكنه تعيين الأدوار',
+    'role_already_assigned' => 'تم تعيين الدور لهذا المستخدم مسبقًا.',
+    'role_already_revoked' => 'تم إلغاء الدور لهذا المستخدم مسبقًا.',
 ];
