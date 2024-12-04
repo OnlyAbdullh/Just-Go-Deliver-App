@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\JsonResponseHelper;
 use App\Http\Requests\RoleRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use App\Services\RoleService;
 use Illuminate\Support\Facades\Gate;
-use App\Helpers\ApiResponse;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -85,18 +85,18 @@ class RoleController extends Controller
     {
 
         if (!Gate::allows('assign-role', User::class)) {
-            return ApiResponse::errorResponse(__('messages.only_manager_can_assign_roles'), [], 403);
+            return JsonResponseHelper::errorResponse(__('messages.only_manager_can_assign_roles'), [], 403);
         }
         $result =  $this->roleService->assignRoleForUser($request->user_id, $request->role);
 
         if($result === 'has role'){
-            return ApiResponse::successResponse(__('messages.role_already_assigned'));
+            return JsonResponseHelper::successResponse(__('messages.role_already_assigned'));
         }
         else if (!$result) {
-            return ApiResponse::errorResponse(__('messages.user_not_found'), [], 404);
+            return JsonResponseHelper::errorResponse(__('messages.user_not_found'), [], 404);
         }
 
-        return ApiResponse::successResponse(__('messages.role_assign_success'));
+        return JsonResponseHelper::successResponse(__('messages.role_assign_success'));
     }
 
     /**
@@ -160,17 +160,17 @@ class RoleController extends Controller
     public function delete(RoleRequest $request)
     {
         if (!Gate::allows('revokeRole', User::class)) {
-            return ApiResponse::errorResponse(__('messages.only_manager_can_revoke_roles'), [], 403);
+            return JsonResponseHelper::errorResponse(__('messages.only_manager_can_revoke_roles'), [], 403);
         }
 
         $result =  $this->roleService->revokeRoleForUser($request->user_id, $request->role);
-        
+
         if($result === 'has not role'){
-            return ApiResponse::successResponse(__('messages.role_already_revoked'));
+            return JsonResponseHelper::successResponse(__('messages.role_already_revoked'));
         }
         else if (!$result) {
-            return ApiResponse::errorResponse(__('messages.user_not_found'), [], 404);
+            return JsonResponseHelper::errorResponse(__('messages.user_not_found'), [], 404);
         }
-        return ApiResponse::successResponse(__('messages.role_revoke_success'));
+        return JsonResponseHelper::successResponse(__('messages.role_revoke_success'));
     }
 }

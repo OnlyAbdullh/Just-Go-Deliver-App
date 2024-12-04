@@ -6,7 +6,6 @@ use App\Helpers\JsonResponseHelper;
 use App\Services\AuthService;
 use App\Services\OTPService;
 use Illuminate\Http\Request;
-use App\Helpers\ApiResponse;
 use App\Jobs\SendOtpEmailJob;
 
 class AuthController extends Controller
