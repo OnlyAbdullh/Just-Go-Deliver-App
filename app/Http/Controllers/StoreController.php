@@ -163,7 +163,7 @@ class StoreController extends Controller
     public function store(CreateStoreRequest $request): JsonResponse
     {
         if (!Gate::allows('createStore', User::class)) {
-            return JsonResponseHelper::successResponse('Only store admin can craete store', [], 401);
+            return JsonResponseHelper::successResponse(__('messages.store_admin_only_create'), [], 401);
         }
         $store = $this->storeSrevice->createStore($request->validated());
 
@@ -255,14 +255,15 @@ class StoreController extends Controller
     public function update(UpdateStoreRequest $request, $storeId): JsonResponse
     {
         if (!Gate::allows('updateStore', User::class)) {
-            return JsonResponseHelper::successResponse('Only store admin can update store', [], 401);
+            return JsonResponseHelper::successResponse(__('messages.store_admin_only_update'), [], 401);
         }
+
         $store = $this->storeSrevice->updateStore($storeId, $request->validated());
 
         if (!$store) {
             return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 404);
         }
-        return JsonResponseHelper::successResponse(__('messages.store_updated'), $store, 200);
+        return JsonResponseHelper::successResponse(__('messages.store_updated'), StoreResource::make($store), 200);
     }
 
     /**
@@ -360,13 +361,14 @@ class StoreController extends Controller
     public function destroy(int $storeId): JsonResponse
     {
         if (!Gate::allows('deleteStore', User::class)) {
-            return JsonResponseHelper::successResponse('Only store admin can delete store', [], 401);
+            return JsonResponseHelper::successResponse(__('messages.store_admin_only_delete'), [], 401);
         }
+
         $store = $this->storeSrevice->deleteStore($storeId);
 
         if (!$store) {
             return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 404);
         }
-        return JsonResponseHelper::successResponse(__('message'), $store, 200);
+        return JsonResponseHelper::successResponse(__('message'), StoreResource::make($store), 200);
     }
 }

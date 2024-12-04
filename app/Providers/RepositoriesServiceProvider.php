@@ -1,9 +1,6 @@
 <?php
 
 namespace App\Providers;
-
-use App\Repositories\StoreRepository;
-use App\Repositories\StoreRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoriesServiceProvider extends ServiceProvider
@@ -21,6 +18,6 @@ class RepositoriesServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->app->bind(StoreRepositoryInterface::class, StoreRepository::class);
+        //$this->app->bind(StoreRepositoryInterface::class, StoreRepository::class);
     }
 }

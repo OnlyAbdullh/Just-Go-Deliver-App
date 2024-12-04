@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Contracts;
 
 use App\Models\Store;
 use Illuminate\Http\UploadedFile;

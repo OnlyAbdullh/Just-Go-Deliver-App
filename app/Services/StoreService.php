@@ -4,14 +4,14 @@ namespace App\Services;
 
 use App\Http\Resources\StoreResource;
 use App\Models\Store;
-use App\Repositories\StoreRepository;
+use App\Repositories\Contracts\StoreRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
 
 class StoreService
 {
     private $storeRepository;
 
-    public function __construct(StoreRepository $storeRepository)
+    public function __construct(StoreRepositoryInterface $storeRepository)
     {
         $this->storeRepository = $storeRepository;
     }
@@ -60,6 +60,7 @@ class StoreService
         if (!$store) {
             return null;
         }
+
         if (isset($data['logo'])) {
             if ((!empty($store->logo)) && Storage::disk('public')->exists($store->logo)) {
                 Storage::disk('public')->delete($store->logo);

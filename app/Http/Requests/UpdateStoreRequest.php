@@ -16,7 +16,7 @@ class UpdateStoreRequest extends FormRequest
     public function authorize(): bool
     {
         $store = $this->route('store');
-        return $store->user_id == auth()->id();
+        return $store == auth()->id();
     }
 
     /**
