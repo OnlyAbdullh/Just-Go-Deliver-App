@@ -7,11 +7,14 @@ use Illuminate\Http\JsonResponse;
 class JsonResponseHelper
 {
 
-    public static function successResponse($data = [], $statusCode = 200): JsonResponse
+    public static function successResponse($message = '', $data = [], $statusCode = 200): JsonResponse
     {
         $responseData = [];
 
         $responseData['successful'] = true;
+        if (!empty($message)) {
+            $responseData['message'] = $message;
+        }
 
         if (!empty($data)) {
             $responseData['data'] = $data;
