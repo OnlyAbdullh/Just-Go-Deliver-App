@@ -28,7 +28,7 @@ class AuthService
         return $this->userRepository->createUser($data);
     }
 
-    public function completeRegistration($registrationData)
+    public function completeRegistration($registrationData,string $email)
     {
         if (!$registrationData) {
             return response()->json([
@@ -44,8 +44,8 @@ class AuthService
         $this->otpRepository->store($user->id, $sessionOtp, $otpExpiry);
 
         session()->forget('registration_data');
-        session()->forget('otp');
-        session()->forget('otp_expiry');
+        session()->forget(["otp_{$email}", "otp_expiry_{$email}"]);
+        session()->forget('registration_data');
 
     }
 

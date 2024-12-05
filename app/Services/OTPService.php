@@ -28,15 +28,18 @@ class OTPService
 
         $expiresAt = Carbon::now()->addMinutes(2);
 
-        session(['otp' => $otp, 'otp_expiry' => $expiresAt]);
+        session([
+            "otp_{$email}" => $otp,
+            "otp_expiry_{$email}" => $expiresAt
+        ]);
         SendOtpEmailJob::dispatch($email, $otp);
     }
 
 
-    public function validateOTP(string $inputOtp): array
+    public function validateOTP(string $inputOtp,string $email): array
     {
-        $sessionOtp = session('otp');
-        $otpExpiry = session('otp_expiry');
+        $sessionOtp = session("otp_{$email}");
+        $otpExpiry = session("otp_expiry_{$email}");
 
         if (!$sessionOtp || Carbon::now()->isAfter($otpExpiry)) {
             return [

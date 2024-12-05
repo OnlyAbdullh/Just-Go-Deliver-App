@@ -9,6 +9,7 @@ use App\Services\OTPService;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Jobs\SendOtpEmailJob;
+
 class OTPController extends Controller
 {
     protected $otpService;
@@ -19,6 +20,7 @@ class OTPController extends Controller
         $this->otpService = $otpService;
         $this->authService = $authService;
     }
+
     /**
      * @OA\Post(
      *     path="/resend-otp",
@@ -62,7 +64,7 @@ class OTPController extends Controller
 
     public function ResendOTP(Request $request)
     {
-        $email=$request->input('email');
+        $email = $request->input('email');
         $registrationData = session('registration_data');
 
         if (!$registrationData) {
@@ -75,10 +77,11 @@ class OTPController extends Controller
 
         $this->otpService->sendOTP($email);
 
-        session(['otp_expiry' => now()->addMinutes(5)]);
+        session(['otp_expiry' => now()->addMinutes(2)]);
 
         return JsonResponseHelper::successResponse('OTP resent successfully.');
     }
+
     /**
      * @OA\Post(
      *     path="/validate-otp",
@@ -132,6 +135,7 @@ class OTPController extends Controller
     public function validateOTP(Request $request)
     {
         $inputOtp = $request->input('otp');
+        $email = $request->input('email');
         $registrationData = session('registration_data');
 
         if (!$registrationData) {
@@ -142,7 +146,7 @@ class OTPController extends Controller
             );
         }
 
-        $otpValidationResult = $this->otpService->validateOTP($inputOtp);
+        $otpValidationResult = $this->otpService->validateOTP($inputOtp, $email);
 
         if (!$otpValidationResult['successful']) {
 
@@ -153,7 +157,7 @@ class OTPController extends Controller
             );
         }
 
-        $this->authService->completeRegistration($registrationData);
+        $this->authService->completeRegistration($registrationData,$email);
 
         return JsonResponseHelper::successResponse('Registration completed successfully.');
     }
