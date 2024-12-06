@@ -75,7 +75,6 @@ class AuthController extends Controller
 
         session([
             'registration_data' => $registrationData,
-            'otp_expiry' => now()->addMinutes(2)
         ]);
         // \Log::info('After ', session()->all());
         $this->otpService->sendOTP($validatedData['email']);
@@ -101,12 +100,18 @@ class AuthController extends Controller
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="User logged in successfully"),
      *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="access_token", type="string", example="eyJhbGciOiJIUzI1NiIsInR..."),
-     *                 @OA\Property(property="refresh_token", type="string", example="dGhpc2lzYXJlZnJlc2h0b2..."),
+     *                 @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."),
+     *                 @OA\Property(property="refresh_token", type="string", example="eyJpdiI6IkZVNlF2ZVVIZ25JWkVqaXgxUmFRRHc9PS..."),
      *                 @OA\Property(property="user", type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="John Doe"),
-     *                     @OA\Property(property="email", type="string", example="user@example.com")
+     *                     @OA\Property(property="id", type="integer", example=26),
+     *                     @OA\Property(property="first_name", type="string", example="abdullah"),
+     *                     @OA\Property(property="last_name", type="string", example="alkasm"),
+     *                     @OA\Property(property="email", type="string", example="abdallaalksm9@gmail.com"),
+     *                     @OA\Property(property="location", type="string", example="location 1"),
+     *                     @OA\Property(property="image", type="string", nullable=true, example="any path"),
+     *                     @OA\Property(property="role", type="string", example="user"),
+     *                     @OA\Property(property="fcm_token", type="string", nullable=true, example=3231),
+     *                     @OA\Property(property="phone_number", type="string", example="0969090711")
      *                 )
      *             ),
      *             @OA\Property(property="status_code", type="integer", example=200)
@@ -132,6 +137,7 @@ class AuthController extends Controller
      *     )
      * )
      */
+
 
 
 

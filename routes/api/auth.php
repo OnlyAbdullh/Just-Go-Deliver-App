@@ -3,8 +3,9 @@
 use App\Http\Controllers\OTPController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-
+use Intervention\Image\ImageManager;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,7 +26,7 @@ Route::post('refresh', [AuthController::class, 'refresh']);
 Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 });
-Route::get('/api/documentation', function () {
+ Route::get('/api/documentation', function () {
     \Illuminate\Support\Facades\Artisan::call('l5-swagger:generate');
     return redirect('/swagger-ui');
 });
