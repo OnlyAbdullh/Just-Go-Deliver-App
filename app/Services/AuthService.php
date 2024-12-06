@@ -14,12 +14,13 @@ class AuthService
 {
     protected $userRepository;
     protected $otpRepository;
+    protected $roleService;
 
-
-    public function __construct(AuthRepositoryInterface $userRepository, OTPRepository $otpRepository)
+    public function __construct(AuthRepositoryInterface $userRepository, OTPRepository $otpRepository, RoleService $roleService)
     {
         $this->userRepository = $userRepository;
         $this->otpRepository = $otpRepository;
+        $this->roleService = $roleService;
     }
 
     public function register(array $data)
@@ -28,7 +29,7 @@ class AuthService
         return $this->userRepository->createUser($data);
     }
 
-    public function completeRegistration($registrationData,string $email)
+    public function completeRegistration($registrationData, string $email)
     {
         if (!$registrationData) {
             return response()->json([
@@ -38,9 +39,9 @@ class AuthService
         }
 
         $user = $this->register($registrationData);
-
-        $sessionOtp = session('otp');
-        $otpExpiry = session('otp_expiry');
+        $this->roleService->assignRoleForUser($user->id, 'user');
+        $sessionOtp = session( "otp_{$email}" );
+        $otpExpiry = session( "otp_expiry_{$email}");
         $this->otpRepository->store($user->id, $sessionOtp, $otpExpiry);
 
         session()->forget('registration_data');

@@ -87,7 +87,7 @@ class RoleController extends Controller
         if (!Gate::allows('assign-role', User::class)) {
             return JsonResponseHelper::errorResponse(__('messages.only_manager_can_assign_roles'), [], 403);
         }
-        $result =  $this->roleService->assignRoleForUser($request->user_id, $request->role);
+        $result = $this->roleService->assignRoleForUser($request->user_id, $request->role);
 
         if ($result === 'has role') {
             return JsonResponseHelper::successResponse(__('messages.role_already_assigned'));
@@ -162,7 +162,7 @@ class RoleController extends Controller
             return JsonResponseHelper::errorResponse(__('messages.only_manager_can_revoke_roles'), [], 403);
         }
 
-        $result =  $this->roleService->revokeRoleForUser($request->user_id, $request->role);
+        $result = $this->roleService->revokeRoleForUser($request->user_id, $request->role);
 
         if ($result === 'has not role') {
             return JsonResponseHelper::successResponse(__('messages.role_already_revoked'));

@@ -28,4 +28,14 @@ class UserController extends Controller
         return response()->json($userDetails);
     }
 
+    public function destroy(User $user)
+    {
+        $this->userService->deleteUser($user);
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $updatedUser = $this->userService->updateUser($user, $request->all());
+        return response()->json($updatedUser);
+    }
 }

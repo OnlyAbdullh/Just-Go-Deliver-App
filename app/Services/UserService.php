@@ -23,4 +23,13 @@ class UserService
         return $this->userRepository->getUserDetails($user);
     }
 
+    public function deleteUser(User $user)
+    {
+        return $this->userRepository->deleteUser($user);
+    }
+
+    public function updateUser(User $user, array $data)
+    {
+        return $this->userRepository->updateUser($user, $data);
+    }
 }
