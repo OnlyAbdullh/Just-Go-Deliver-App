@@ -29,6 +29,7 @@ class OTPController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
+     *             required={"email"},
      *             @OA\Property(property="email", type="string", example="user@example.com", description="The email address used for registration.")
      *         )
      *     ),
@@ -90,8 +91,9 @@ class OTPController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="otp", type="string", example="123456", description="The OTP sent to the user's email."),
-     *             @OA\Property(property="email", type="string", format="email", example="user@example.com", description="The email address to which the OTP was sent.")
+     *             required={"email", "otp"},
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com", description="The email address to which the OTP was sent."),
+     *             @OA\Property(property="otp", type="string", example="123456", description="The OTP sent to the user's email.")
      *         )
      *     ),
      *     @OA\Response(

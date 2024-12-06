@@ -525,6 +525,9 @@
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "email"
+                                ],
                                 "properties": {
                                     "email": {
                                         "description": "The email address used for registration.",
@@ -625,17 +628,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "email",
+                                    "otp"
+                                ],
                                 "properties": {
-                                    "otp": {
-                                        "description": "The OTP sent to the user's email.",
-                                        "type": "string",
-                                        "example": "123456"
-                                    },
                                     "email": {
                                         "description": "The email address to which the OTP was sent.",
                                         "type": "string",
                                         "format": "email",
                                         "example": "user@example.com"
+                                    },
+                                    "otp": {
+                                        "description": "The OTP sent to the user's email.",
+                                        "type": "string",
+                                        "example": "123456"
                                     }
                                 },
                                 "type": "object"
@@ -1961,13 +1968,13 @@
                 }
             }
         },
-        "/users/{id}/image": {
+        "/users/{id}/upload": {
             "post": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Upload a profile image for a user",
-                "operationId": "e4b87584587e9b900a89cdb500acdada",
+                "operationId": "34ccc03d36000ae607ed1c990665544e",
                 "parameters": [
                     {
                         "name": "id",
@@ -2003,11 +2010,8 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "message": {
-                                            "type": "string"
-                                        },
                                         "path": {
-                                            "type": "string"
+                                            "type": "any path"
                                         }
                                     },
                                     "type": "object"
