@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_refresh_tokens', function (Blueprint $table) {
+        Schema::create('token_blacklist', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->string('device_id');
-            $table->string('refresh_token',1024)->unique();
+            $table->string('token',512)->unique();
             $table->timestamp('expires_at');
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+
     }
 
     /**
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_refresh_tokens');
+        Schema::dropIfExists('token_blacklist');
     }
 };

@@ -3,56 +3,29 @@
 namespace App\Services;
 
 use App\Jobs\SendOtpEmailJob;
-use App\Repositories\OTPRepository;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\OTPMail;
-use Illuminate\Support\Str;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Ichtrojan\Otp\Otp;
 
 class OTPService
 {
-    protected $otpRepository;
-
-    public function __construct(OTPRepository $otpRepository)
+    public function __construct( )
     {
-        $this->otpRepository = $otpRepository;
     }
 
     public function sendOTP(string $email): void
     {
-        //  $otp = Str::padLeft(rand(0, 999999), 6, '0');
-        $otp = strval(rand(100000, 999999));
-
-        $expiresAt = Carbon::now()->addMinutes(2);
-
-        session([
-            "otp_{$email}" => $otp,
-            "otp_expiry_{$email}" => $expiresAt
-        ]);
-        SendOtpEmailJob::dispatch($email, $otp);
+        $otpDetails = (new Otp)->generate($email, 'numeric', 6, 5);
+        SendOtpEmailJob::dispatch($email, $otpDetails->token);
     }
 
 
-    public function validateOTP(string $inputOtp,string $email): array
+    public function validateOTP(string $inputOtp, string $email): array
     {
-        $sessionOtp = session("otp_{$email}");
-        $otpExpiry = session("otp_expiry_{$email}");
+        $validationResult = (new Otp)->validate($email, $inputOtp);
 
-        if (!$sessionOtp || Carbon::now()->isAfter($otpExpiry)) {
+        if (!$validationResult->status) {
             return [
                 'successful' => false,
-                'message' => 'OTP has expired, please Resend it',
-                'status_code' => 401,
-            ];
-        }
-
-        if (trim((string)$sessionOtp) !== trim($inputOtp)) {
-            return [
-                'successful' => false,
-                'message' => 'Invalid OTP.',
+                'message' => $validationResult->message,
                 'status_code' => 400,
             ];
         }
@@ -63,4 +36,5 @@ class OTPService
             'status_code' => 200,
         ];
     }
+
 }

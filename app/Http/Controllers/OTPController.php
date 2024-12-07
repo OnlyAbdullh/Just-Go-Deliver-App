@@ -78,10 +78,9 @@ class OTPController extends Controller
 
         $this->otpService->sendOTP($email);
 
-        session(['otp_expiry' => now()->addMinutes(2)]);
-
         return JsonResponseHelper::successResponse('OTP resent successfully.');
     }
+
 
     /**
      * @OA\Post(
@@ -153,7 +152,6 @@ class OTPController extends Controller
         $otpValidationResult = $this->otpService->validateOTP($inputOtp, $email);
 
         if (!$otpValidationResult['successful']) {
-
             return JsonResponseHelper::errorResponse(
                 $otpValidationResult['message'],
                 [],
@@ -161,9 +159,10 @@ class OTPController extends Controller
             );
         }
 
-        $this->authService->completeRegistration($registrationData,$email);
+        $this->authService->completeRegistration($registrationData, $email);
 
         return JsonResponseHelper::successResponse('Registration completed successfully.');
     }
+
 
 }

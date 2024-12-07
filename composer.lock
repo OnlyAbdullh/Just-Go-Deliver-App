@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "403d07b04a885a4b160c219f05b45c83",
+    "content-hash": "1c79804aee25f2207a6bddc65d475c2a",
     "packages": [
         {
             "name": "brick/math",
@@ -1011,75 +1011,6 @@
             "time": "2023-10-06T06:47:41+00:00"
         },
         {
-            "name": "fouladgar/laravel-otp",
-            "version": "v4.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mohammad-fouladgar/laravel-otp.git",
-                "reference": "7a1e741c9afc9aae8c5a268f950d60a99b375144"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mohammad-fouladgar/laravel-otp/zipball/7a1e741c9afc9aae8c5a268f950d60a99b375144",
-                "reference": "7a1e741c9afc9aae8c5a268f950d60a99b375144",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "^10.0|^11.0",
-                "illuminate/notifications": "^10.0|^11.0",
-                "illuminate/support": "^10.0|^11.0",
-                "php": "^8.2"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.4",
-                "orchestra/testbench": "^7.0|^8.0",
-                "php-coveralls/php-coveralls": "^2.1",
-                "phpunit/phpunit": "^10.5.17"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Fouladgar\\OTP\\ServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Fouladgar\\OTP\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mohammad Fouladgar",
-                    "email": "fouladgar.dev@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "This package provides convenient methods for sending and validating OTP notifications to users for authentication.",
-            "keywords": [
-                "laravel",
-                "laravel-otp",
-                "lumen",
-                "one-time-password",
-                "otp",
-                "otp-authentication",
-                "otp-login"
-            ],
-            "support": {
-                "issues": "https://github.com/mohammad-fouladgar/laravel-otp/issues",
-                "source": "https://github.com/mohammad-fouladgar/laravel-otp"
-            },
-            "time": "2024-06-21T10:40:43+00:00"
-        },
-        {
             "name": "fruitcake/php-cors",
             "version": "v1.3.0",
             "source": {
@@ -1622,6 +1553,53 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "ichtrojan/laravel-otp",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ichtrojan/laravel-otp.git",
+                "reference": "0c12316ccf6f051cac81d6be418ad6f68689d4b9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ichtrojan/laravel-otp/zipball/0c12316ccf6f051cac81d6be418ad6f68689d4b9",
+                "reference": "0c12316ccf6f051cac81d6be418ad6f68689d4b9",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Otp": "Ichtrojan\\Otp\\Otp"
+                    },
+                    "providers": [
+                        "Ichtrojan\\Otp\\OtpServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ichtrojan\\Otp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Okoh",
+                    "email": "michael@okoh.co.uk"
+                }
+            ],
+            "description": "A simple package to generate and validate OTPs",
+            "support": {
+                "issues": "https://github.com/ichtrojan/laravel-otp/issues",
+                "source": "https://github.com/ichtrojan/laravel-otp/tree/v2.0.0"
+            },
+            "time": "2023-12-24T22:16:55+00:00"
         },
         {
             "name": "laravel/framework",

@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Repositories\Contracts\AuthRepositoryInterface;
-use App\Repositories\OTPRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -13,13 +12,11 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class AuthService
 {
     protected $userRepository;
-    protected $otpRepository;
     protected $roleService;
 
-    public function __construct(AuthRepositoryInterface $userRepository, OTPRepository $otpRepository, RoleService $roleService)
+    public function __construct(AuthRepositoryInterface $userRepository, RoleService $roleService )
     {
         $this->userRepository = $userRepository;
-        $this->otpRepository = $otpRepository;
         $this->roleService = $roleService;
     }
 
@@ -38,17 +35,22 @@ class AuthService
             ], 422);
         }
 
+        // Register the user
         $user = $this->register($registrationData);
+
+        // Assign the 'user' role to the newly registered user
         $this->roleService->assignRoleForUser($user->id, 'user');
-        $sessionOtp = session( "otp_{$email}" );
-        $otpExpiry = session( "otp_expiry_{$email}");
-        $this->otpRepository->store($user->id, $sessionOtp, $otpExpiry);
 
-        session()->forget('registration_data');
-        session()->forget(["otp_{$email}", "otp_expiry_{$email}"]);
+
+        // Clear any remaining session data for registration
         session()->forget('registration_data');
 
+        return response()->json([
+            "status" => true,
+            "message" => "Registration completed successfully.",
+        ], 200);
     }
+
 
     public function logout(string $deviceId)
     {
