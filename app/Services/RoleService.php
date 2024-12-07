@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Spatie\Permission\Contracts\Role;
 
 class RoleService
 {
@@ -23,7 +24,7 @@ class RoleService
         return true;
     }
 
-    public function revokeRoleForUser(int $id, string $role):bool|string
+    public function revokeRoleForUser(int $id, string $role): bool|string
     {
         $userId = $id;
         $user = User::find($userId);

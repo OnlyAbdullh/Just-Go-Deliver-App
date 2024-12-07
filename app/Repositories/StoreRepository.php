@@ -17,6 +17,7 @@ class StoreRepository implements StoreRepositoryInterface
         if ($stores->isEmpty()) {
             return false;
         }
+        
         return $stores;
     }
 

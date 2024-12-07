@@ -81,7 +81,7 @@ class StoreController extends Controller
         $data = $this->storeSrevice->getAllStores($itemsPerPage);
 
         if (!$data) {
-            return   JsonResponseHelper::errorResponse(__('messages.no_stores_available'), [], 404);
+            return  JsonResponseHelper::errorResponse(__('messages.no_stores_available'), [], 404);
         }
 
         return JsonResponseHelper::successResponse(__('messages.stores_fetched'), $data);
@@ -165,6 +165,7 @@ class StoreController extends Controller
         if (!Gate::allows('createStore', User::class)) {
             return JsonResponseHelper::successResponse(__('messages.store_admin_only_create'), [], 401);
         }
+        
         $store = $this->storeSrevice->createStore($request->validated());
 
         return JsonResponseHelper::successResponse(__('messages.stores_created'), StoreResource::make($store), 201);
@@ -369,6 +370,6 @@ class StoreController extends Controller
         if (!$store) {
             return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 404);
         }
-        return JsonResponseHelper::successResponse(__('message'), StoreResource::make($store), 200);
+        return JsonResponseHelper::successResponse(__('messages.store_deleted'), StoreResource::make($store), 200);
     }
 }

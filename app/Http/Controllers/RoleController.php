@@ -89,10 +89,9 @@ class RoleController extends Controller
         }
         $result =  $this->roleService->assignRoleForUser($request->user_id, $request->role);
 
-        if($result === 'has role'){
+        if ($result === 'has role') {
             return JsonResponseHelper::successResponse(__('messages.role_already_assigned'));
-        }
-        else if (!$result) {
+        } else if (!$result) {
             return JsonResponseHelper::errorResponse(__('messages.user_not_found'), [], 404);
         }
 
@@ -165,10 +164,9 @@ class RoleController extends Controller
 
         $result =  $this->roleService->revokeRoleForUser($request->user_id, $request->role);
 
-        if($result === 'has not role'){
+        if ($result === 'has not role') {
             return JsonResponseHelper::successResponse(__('messages.role_already_revoked'));
-        }
-        else if (!$result) {
+        } else if (!$result) {
             return JsonResponseHelper::errorResponse(__('messages.user_not_found'), [], 404);
         }
         return JsonResponseHelper::successResponse(__('messages.role_revoke_success'));

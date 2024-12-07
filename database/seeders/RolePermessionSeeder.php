@@ -89,6 +89,6 @@ class RolePermessionSeeder extends Seeder
         ]);
 
 
-        $manager->assignRole('store_admin');
+        $manager->assignRole('manager');
     }
 }

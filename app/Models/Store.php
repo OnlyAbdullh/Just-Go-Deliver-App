@@ -18,4 +18,10 @@ class Store extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'store_product')
+            ->withPivot('price', 'qauntity', 'description', 'sold_quantity')
+            ->withTimestamps();
+    }
 }
