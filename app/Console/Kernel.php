@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('token:blacklist:clean')->daily();
+        $schedule->command('otp:clean')->daily();
     }
 
     /**

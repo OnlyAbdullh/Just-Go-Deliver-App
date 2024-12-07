@@ -85,32 +85,22 @@ class OTPController extends Controller
     /**
      * @OA\Post(
      *     path="/validate-otp",
-     *     summary="Validate the OTP provided by the user during registration",
+     *     summary="Validate OTP and complete user registration",
      *     tags={"OTP"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"email", "otp"},
-     *             @OA\Property(property="email", type="string", format="email", example="user@example.com", description="The email address to which the OTP was sent."),
-     *             @OA\Property(property="otp", type="string", example="123456", description="The OTP sent to the user's email.")
+     *             @OA\Property(property="otp", type="string", example="123456", description="The OTP sent to the user's email."),
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com", description="The email associated with the OTP.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="OTP validated and registration completed successfully.",
+     *         description="OTP validated successfully, and registration completed.",
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Registration completed successfully."),
      *             @OA\Property(property="status_code", type="integer", example=200)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="OTP has expired.",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="OTP has expired, please Resend it."),
-     *             @OA\Property(property="status_code", type="integer", example=401)
      *         )
      *     ),
      *     @OA\Response(
@@ -124,15 +114,25 @@ class OTPController extends Controller
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Session expired.",
+     *         description="Session expired or registration data missing.",
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Session expired. Please register again."),
      *             @OA\Property(property="status_code", type="integer", example=422)
      *         )
-     *     )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Unexpected server error.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="successful", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="An error occurred. Please try again later."),
+     *             @OA\Property(property="status_code", type="integer", example=500)
+     *         )
+     *     ),
      * )
      */
+
 
 
     public function validateOTP(Request $request)

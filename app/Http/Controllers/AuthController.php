@@ -7,6 +7,7 @@ use App\Services\AuthService;
 use App\Services\OTPService;
 use Illuminate\Http\Request;
 use App\Jobs\SendOtpEmailJob;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -44,24 +45,32 @@ class AuthController extends Controller
      *             @OA\Property(property="status_code", type="integer", example=200)
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation error or bad request",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Validation error"),
-     *             @OA\Property(property="errors", type="object", example={"email": {"The email field is required."}}),
-     *             @OA\Property(property="status_code", type="integer", example=400)
-     *         )
-     *     )
+     *    @OA\Response(
+     *          response=409,
+     *          description="Email already registered",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="successful", type="boolean", example=false),
+     *              @OA\Property(property="message", type="string", example="This email is already registered."),
+     *              @OA\Property(property="status_code", type="integer", example=409)
+     *          )
+     *      ),
+     *         @OA\Response(
+     *          response=500,
+     *          description="Unexpected error occurred.",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="successful", type="boolean", example=false),
+     *              @OA\Property(property="message", type="string", example="An unexpected error occurred"),
+     *              @OA\Property(property="status_code", type="integer", example=500)
+     *          )
+     *      ),
      * )
      */
 
     public function register(Request $request)
     {
-        $validatedData = $request->validate([
-            'email' => 'required|email|unique:users,email',
-        ]);
+        if (DB::table('users')->where('email', $request->input('email'))->exists()) {
+            return JsonResponseHelper::errorResponse('This email is already registered.',[], 409);
+        }
 
         $registrationData = [
             'first_name' => $request->input('first_name'),
@@ -77,7 +86,7 @@ class AuthController extends Controller
             'registration_data' => $registrationData,
         ]);
         // \Log::info('After ', session()->all());
-        $this->otpService->sendOTP($validatedData['email']);
+        $this->otpService->sendOTP($request->input('email'));
         return JsonResponseHelper::successResponse('Registration initiated. OTP sent to your email.');
     }
 
@@ -134,7 +143,16 @@ class AuthController extends Controller
      *             @OA\Property(property="message", type="string", example="You have already logged in on this device."),
      *             @OA\Property(property="status_code", type="integer", example=409)
      *         )
-     *     )
+     *     ),
+     *     @OA\Response(
+     *          response=500,
+     *          description="Unexpected error occurred.",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="successful", type="boolean", example=false),
+     *              @OA\Property(property="message", type="string", example="An unexpected error occurred"),
+     *              @OA\Property(property="status_code", type="integer", example=500)
+     *          )
+     *      ),
      * )
      */
 

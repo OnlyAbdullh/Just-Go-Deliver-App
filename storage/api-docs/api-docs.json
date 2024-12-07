@@ -76,8 +76,8 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Validation error or bad request",
+                    "409": {
+                        "description": "Email already registered",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -88,19 +88,35 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Validation error"
-                                        },
-                                        "errors": {
-                                            "type": "object",
-                                            "example": {
-                                                "email": [
-                                                    "The email field is required."
-                                                ]
-                                            }
+                                            "example": "This email is already registered."
                                         },
                                         "status_code": {
                                             "type": "integer",
-                                            "example": 400
+                                            "example": 409
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected error occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 500
                                         }
                                     },
                                     "type": "object"
@@ -262,6 +278,30 @@
                                         "status_code": {
                                             "type": "integer",
                                             "example": 409
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected error occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 500
                                         }
                                     },
                                     "type": "object"
@@ -621,28 +661,24 @@
                 "tags": [
                     "OTP"
                 ],
-                "summary": "Validate the OTP provided by the user during registration",
+                "summary": "Validate OTP and complete user registration",
                 "operationId": "4652e7dec22bb86a5ca55c0ba447b690",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "email",
-                                    "otp"
-                                ],
                                 "properties": {
-                                    "email": {
-                                        "description": "The email address to which the OTP was sent.",
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
                                     "otp": {
                                         "description": "The OTP sent to the user's email.",
                                         "type": "string",
                                         "example": "123456"
+                                    },
+                                    "email": {
+                                        "description": "The email associated with the OTP.",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
                                     }
                                 },
                                 "type": "object"
@@ -652,7 +688,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OTP validated and registration completed successfully.",
+                        "description": "OTP validated successfully, and registration completed.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -668,30 +704,6 @@
                                         "status_code": {
                                             "type": "integer",
                                             "example": 200
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "OTP has expired.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "OTP has expired, please Resend it."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 401
                                         }
                                     },
                                     "type": "object"
@@ -724,7 +736,7 @@
                         }
                     },
                     "422": {
-                        "description": "Session expired.",
+                        "description": "Session expired or registration data missing.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -740,6 +752,30 @@
                                         "status_code": {
                                             "type": "integer",
                                             "example": 422
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected server error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occurred. Please try again later."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 500
                                         }
                                     },
                                     "type": "object"
