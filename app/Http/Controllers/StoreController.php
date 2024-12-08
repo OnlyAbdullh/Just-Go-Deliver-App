@@ -6,7 +6,6 @@ use App\Helpers\JsonResponseHelper;
 use App\Http\Requests\CreateStoreRequest;
 use App\Http\Requests\UpdateStoreRequest;
 use App\Http\Resources\StoreResource;
-use App\Models\Store;
 use App\Models\User;
 use App\Services\StoreService;
 use Illuminate\Http\JsonResponse;
@@ -100,7 +99,12 @@ class StoreController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"logo", "location", "description", "name"},
+     *                 @OA\Property(
+     *                     property="user_id",
+     *                     type="integer",
+     *                     description="ID of the user creating the store",
+     *                     example=1
+     *                 ),
      *                 @OA\Property(
      *                     property="logo",
      *                     type="string",
@@ -124,7 +128,8 @@ class StoreController extends Controller
      *                     type="string",
      *                     description="Name of the store",
      *                     example="My Store"
-     *                 )
+     *                 ),
+     *                 required={"user_id", "logo", "description", "name"}
      *             )
      *         )
      *     ),
@@ -139,42 +144,27 @@ class StoreController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response=422,
      *         description="Validation Error",
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Validation Error"),
-     *             @OA\Property(property="data", type="object", additionalProperties=@OA\Property(type="string", example="The name field is required.")),
+     *             @OA\Property(property="data", type="object",
+     *                 additionalProperties={
+     *                     @OA\Property(type="string", example="The user_id field is required.")
+     *                 }
+     *             ),
      *             @OA\Property(property="status_code", type="integer", example=400)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Authorization Error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="You already have a store and cannot create another one."),
-     *             @OA\Property(property="status_code", type="integer", example=401)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Only store admin can create a store"),
-     *             @OA\Property(property="status_code", type="integer", example=403)
      *         )
      *     )
      * )
      */
 
-
-    public function store(CreateStoreRequest $request)
+    public function store(CreateStoreRequest $request): JsonResponse
     {
-        if (auth()->user()->store) {
-            return JsonResponseHelper::errorResponse(__('messages.store_already_exists'), [], 401);
-        }
+    /*    if (!Gate::allows('createStore', User::class)) {
+            return JsonResponseHelper::errorResponse(__('messages.store_admin_only_create'), [], 401);
+        }*/
 
         $store = $this->storeSrevice->createStore($request->validated());
 
@@ -231,7 +221,7 @@ class StoreController extends Controller
      *         description="Store updated successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Store updated successfully"),
+     *             @OA\Property(property="message", type="string", example="store updated successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/StoreResource"),
      *             @OA\Property(property="status_code", type="integer", example=200)
      *         )
@@ -242,33 +232,38 @@ class StoreController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="You are not authorized to update this store."),
-     *             @OA\Property(property="data", type="object"),
+     *             @OA\Property(property="data", type="object", example={}),
      *             @OA\Property(property="status_code", type="integer", example=403)
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response=422,
      *         description="Validation Error",
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Validation Error"),
      *             @OA\Property(property="data", type="object",
-     *                 @OA\AdditionalProperties(
-     *                     @OA\Schema(type="string", example="The logo must be an image.")
-     *                 )
+     *                 additionalProperties={
+     *                     @OA\Property(type="string", example="The logo must be an image.")
+     *                 }
      *             ),
-     *             @OA\Property(property="status_code", type="integer", example=400)
+     *             @OA\Property(property="status_code", type="integer", example=422)
      *         )
      *     )
      * )
      */
 
-
-    public function update(UpdateStoreRequest $request, Store $store): JsonResponse
+    public function update(UpdateStoreRequest $request, $storeId): JsonResponse
     {
+        if (!Gate::allows('updateStore', User::class)) {
+            return JsonResponseHelper::successResponse(__('messages.store_admin_only_update'), [], 401);
+        }
 
-        $store = $this->storeSrevice->updateStore($store, $request->validated());
+        $store = $this->storeSrevice->updateStore($storeId, $request->validated());
 
+        if (!$store) {
+            return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 404);
+        }
         return JsonResponseHelper::successResponse(__('messages.store_updated'), StoreResource::make($store), 200);
     }
 
@@ -308,8 +303,13 @@ class StoreController extends Controller
      * )
      */
 
-    public function show(Store $store): JsonResponse
+    public function show(int $storeId): JsonResponse
     {
+
+        $store = $this->storeSrevice->showStore($storeId);
+        if (!$store) {
+            return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 404);
+        }
         return JsonResponseHelper::successResponse(__('messages.store_displayed'), StoreResource::make($store), 200);
     }
 
@@ -331,8 +331,8 @@ class StoreController extends Controller
      *         description="Store deleted successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Store deleted successfully"),
-     *             @OA\Property(property="data", type="object", example={} ),
+     *             @OA\Property(property="message", type="string", example="store deleted successfully"),
+     *             @OA\Property(property="data", type="object", example={}),
      *             @OA\Property(property="status_code", type="integer", example=200)
      *         )
      *     ),
@@ -342,7 +342,7 @@ class StoreController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Store not found."),
-     *             @OA\Property(property="data", type="object", example={} ),
+     *             @OA\Property(property="data", type="object", example={}),
      *             @OA\Property(property="status_code", type="integer", example=404)
      *         )
      *     ),
@@ -352,22 +352,24 @@ class StoreController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="You are not authorized to delete this store."),
-     *             @OA\Property(property="data", type="object", example={} ),
+     *             @OA\Property(property="data", type="object", example={}),
      *             @OA\Property(property="status_code", type="integer", example=403)
      *         )
      *     )
      * )
      */
 
-
-    public function destroy(Store $store): JsonResponse
+    public function destroy(int $storeId): JsonResponse
     {
-        if (!auth()->user()->hasRole('store_admin') && $store->user_id === auth()->id()) {
-            return JsonResponseHelper::errorResponse(__('messages.store_delete_unauthorized'), [], 403);
+        if (!Gate::allows('deleteStore', User::class)) {
+            return JsonResponseHelper::successResponse(__('messages.store_admin_only_delete'), [], 401);
         }
 
-        $this->storeSrevice->deleteStore($store);
+        $store = $this->storeSrevice->deleteStore($storeId);
 
-        return JsonResponseHelper::successResponse(__('messages.store_deleted'),  [], 200);
+        if (!$store) {
+            return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 404);
+        }
+        return JsonResponseHelper::successResponse(__('messages.store_deleted'), StoreResource::make($store), 200);
     }
 }
