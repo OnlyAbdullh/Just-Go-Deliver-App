@@ -149,7 +149,7 @@ class StoreController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Validation Error"),
-     *             @OA\Property(property="data", type="object", 
+     *             @OA\Property(property="data", type="object",
      *                 additionalProperties={
      *                     @OA\Property(type="string", example="The user_id field is required.")
      *                 }
@@ -162,10 +162,10 @@ class StoreController extends Controller
 
     public function store(CreateStoreRequest $request): JsonResponse
     {
-        // if (!Gate::allows('createStore', User::class)) {
-        //     return JsonResponseHelper::successResponse(__('messages.store_admin_only_create'), [], 401);
-        // }
-        
+     /*   if (!Gate::allows('createStore', User::class)) {
+            return JsonResponseHelper::successResponse(__('messages.store_admin_only_create'), [], 401);
+        }*/
+
         $store = $this->storeSrevice->createStore($request->validated());
 
         return JsonResponseHelper::successResponse(__('messages.stores_created'), StoreResource::make($store), 201);
@@ -242,7 +242,7 @@ class StoreController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Validation Error"),
-     *             @OA\Property(property="data", type="object", 
+     *             @OA\Property(property="data", type="object",
      *                 additionalProperties={
      *                     @OA\Property(type="string", example="The logo must be an image.")
      *                 }
