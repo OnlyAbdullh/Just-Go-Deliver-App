@@ -74,20 +74,11 @@ class AuthController extends Controller
             return JsonResponseHelper::errorResponse('This email is already registered.',[], 409);
         }
         $email = $request->input('email');
-        $registrationData = [
-            'first_name' => $request->input('first_name'),
-            'last_name' => $request->input('last_name'),
-            'email' => $email,
-            'password' => $request->input('password'),
-            'location' => $request->input('location'),
-            'phone_number' => $request->input('phone_number'),
-        ];
-        // Store registration data in the database
         TemporaryRegistration::create([
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),
             'email' => $email,
-            'password' =>Hash::make($request->input('password')),
+            'password' => $request->input('password'),
             'location' => $request->input('location'),
             'phone_number' => $request->input('phone_number'),
         ]);
