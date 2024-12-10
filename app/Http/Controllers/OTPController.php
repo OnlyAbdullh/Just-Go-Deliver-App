@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Helpers\JsonResponseHelper;
+use App\Models\TemporaryRegistration;
 use App\Services\AuthService;
 use App\Services\OTPService;
 use Illuminate\Http\Request;
@@ -66,11 +67,12 @@ class OTPController extends Controller
     public function ResendOTP(Request $request)
     {
         $email = $request->input('email');
-        $registrationData = session('registration_data');
+
+        $registrationData = TemporaryRegistration::where('email', $email)->first();
 
         if (!$registrationData) {
             return JsonResponseHelper::errorResponse(
-                'Session expired. Please register again.',
+                'Registration data not found or expired. Please register again.',
                 [],
                 422
             );
@@ -137,13 +139,16 @@ class OTPController extends Controller
 
     public function validateOTP(Request $request)
     {
-        $inputOtp = $request->input('otp');
+
+
         $email = $request->input('email');
-        $registrationData = session('registration_data');
+        $inputOtp = $request->input('otp');
+
+        $registrationData = TemporaryRegistration::where('email', $email)->first();
 
         if (!$registrationData) {
             return JsonResponseHelper::errorResponse(
-                'Session expired. Please register again.',
+                'Session expired or email not found. Please register again.',
                 [],
                 422
             );
@@ -159,10 +164,13 @@ class OTPController extends Controller
             );
         }
 
-        $this->authService->completeRegistration($registrationData, $email);
+        $this->authService->completeRegistration($registrationData->toArray(), $email);
+
+        $registrationData->delete();
 
         return JsonResponseHelper::successResponse('Registration completed successfully.');
     }
+
 
 
 }

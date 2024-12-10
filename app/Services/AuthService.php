@@ -35,15 +35,9 @@ class AuthService
             ], 422);
         }
 
-        // Register the user
         $user = $this->register($registrationData);
 
-        // Assign the 'user' role to the newly registered user
         $this->roleService->assignRoleForUser($user->id, 'user');
-
-
-        // Clear any remaining session data for registration
-        session()->forget('registration_data');
 
         return response()->json([
             "status" => true,

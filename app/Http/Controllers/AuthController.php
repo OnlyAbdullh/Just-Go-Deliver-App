@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\JsonResponseHelper;
+use App\Models\TemporaryRegistration;
 use App\Services\AuthService;
 use App\Services\OTPService;
 use Illuminate\Http\Request;
 use App\Jobs\SendOtpEmailJob;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -71,22 +73,25 @@ class AuthController extends Controller
         if (DB::table('users')->where('email', $request->input('email'))->exists()) {
             return JsonResponseHelper::errorResponse('This email is already registered.',[], 409);
         }
-
+        $email = $request->input('email');
         $registrationData = [
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),
-            'email' => $request->input('email'),
+            'email' => $email,
             'password' => $request->input('password'),
             'location' => $request->input('location'),
             'phone_number' => $request->input('phone_number'),
         ];
-        //  \Log::info('Before  ', session()->all());
-
-        session([
-            'registration_data' => $registrationData,
+        // Store registration data in the database
+        TemporaryRegistration::create([
+            'first_name' => $request->input('first_name'),
+            'last_name' => $request->input('last_name'),
+            'email' => $email,
+            'password' =>Hash::make($request->input('password')),
+            'location' => $request->input('location'),
+            'phone_number' => $request->input('phone_number'),
         ]);
-        // \Log::info('After ', session()->all());
-        $this->otpService->sendOTP($request->input('email'));
+        $this->otpService->sendOTP($email);
         return JsonResponseHelper::successResponse('Registration initiated. OTP sent to your email.');
     }
 
