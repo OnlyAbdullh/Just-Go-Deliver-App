@@ -2,40 +2,23 @@
 
 namespace App\Services;
 
-use App\Helpers\JsonResponseHelper;
 use App\Models\Category;
 use App\Models\Store;
-use App\Models\Product;
 use App\Models\Store_Product;
-use App\Repositories\Contracts\ImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\StoreRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
-    private $productRepository, $storeRepository, $categoryService, $imageRepository;
+    private $productRepository, $storeRepository, $categoryService;
 
-    public function __construct(ProductRepositoryInterface $productRepository, ImageRepositoryInterface $imageRepository, StoreRepositoryInterface $storeRepository, CategoryService $categoryService)
+    public function __construct(ProductRepositoryInterface $productRepository, StoreRepositoryInterface $storeRepository, CategoryService $categoryService)
     {
         $this->productRepository = $productRepository;
         $this->storeRepository = $storeRepository;
-        $this->imageRepository = $imageRepository;
         $this->categoryService = $categoryService;
-    }
-
-    public function getAllProduct($items)
-    {
-        $stores = $this->productRepository->get_all_product($items);
-
-        return $stores;
-    }
-
-    public function showProduct(Store $store, Product $product)
-    {
-        return $this->productRepository->findStoreProductById($store, $product->id);
     }
 
     public function addProductToStore($data, Store $store): bool
@@ -48,9 +31,7 @@ class ProductService
             $product = $this->productRepository->findOrCreate($data['name'], $category->id);
 
             Log::info('after creating new product');
-
-            $this->imageRepository->store($store->id, $product->id, $data['sub_images']);
-
+            
             $store->products()->attach($product->id, [
                 'price' => $data['price'],
                 'quantity' => $data['quantity'],
@@ -64,9 +45,7 @@ class ProductService
 
     public function updateQuantity($storeId, $productId, $quantitySold): bool
     {
-        $store = $this->storeRepository->findById($storeId);
-
-        $storeProduct = $this->productRepository->findStoreProductById($store, $productId);
+        $storeProduct = $this->productRepository->findStoreProductById($storeId, $productId);
 
         if (!$storeProduct || $storeProduct->quantity < $quantitySold) {
             return false;
@@ -122,39 +101,5 @@ class ProductService
     public function modifyDescriptionForProduct(Store_Product $storeProduct, $description)
     {
         return $this->productRepository->updateProduct($storeProduct, ['description' => $description]);
-    }
-
-    public function deleteMainImage($image)
-    {
-        if ((!empty($image) && Storage::disk('public')->exists($image))) {
-            Storage::disk('public')->delete($image);
-        }
-    }
-
-    public function deleteSubImages($images)
-    {
-        if ($images->isNotEmpty()) {
-            foreach ($images as $image) {
-                if (Storage::exists($image->image)) {
-                    Storage::delete($image->image);
-                }
-
-                $image->delete();
-            }
-        }
-    }
-    public function removeProductFromStore(Store $store, Product $product)
-    {
-        $storeProduct = $this->productRepository->findProductInStore($store, $product->id);
-
-        if (!$storeProduct) {
-            return false;
-        }
-        $this->deleteMainImage($storeProduct->main_image);
-        $this->deleteSubImages($storeProduct->images);
-
-        $storeProduct->delete();
-
-        return true;
     }
 }
