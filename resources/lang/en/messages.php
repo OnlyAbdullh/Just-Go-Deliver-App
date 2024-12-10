@@ -24,6 +24,7 @@ return [
     'category_admin_only_update' => 'Only store admin can update a category',
     'category_admin_only_delete' => 'Only store admin can delete a category',
     'not_authorized_to_add_product' => 'You are not authorized to add a product to this store',
+    'not_authorized_to_update_product' => 'You are not authorized to update a product in this store',
     'validation_errors' => 'Validation Errors',
     'role_revoke_success' => 'Role revoked successfully',
     'user_not_found' => 'User not found',

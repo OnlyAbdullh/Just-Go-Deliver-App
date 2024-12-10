@@ -162,9 +162,9 @@ class StoreController extends Controller
 
     public function store(CreateStoreRequest $request): JsonResponse
     {
-        if (!Gate::allows('createStore', User::class)) {
-            return JsonResponseHelper::successResponse(__('messages.store_admin_only_create'), [], 401);
-        }
+        // if (!Gate::allows('createStore', User::class)) {
+        //     return JsonResponseHelper::successResponse(__('messages.store_admin_only_create'), [], 401);
+        // }
         
         $store = $this->storeSrevice->createStore($request->validated());
 

@@ -11,7 +11,7 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'main_image'
+        'category_id'
     ];
 
     public function category()
@@ -21,7 +21,7 @@ class Product extends Model
 
     public function stores()
     {
-        return $this->belongsToMany(Store::class, 'store_product')
+        return $this->belongsToMany(Store::class, 'store_products')
             ->withPivot('price', 'quantity', 'description', 'sold_quantity')
             ->withTimestamps();
     }

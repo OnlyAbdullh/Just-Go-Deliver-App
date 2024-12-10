@@ -34,4 +34,9 @@ class StorePolicy
     {
         return $user->hasRole('store_admin') && $store->user_id === $user->id;
     }
+
+    public function updateProduct(User $user, Store $store)
+    {
+        return $user->hasRole('store_admin') && $store->user_id === $user->id;
+    }
 }

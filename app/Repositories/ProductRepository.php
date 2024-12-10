@@ -7,15 +7,23 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\Store_Product;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 
 class ProductRepository implements ProductRepositoryInterface
 {
-    public function findOrCreate($data)
+    public function findOrCreate($name, $categoryId)
     {
-        return Product::firstOrCreate(
-            ['name' => $data['name']],
-            ['main_image' => $data['main_image']]
-        );
+        $product = Product::where('name', $name)->first();
+
+        Log::info('in body of findOrCreate function in product repo');
+        if (!$product) {
+            return Product::create([
+                'name' => $name,
+                'category_id' => $categoryId,
+            ]);
+        }
+
+        return $product;
     }
 
     public function uploadImage(UploadedFile $file, string $directory, string $disk = 'public'): bool|string

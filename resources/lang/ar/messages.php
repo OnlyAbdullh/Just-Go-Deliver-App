@@ -14,6 +14,7 @@ return [
     'store_admin_only_update' => 'فقط مشرف المتجر يمكنه تحديث المتجر',
     'store_admin_only_delete' => 'فقط مشرف المتجر يمكنه حذف المتجر',
     'not_authorized_to_add_product' => 'غير مصرح لك بإضافة منتج إلى هذا المتجر',
+    'not_authorized_to_update_product' => 'غير مسموح لك بتحديث منتج في هذا المتجر',
     'validation_errors' => 'أخطاء التحقق',
     'role_revoke_success' => 'تم إلغاء الدور بنجاح',
     'user_not_found' => 'المستخدم غير موجود',

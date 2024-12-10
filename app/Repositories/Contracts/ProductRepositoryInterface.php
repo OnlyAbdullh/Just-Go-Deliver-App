@@ -7,7 +7,7 @@ use App\Models\Store_Product;
 
 interface ProductRepositoryInterface
 {
-    public function findOrCreate($data);
+    public function findOrCreate($name, $categoryId);
 
     public function uploadImage(UploadedFile $file, string $directory, string $disk = 'public');
 

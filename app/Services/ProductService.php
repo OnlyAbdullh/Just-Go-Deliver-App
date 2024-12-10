@@ -8,6 +8,7 @@ use App\Models\Store_Product;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\StoreRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProductService
 {
@@ -20,16 +21,17 @@ class ProductService
         $this->categoryService = $categoryService;
     }
 
-    public function addProductToStore($data, Store $store)
+    public function addProductToStore($data, Store $store): bool
     {
         $imagePath = $this->productRepository->uploadImage($data['main_image'], 'products');
 
         $category = $this->categoryService->findOrCreate($data['category_name']);
 
-
         DB::transaction(function () use ($store, $data, $imagePath, $category) {
-            $product = $this->productRepository->findOrCreate(['name' => $data['name'], 'category_id' => $category->id]);
+            $product = $this->productRepository->findOrCreate($data['name'], $category->id);
 
+            Log::info('after creating new product');
+            
             $store->products()->attach($product->id, [
                 'price' => $data['price'],
                 'quantity' => $data['quantity'],

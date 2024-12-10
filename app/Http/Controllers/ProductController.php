@@ -89,9 +89,9 @@ class ProductController extends Controller
             return JsonResponseHelper::successResponse(__('messages.store_not_found'), [], 404);
         }
 
-        if (!Gate::allows('addProductToStore', $store)) {
-            return JsonResponseHelper::successResponse(__('messages.not_authorized_to_add_product'), [], 401);
-        }
+        // if (!Gate::allows('addProductToStore', $store)) {
+        //     return JsonResponseHelper::successResponse(__('messages.not_authorized_to_add_product'), [], 401);
+        // }
 
 
         $validated = $request->validate([
@@ -112,7 +112,15 @@ class ProductController extends Controller
 
     public function update(Request $request, $storeId, $productId)
     {
+        $store = $this->storeRepository->findById($storeId);
+        if (!$store) {
+            return JsonResponseHelper::successResponse(__('messages.store_not_found'), [], 404);
+        }
 
+        if (!Gate::allows('updateProduct', $store)) {
+            return JsonResponseHelper::successResponse(__('messages.not_authorized_to_update_product'), [], 401);
+        }
+        
         $validated = $request->validate([
             'price' => 'sometimes|numeric|between:0,99999.99',
             'quantity' => 'sometimes',
