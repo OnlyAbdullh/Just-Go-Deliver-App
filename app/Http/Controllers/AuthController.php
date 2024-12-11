@@ -74,6 +74,7 @@ class AuthController extends Controller
             return JsonResponseHelper::errorResponse('This email is already registered.',[], 409);
         }
         $email = $request->input('email');
+        TemporaryRegistration::where('email', $email)->delete();
         TemporaryRegistration::create([
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),

@@ -22,43 +22,36 @@ class OTPController extends Controller
         $this->authService = $authService;
     }
 
+
     /**
      * @OA\Post(
      *     path="/resend-otp",
-     *     summary="Resend the OTP to the user's email during registration",
-     *     tags={"OTP"},
+     *     summary="Resend OTP to the user's email",
+     *     tags={"Authentication"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
+     *             type="object",
      *             required={"email"},
-     *             @OA\Property(property="email", type="string", example="user@example.com", description="The email address used for registration.")
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com", description="The email address of the user")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="OTP resent successfully.",
+     *         description="OTP resent successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="OTP resent successfully."),
-     *             @OA\Property(property="status_code", type="integer", example=200)
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="OTP resent successfully.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Session expired.",
+     *         description="Registration data not found",
      *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Session expired. Please register again."),
-     *             @OA\Property(property="status_code", type="integer", example=422)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Unexpected error occurred.",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="An unexpected error occurred."),
-     *             @OA\Property(property="status_code", type="integer", example=500)
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Registration data not found. Please register again.")
      *         )
      *     )
      * )
@@ -72,7 +65,7 @@ class OTPController extends Controller
 
         if (!$registrationData) {
             return JsonResponseHelper::errorResponse(
-                'Registration data not found or expired. Please register again.',
+                'Registration data not found. Please register again.',
                 [],
                 422
             );
@@ -83,55 +76,47 @@ class OTPController extends Controller
         return JsonResponseHelper::successResponse('OTP resent successfully.');
     }
 
-
     /**
      * @OA\Post(
      *     path="/validate-otp",
      *     summary="Validate OTP and complete user registration",
-     *     tags={"OTP"},
+     *     tags={"Authentication"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="otp", type="string", example="123456", description="The OTP sent to the user's email."),
-     *             @OA\Property(property="email", type="string", format="email", example="user@example.com", description="The email associated with the OTP.")
+     *             type="object",
+     *             required={"email", "otp"},
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com", description="The email address of the user"),
+     *             @OA\Property(property="otp", type="string", example="123456", description="The OTP sent to the user's email")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="OTP validated successfully, and registration completed.",
+     *         description="Registration completed successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Registration completed successfully."),
-     *             @OA\Property(property="status_code", type="integer", example=200)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Invalid OTP.",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Invalid OTP."),
-     *             @OA\Property(property="status_code", type="integer", example=400)
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Registration completed successfully.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Session expired or registration data missing.",
+     *         description="Email not found or session expired",
      *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Session expired. Please register again."),
-     *             @OA\Property(property="status_code", type="integer", example=422)
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Email not found. Please register again.")
      *         )
      *     ),
      *     @OA\Response(
-     *         response=500,
-     *         description="Unexpected server error.",
+     *         response=400,
+     *         description="Invalid OTP",
      *         @OA\JsonContent(
-     *             @OA\Property(property="successful", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="An error occurred. Please try again later."),
-     *             @OA\Property(property="status_code", type="integer", example=500)
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="OTP is invalid.")
      *         )
-     *     ),
+     *     )
      * )
      */
 
@@ -140,7 +125,6 @@ class OTPController extends Controller
     public function validateOTP(Request $request)
     {
 
-
         $email = $request->input('email');
         $inputOtp = $request->input('otp');
 
@@ -148,7 +132,7 @@ class OTPController extends Controller
 
         if (!$registrationData) {
             return JsonResponseHelper::errorResponse(
-                'Session expired or email not found. Please register again.',
+                'email not found. Please register again.',
                 [],
                 422
             );
