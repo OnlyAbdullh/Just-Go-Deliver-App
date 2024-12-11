@@ -690,7 +690,7 @@
         "/resend-otp": {
             "post": {
                 "tags": [
-                    "Authentication"
+                    "OTP"
                 ],
                 "summary": "Resend OTP to the user's email",
                 "operationId": "b9ca2fb8c7432f6e445ab1baabdde545",
@@ -762,7 +762,7 @@
         "/validate-otp": {
             "post": {
                 "tags": [
-                    "Authentication"
+                    "OTP"
                 ],
                 "summary": "Validate OTP and complete user registration",
                 "operationId": "4652e7dec22bb86a5ca55c0ba447b690",
@@ -2506,6 +2506,10 @@
         {
             "name": "Favorites",
             "description": "Favorites"
+        },
+        {
+            "name": "OTP",
+            "description": "OTP"
         },
         {
             "name": "Products",
