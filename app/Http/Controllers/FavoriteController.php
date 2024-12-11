@@ -16,6 +16,7 @@ class FavoriteController extends Controller
     {
         $this->favoriteService = $favoriteService;
     }
+
     /**
      * @OA\Post(
      *     path="/api/favorites",
@@ -68,15 +69,15 @@ class FavoriteController extends Controller
      *     )
      * )
      */
-    public function add(int $store_id, int $product_id): \Illuminate\Http\JsonResponse
+    public function add(int $store_id, int $product_id)
     {
         $result = $this->favoriteService->addToFavorites($product_id, $store_id);
 
-        if ($result === 'not_in_store') {
-            return JsonResponseHelper::errorResponse('Product does not belong to the specified store.', [], 404);
-        }
+        /* if ($result === 'not_in_store') {
+             return JsonResponseHelper::errorResponse('Product does not belong to the specified store.', [], 404);
+         }*/
 
-        if ($result === 'already_favorited') {
+        if ($result === 'already_favorite') {
             return JsonResponseHelper::errorResponse('Product is already in your favorites.', [], 409);
         }
 
@@ -85,6 +86,27 @@ class FavoriteController extends Controller
         }
 
         return JsonResponseHelper::errorResponse('An unexpected error occurred.', [], 500);
+    }
+
+    public function remove(int $store_id, int $product_id)
+    {
+        $result = $this->favoriteService->removeFromFavorites($product_id, $store_id);
+
+        if ($result === 'not_in_favorites') {
+            return JsonResponseHelper::errorResponse('Product is not in your favorites.', [], 404);
+        }
+        if ($result === 'success') {
+            return JsonResponseHelper::successResponse('Product removed from favorites successfully.', [], 200);
+        }
+
+        return JsonResponseHelper::errorResponse('An unexpected error occurred.', [], 500);
+    }
+
+
+    public function check(int $store_id, int $product_id)
+    {
+        $isFavorite = $this->favoriteService->isProductFavorited($product_id, $store_id);
+        return JsonResponseHelper::successResponse('Favorite status retrieved.', ['is_favorite' => $isFavorite]);
     }
 
 }

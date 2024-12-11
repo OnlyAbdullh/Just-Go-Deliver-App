@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Repositories\AuthRepository;
 use App\Repositories\Contracts\AuthRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -11,19 +12,19 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
-    protected $userRepository;
+    protected $authRepository;
     protected $roleService;
 
-    public function __construct(AuthRepositoryInterface $userRepository, RoleService $roleService )
+    public function __construct(AuthRepository $authRepository, RoleService $roleService)
     {
-        $this->userRepository = $userRepository;
+        $this->authRepository = $authRepository;
         $this->roleService = $roleService;
     }
 
     public function register(array $data)
     {
         $data['password'] = Hash::make($data['password']);
-        return $this->userRepository->createUser($data);
+        return $this->authRepository->createUser($data);
     }
 
     public function completeRegistration($registrationData, string $email)
@@ -49,31 +50,34 @@ class AuthService
     public function logout(string $deviceId)
     {
         $user = auth()->user();
-        $deviceExists = $this->userRepository->deviceExists($deviceId, $user->id);
+        $deviceExists = $this->authRepository->deviceExists($deviceId, $user->id);
         if (!$deviceExists) {
             throw new \Exception('Device ID not found', 404);
         }
         $currentToken = JWTAuth::getToken();
-        DB::table('token_blacklist')->insert([
-            'token' => $currentToken,
-            'expires_at' => Carbon::now()->addMinutes(config('jwt.ttl')),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        $this->userRepository->deleteRefreshToken($deviceId, $user->id);
-        auth()->logout();
+        DB::transaction(function () use ($currentToken, $deviceId, $user) {
+            DB::table('token_blacklist')->insert([
+                'token' => $currentToken,
+                'expires_at' => Carbon::now()->addMinutes(config('jwt.ttl')),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
+            $this->authRepository->deleteRefreshToken($deviceId, $user->id);
+        });
+
+        auth()->logout();
     }
 
 
     public function login(array $credentials, string $deviceId)
     {
-        $user = $this->userRepository->findByEmail($credentials['email']);
+        $user = $this->authRepository->findByEmail($credentials['email']);
 
         if ($user && Hash::check($credentials['password'], $user->password)) {
 
             // Check if the user is already logged in on this device by looking for the device's refresh token
-            $existingRefreshToken = $this->userRepository->findRefreshTokenByDevice($user->id, $deviceId);
+            $existingRefreshToken = $this->authRepository->findRefreshTokenByDevice($user->id, $deviceId);
 
             if ($existingRefreshToken) {
                 return [
@@ -83,10 +87,10 @@ class AuthService
                 ];
             }
 
-            $accessToken = $this->userRepository->createAccessToken($user);
-            $refreshToken = $this->userRepository->createRefreshToken();
+            $accessToken = $this->authRepository->createAccessToken($user);
+            $refreshToken = $this->authRepository->createRefreshToken();
 
-            $this->userRepository->saveRefreshToken($user, $deviceId, $refreshToken, Carbon::now()->addWeeks(2));
+            $this->authRepository->saveRefreshToken($user, $deviceId, $refreshToken, Carbon::now()->addWeeks(2));
             return [
                 'successful' => true,
                 'access_token' => $accessToken,
@@ -105,19 +109,19 @@ class AuthService
 
     public function refreshToken(string $refreshToken, string $deviceId): array
     {
-        $refreshTokenRecord = $this->userRepository->findRefreshToken($refreshToken, $deviceId);
+        $refreshTokenRecord = $this->authRepository->findRefreshToken($refreshToken, $deviceId);
 
         if (!$refreshTokenRecord) {
             throw new \Exception('Invalid or expired refresh token', 401);
         }
         $user = User::find($refreshTokenRecord->user_id);
 
-        $deviceExists = $this->userRepository->deviceExists($deviceId, $user->id);
+        $deviceExists = $this->authRepository->deviceExists($deviceId, $user->id);
 
         if (!$deviceExists) {
             throw new \Exception('Device ID not found', 404);
         }
-        $accessToken = $this->userRepository->createAccessToken($user);
+        $accessToken = $this->authRepository->createAccessToken($user);
 
         return [
             'access_token' => $accessToken,
