@@ -27,7 +27,7 @@ class OTPController extends Controller
      * @OA\Post(
      *     path="/resend-otp",
      *     summary="Resend OTP to the user's email",
-     *     tags={"Authentication"},
+     *     tags={"OTP"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -80,7 +80,7 @@ class OTPController extends Controller
      * @OA\Post(
      *     path="/validate-otp",
      *     summary="Validate OTP and complete user registration",
-     *     tags={"Authentication"},
+     *     tags={"OTP"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(

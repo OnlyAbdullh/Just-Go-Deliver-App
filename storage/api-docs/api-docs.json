@@ -553,12 +553,146 @@
                 }
             }
         },
+        "/api/favorites": {
+            "post": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Add a product to favorites",
+                "description": "Adds a product to the user's favorites if it belongs to the specified store and is not already in favorites.",
+                "operationId": "8fe66ed6a867523e6b0bffe9985759f9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "store_id",
+                                    "product_id"
+                                ],
+                                "properties": {
+                                    "store_id": {
+                                        "description": "ID of the store",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "product_id": {
+                                        "description": "ID of the product",
+                                        "type": "integer",
+                                        "example": 42
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Product added to favorites successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product added to favorites successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product does not belong to the specified store.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product does not belong to the specified store."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Product is already in your favorites.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product is already in your favorites."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "An unexpected error occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/resend-otp": {
             "post": {
                 "tags": [
-                    "OTP"
+                    "Authentication"
                 ],
-                "summary": "Resend the OTP to the user's email during registration",
+                "summary": "Resend OTP to the user's email",
                 "operationId": "b9ca2fb8c7432f6e445ab1baabdde545",
                 "requestBody": {
                     "required": true,
@@ -570,8 +704,9 @@
                                 ],
                                 "properties": {
                                     "email": {
-                                        "description": "The email address used for registration.",
+                                        "description": "The email address of the user",
                                         "type": "string",
+                                        "format": "email",
                                         "example": "user@example.com"
                                     }
                                 },
@@ -582,22 +717,18 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OTP resent successfully.",
+                        "description": "OTP resent successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "successful": {
+                                        "status": {
                                             "type": "boolean",
                                             "example": true
                                         },
                                         "message": {
                                             "type": "string",
                                             "example": "OTP resent successfully."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 200
                                         }
                                     },
                                     "type": "object"
@@ -606,46 +737,18 @@
                         }
                     },
                     "422": {
-                        "description": "Session expired.",
+                        "description": "Registration data not found",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "successful": {
+                                        "status": {
                                             "type": "boolean",
                                             "example": false
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Session expired. Please register again."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 422
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Unexpected error occurred.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "An unexpected error occurred."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 500
+                                            "example": "Registration data not found. Please register again."
                                         }
                                     },
                                     "type": "object"
@@ -659,7 +762,7 @@
         "/validate-otp": {
             "post": {
                 "tags": [
-                    "OTP"
+                    "Authentication"
                 ],
                 "summary": "Validate OTP and complete user registration",
                 "operationId": "4652e7dec22bb86a5ca55c0ba447b690",
@@ -668,17 +771,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "email",
+                                    "otp"
+                                ],
                                 "properties": {
-                                    "otp": {
-                                        "description": "The OTP sent to the user's email.",
-                                        "type": "string",
-                                        "example": "123456"
-                                    },
                                     "email": {
-                                        "description": "The email associated with the OTP.",
+                                        "description": "The email address of the user",
                                         "type": "string",
                                         "format": "email",
                                         "example": "user@example.com"
+                                    },
+                                    "otp": {
+                                        "description": "The OTP sent to the user's email",
+                                        "type": "string",
+                                        "example": "123456"
                                     }
                                 },
                                 "type": "object"
@@ -688,46 +795,18 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OTP validated successfully, and registration completed.",
+                        "description": "Registration completed successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "successful": {
+                                        "status": {
                                             "type": "boolean",
                                             "example": true
                                         },
                                         "message": {
                                             "type": "string",
                                             "example": "Registration completed successfully."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 200
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid OTP.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Invalid OTP."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 400
                                         }
                                     },
                                     "type": "object"
@@ -736,22 +815,18 @@
                         }
                     },
                     "422": {
-                        "description": "Session expired or registration data missing.",
+                        "description": "Email not found or session expired",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "successful": {
+                                        "status": {
                                             "type": "boolean",
                                             "example": false
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Session expired. Please register again."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 422
+                                            "example": "Email not found. Please register again."
                                         }
                                     },
                                     "type": "object"
@@ -759,23 +834,19 @@
                             }
                         }
                     },
-                    "500": {
-                        "description": "Unexpected server error.",
+                    "400": {
+                        "description": "Invalid OTP",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "successful": {
+                                        "status": {
                                             "type": "boolean",
                                             "example": false
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "An error occurred. Please try again later."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 500
+                                            "example": "OTP is invalid."
                                         }
                                     },
                                     "type": "object"
@@ -2433,8 +2504,8 @@
             "description": "Authentication"
         },
         {
-            "name": "OTP",
-            "description": "OTP"
+            "name": "Favorites",
+            "description": "Favorites"
         },
         {
             "name": "Products",
