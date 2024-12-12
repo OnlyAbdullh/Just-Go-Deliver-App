@@ -18,7 +18,7 @@ class FavoriteController extends Controller
     }
 
     /**
-     * @OA\Post(
+     * @OA\Get(
      *     path="/api/favorites",
      *     tags={"Favorites"},
      *     summary="Add a product to favorites",

@@ -31,20 +31,22 @@ class FavoriteRepository implements FavoriteRepositoryInterface
                 )->withPivot('price', 'quantity', 'description', 'sold_quantity');
             }])
             ->get()
-            ->map(function ($product) {
-                $store = $product->stores->first();
-                return [
-                    'product_id' => $product->id,
-                    'product_name' => $product->name,
-                    'category_id' => $product->category_id,
-                    'store_id' => $store?->id,
-                    'store_name' => $store?->name,
-                    'price' => $store?->pivot->price,
-                    'quantity' => $store?->pivot->quantity,
-                    'description' => $store?->pivot->description,
-                    'sold_quantity' => $store?->pivot->sold_quantity,
-                ];
+            ->flatMap(function ($product) {
+                return $product->stores->map(function ($store) use ($product) {
+                    return [
+                        'product_id' => $product->id,
+                        'product_name' => $product->name,
+                        'category_id' => $product->category_id,
+                        'store_id' => $store->id,
+                        'store_name' => $store->name,
+                        'price' => $store->pivot->price,
+                        'quantity' => $store->pivot->quantity,
+                        'description' => $store->pivot->description,
+                        'sold_quantity' => $store->pivot->sold_quantity,
+                    ];
+                });
             })
+            ->unique(fn($item) => $item['product_id'] . '-' . $item['store_id'])
             ->toArray();
     }
 
