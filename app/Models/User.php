@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
@@ -63,5 +64,10 @@ class User extends Authenticatable implements JWTSubject
     public function refreshTokens()
     {
         return $this->hasMany(UserRefreshToken::class, 'user_id');
+    }
+
+    public function store()
+    {
+        return $this->hasOne(Store::class);
     }
 }

@@ -6,6 +6,8 @@ use App\Helpers\JsonResponseHelper;
 use App\Models\Store;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
 class UpdateStoreRequest extends FormRequest
@@ -16,7 +18,7 @@ class UpdateStoreRequest extends FormRequest
     public function authorize(): bool
     {
         $store = $this->route('store');
-        return $store == auth()->id();
+        return auth()->user()->hasRole('store_admin') && $store->user_id === auth()->id();
     }
 
     /**
@@ -27,14 +29,24 @@ class UpdateStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'logo'=>'sometimes|image|mimes:jpg,png,jpeg',
-            'location'=>'sometimes|string',
-            'description'=>'sometimes',
-            'name'=>'sometimes',
+            'logo' => 'sometimes|image|mimes:jpg,png,jpeg',
+            'location' => 'sometimes|string',
+            'description' => 'sometimes',
+            'name' => 'sometimes',
         ];
     }
-    protected function failedAuthorization():JsonResponse
+    protected function failedValidation(Validator $validator)
     {
-        return JsonResponseHelper::errorResponse('You are not authorized to update this store.',[],403);
+        $errors = collect($validator->errors()->toArray())
+            ->map(fn($error) => $error[0]) // Get only the first error for each field
+            ->toArray();
+
+        throw new HttpResponseException(
+            JsonResponseHelper::errorResponse(__('messages.validation_error'), $errors,400)
+        );
+    }
+    protected function failedAuthorization(): JsonResponse
+    {
+        return JsonResponseHelper::errorResponse(__('messages.store_update_unauthorized'), [], 403);
     }
 }

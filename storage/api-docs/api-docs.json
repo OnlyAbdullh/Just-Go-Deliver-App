@@ -815,7 +815,8 @@
                                     "main_image",
                                     "price",
                                     "quantity",
-                                    "description"
+                                    "description",
+                                    "sub_images"
                                 ],
                                 "properties": {
                                     "name": {
@@ -824,6 +825,21 @@
                                     },
                                     "main_image": {
                                         "description": "Main image of the product",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "sub_images[0]": {
+                                        "description": "sub image of the product",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "sub_images[1]": {
+                                        "description": "sub image of the product",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "sub_images[2]": {
+                                        "description": "sub image of the product",
                                         "type": "string",
                                         "format": "binary"
                                     },
@@ -932,6 +948,290 @@
                         }
                     }
                 }
+            }
+        },
+        "/products/{store}/{product}": {
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Update a product in a store",
+                "description": "Update product details for a store. Only accessible by users with the store_admin role who own the store.",
+                "operationId": "f5b3d3769490812fd4d28c74b856f76c",
+                "parameters": [
+                    {
+                        "name": "store",
+                        "in": "path",
+                        "description": "ID of the store",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "ID of the product to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "price": {
+                                        "description": "New price of the product",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 199.99
+                                    },
+                                    "quantity": {
+                                        "description": "New quantity of the product",
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "description": {
+                                        "description": "New description of the product",
+                                        "type": "string",
+                                        "example": "Updated product description"
+                                    },
+                                    "main_image": {
+                                        "description": "Main image for the product",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product details updated successfully."
+                                        },
+                                        "data": {
+                                            "description": "Updated product details",
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are not authorized to update a product in this store"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 403
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found or Store Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product not found"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/products/{store}/{product}": {
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Delete a product from a store",
+                "description": "Allows a store admin to delete a specific product from their store.",
+                "operationId": "17d62e2fa307b413a0e7b62c39e4c35f",
+                "parameters": [
+                    {
+                        "name": "store",
+                        "in": "path",
+                        "description": "ID of the store",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "ID of the product",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The product was successfully deleted from the store."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to delete the product",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are not authorized to delete this product."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 403
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found or Store not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The product was not found in this store."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/users/assign-role": {
@@ -1323,17 +1623,12 @@
                         "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "user_id",
                                     "logo",
+                                    "location",
                                     "description",
                                     "name"
                                 ],
                                 "properties": {
-                                    "user_id": {
-                                        "description": "ID of the user creating the store",
-                                        "type": "integer",
-                                        "example": 1
-                                    },
                                     "logo": {
                                         "description": "Image file for the store logo (jpg, png, jpeg)",
                                         "type": "string",
@@ -1388,7 +1683,7 @@
                             }
                         }
                     },
-                    "422": {
+                    "400": {
                         "description": "Validation Error",
                         "content": {
                             "application/json": {
@@ -1404,17 +1699,63 @@
                                         },
                                         "data": {
                                             "type": "object",
-                                            "additionalProperties": [
-                                                {
-                                                    "type": "string",
-                                                    "example": "The user_id field is required.",
-                                                    "property": null
-                                                }
-                                            ]
+                                            "additionalProperties": {
+                                                "type": "string",
+                                                "example": "The name field is required.",
+                                                "property": null
+                                            }
                                         },
                                         "status_code": {
                                             "type": "integer",
                                             "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You already have a store and cannot create another one."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Only store admin can create a store"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 403
                                         }
                                     },
                                     "type": "object"
@@ -1567,7 +1908,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "store updated successfully"
+                                            "example": "Store updated successfully"
                                         },
                                         "data": {
                                             "$ref": "#/components/schemas/StoreResource"
@@ -1597,8 +1938,7 @@
                                             "example": "You are not authorized to update this store."
                                         },
                                         "data": {
-                                            "type": "object",
-                                            "example": []
+                                            "type": "object"
                                         },
                                         "status_code": {
                                             "type": "integer",
@@ -1610,7 +1950,7 @@
                             }
                         }
                     },
-                    "422": {
+                    "400": {
                         "description": "Validation Error",
                         "content": {
                             "application/json": {
@@ -1626,17 +1966,11 @@
                                         },
                                         "data": {
                                             "type": "object",
-                                            "additionalProperties": [
-                                                {
-                                                    "type": "string",
-                                                    "example": "The logo must be an image.",
-                                                    "property": null
-                                                }
-                                            ]
+                                            "additionalProperties": {}
                                         },
                                         "status_code": {
                                             "type": "integer",
-                                            "example": 422
+                                            "example": 400
                                         }
                                     },
                                     "type": "object"
@@ -1678,7 +2012,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "store deleted successfully"
+                                            "example": "Store deleted successfully"
                                         },
                                         "data": {
                                             "type": "object",

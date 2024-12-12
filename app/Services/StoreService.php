@@ -37,7 +37,7 @@ class StoreService
         $imagePath = $this->storeRepository->uploadLogo($data['logo'], 'stores');
 
         $storeData = [
-            'user_id' => $data['user_id'],
+            'user_id' => auth()->id(),
             'name' => $data['name'],
             'logo' => $imagePath
         ];
@@ -52,15 +52,8 @@ class StoreService
         return $this->storeRepository->store($storeData);
     }
 
-    public function updateStore(int $storeId, array $data): Store|null
+    public function updateStore(Store $store, array $data): Store|null
     {
-
-        $store = $this->storeRepository->findById($storeId);
-
-        if (!$store) {
-            return null;
-        }
-
         if (isset($data['logo'])) {
             if ((!empty($store->logo)) && Storage::disk('public')->exists($store->logo)) {
                 Storage::disk('public')->delete($store->logo);
@@ -74,14 +67,17 @@ class StoreService
         return $this->storeRepository->update($store, $data);
     }
 
-    public function deleteStore(int $storeId): bool|null
+    public function deleteLogoImage(Store $store)
     {
-        $store = $this->storeRepository->findById($storeId);
-
-        if (!$store) {
-            return null;
+        if ((!empty($store->logo)) && Storage::disk('public')->exists($store->logo)) {
+            Storage::disk('public')->delete($store->logo);
         }
-        return $this->storeRepository->delete($store);
+    }
+
+    public function deleteStore(Store $store)
+    {
+        $this->deleteLogoImage($store);
+        $this->storeRepository->delete($store);
     }
 
     public function showStore($storeId)

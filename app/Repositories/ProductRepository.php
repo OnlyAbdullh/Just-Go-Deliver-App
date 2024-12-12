@@ -26,16 +26,32 @@ class ProductRepository implements ProductRepositoryInterface
         return $product;
     }
 
+    public function get_all_product($itemsPerPage)
+    {
+        return Store::with(['products' => function ($query) {
+            $query->withPivot('price', 'quantity', 'description', 'main_image', 'sold_quantity');
+        }])->paginate($itemsPerPage);
+    }
+
     public function uploadImage(UploadedFile $file, string $directory, string $disk = 'public'): bool|string
     {
         return $file->store($directory, $disk);
     }
 
-    public function findStoreProductById($storeId, $productId)
+    public function findStoreProductById(Store $store, $productId)
     {
+        return $store->products()
+            ->where('products.id', $productId)
+            ->with('images')
+            ->withPivot('price', 'quantity', 'description', 'main_image', 'sold_quantity')
+            ->first();
+    }
 
-        return Store_Product::where('store_id', $storeId)
-            ->where('product_id', $productId)
+    public function findProductInStore(Store $store, $productId)
+    {
+        return $store->products()
+            ->wherePivot('product_id', $productId)
+            ->with('images')
             ->first();
     }
 

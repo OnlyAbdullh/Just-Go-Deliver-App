@@ -2,21 +2,24 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Helpers\JsonResponseHelper;
+use App\Models\Store;
+use Illuminate\Http\JsonResponse;
 
-class CreateStoreRequest extends FormRequest
+class createProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return auth()->user()->hasRole('store_admin');
+        $store = $this->route('store');
+
+        return auth()->user()->hasRole('store_admin') && $store->user_id === auth()->id();
     }
 
     /**
@@ -27,10 +30,14 @@ class CreateStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'logo' => 'required|image|mimes:jpg,png,jpeg',
-            'location' => 'sometimes|string',
-            'description' => 'sometimes',
-            'name' => 'required'
+            'name' => 'required',
+            'category_name' => 'required',
+            'main_image' => 'required|image|mimes:jpeg,png,jpg,bmp',
+            'sub_images' => 'required|array|min:1',
+            'sub_images.*' => 'image|mimes:jpeg,png,jpg,bmp|max:2048',
+            'price' => 'required',
+            'quantity' => 'required',
+            'description' => 'required',
         ];
     }
 
@@ -41,12 +48,12 @@ class CreateStoreRequest extends FormRequest
             ->toArray();
 
         throw new HttpResponseException(
-            JsonResponseHelper::errorResponse(__('messages.validation_error'), $errors)
+            JsonResponseHelper::errorResponse(__('messages.validation_error'), $errors,400)
         );
     }
 
     protected function failedAuthorization(): JsonResponse
     {
-        return JsonResponseHelper::errorResponse(__('messages.store_admin_only_create'), [], 403);
+        return JsonResponseHelper::errorResponse(__('messages.not_authorized_to_add_product'), [], 403);
     }
 }

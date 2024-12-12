@@ -25,4 +25,9 @@ class Product extends Model
             ->withPivot('price', 'quantity', 'description', 'sold_quantity')
             ->withTimestamps();
     }
+
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
 }

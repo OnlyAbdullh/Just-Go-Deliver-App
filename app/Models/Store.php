@@ -24,4 +24,9 @@ class Store extends Model
             ->withPivot('price', 'qauntity', 'description', 'sold_quantity')
             ->withTimestamps();
     }
+
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
 }
