@@ -44,6 +44,12 @@ class FavoriteService
         return 'success';
     }
 
+    public function getFavoriteProducts(): array
+    {
+        $user = Auth::user();
+        return $this->favoriteRepository->getAllFavorites($user);
+    }
+
     public function isProductFavorited(int $product_id, int $store_id): bool
     {
         $user = Auth::user();

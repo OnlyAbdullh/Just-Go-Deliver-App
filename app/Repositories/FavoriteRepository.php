@@ -21,16 +21,42 @@ class FavoriteRepository implements FavoriteRepositoryInterface
         $user->favoriteProducts()->wherePivot('store_id', $store_id)->detach($product_id);
     }
 
-
-
-/*    public function isProductInStore(int $productId, int $storeId): bool
+    public function getAllFavorites(User $user): array
     {
-        $product = Product::find($productId);
-        if (!$product) {
-            return false;
-        }
-        return $product->stores()->where('stores.id', $storeId)->exists();
-    }*/
+        return $user->favoriteProducts()
+            ->with(['stores' => function ($query) {
+                $query->select(
+                    'stores.id',
+                    'stores.name'
+                )->withPivot('price', 'quantity', 'description', 'sold_quantity');
+            }])
+            ->get()
+            ->map(function ($product) {
+                $store = $product->stores->first();
+                return [
+                    'product_id' => $product->id,
+                    'product_name' => $product->name,
+                    'category_id' => $product->category_id,
+                    'store_id' => $store?->id,
+                    'store_name' => $store?->name,
+                    'price' => $store?->pivot->price,
+                    'quantity' => $store?->pivot->quantity,
+                    'description' => $store?->pivot->description,
+                    'sold_quantity' => $store?->pivot->sold_quantity,
+                ];
+            })
+            ->toArray();
+    }
+
+
+    /*    public function isProductInStore(int $productId, int $storeId): bool
+        {
+            $product = Product::find($productId);
+            if (!$product) {
+                return false;
+            }
+            return $product->stores()->where('stores.id', $storeId)->exists();
+        }*/
 
     public function isFavorite(User $user, int $product_id, int $storeId): bool
     {
