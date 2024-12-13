@@ -232,7 +232,7 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        $result = $this->productService->updateProductDetails($store->id, $product->id, $validated);
+        $result = $this->productService->updateProductDetails($store, $product, $validated);
 
         if ($result) {
             return JsonResponseHelper::successResponse(__('messages.product_update_success'), $result);
@@ -301,7 +301,7 @@ class ProductController extends Controller
      * )
      */
 
-    public function destory(Request $request, Store $store, Product $product)
+    public function destroy(Store $store, Product $product)
     {
         if ((!auth()->user()->hasRole('store_admin')) || $store->user_id !== auth()->id()) {
             return JsonResponseHelper::errorResponse(__('messages.not_authorized_to_delete_product'), [], 403);

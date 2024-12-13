@@ -57,9 +57,9 @@ class ProductService
         return true;
     }
 
-    public function updateProductDetails($storeId, $productId, $data)
+    public function updateProductDetails($store, $product, $data)
     {
-        $storeProduct = $this->productRepository->findStoreProductById($storeId, $productId);
+        $storeProduct = $this->productRepository->findStoreProductById($store, $product->id);
 
         if (!$storeProduct) {
             return null;
