@@ -19,7 +19,7 @@ class FavoriteController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/favorites",
+     *     path="/api//favorites/{store_id}/products/{product_id}",
      *     tags={"Favorites"},
      *     summary="Add a product to favorites",
      *     description="Adds a product to the user's favorites if it belongs to the specified store and is not already in favorites.",
@@ -78,7 +78,7 @@ class FavoriteController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/favorites/remove",
+     *     path="/favorites/{store_id}/products/{product_id}/remove",
      *     summary="Remove a product from favorites",
      *     tags={"Favorites"},
      *     @OA\RequestBody(
@@ -127,7 +127,7 @@ class FavoriteController extends Controller
     }
 
     /**
-     * @OA\Get(
+     * @OA\Post (
      *     path="/api/favorites",
      *     tags={"Favorites"},
      *     summary="Get list of favorite products",
@@ -220,7 +220,7 @@ class FavoriteController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/favorites/check",
+     *     path="/favorites/{store_id}/products/{product_id}/check",
      *     summary="Check if a product is favorited",
      *     tags={"Favorites"},
      *     @OA\Parameter(

@@ -553,134 +553,14 @@
                 }
             }
         },
-        "/api/favorites": {
+        "/api//favorites/{store_id}/products/{product_id}": {
             "get": {
-                "tags": [
-                    "Favorites"
-                ],
-                "summary": "Get list of favorite products",
-                "description": "Retrieves a list of the user's favorite products along with associated store details, such as store ID, store name, and product-specific details (price, quantity, description, sold quantity).",
-                "operationId": "c1f59c4abfdf3445e7c58939f93a0482",
-                "responses": {
-                    "200": {
-                        "description": "Favorites retrieved successfully.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Favorites retrieved successfully."
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "product_id": {
-                                                        "type": "integer",
-                                                        "example": 4
-                                                    },
-                                                    "product_name": {
-                                                        "type": "string",
-                                                        "example": "laptop lenovo"
-                                                    },
-                                                    "category_id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "store_id": {
-                                                        "type": "integer",
-                                                        "example": 3
-                                                    },
-                                                    "store_name": {
-                                                        "type": "string",
-                                                        "example": "abd"
-                                                    },
-                                                    "price": {
-                                                        "type": "number",
-                                                        "format": "float",
-                                                        "example": 1000
-                                                    },
-                                                    "quantity": {
-                                                        "type": "integer",
-                                                        "example": 4
-                                                    },
-                                                    "description": {
-                                                        "type": "string",
-                                                        "example": "ram 16"
-                                                    },
-                                                    "sold_quantity": {
-                                                        "type": "integer",
-                                                        "example": 0
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthenticated."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "An error occurred."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ]
-            },
-            "post": {
                 "tags": [
                     "Favorites"
                 ],
                 "summary": "Add a product to favorites",
                 "description": "Adds a product to the user's favorites if it belongs to the specified store and is not already in favorites.",
-                "operationId": "8fe66ed6a867523e6b0bffe9985759f9",
+                "operationId": "0e9500953ff76e5a4d72e7b1ab28bbe0",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -771,13 +651,13 @@
                 }
             }
         },
-        "/favorites/remove": {
+        "/favorites/{store_id}/products/{product_id}/remove": {
             "delete": {
                 "tags": [
                     "Favorites"
                 ],
                 "summary": "Remove a product from favorites",
-                "operationId": "65b8ef24102621203cb9fd64f36c5234",
+                "operationId": "ace46bb51f5e0872427bd2e361e454cf",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -856,13 +736,135 @@
                 }
             }
         },
-        "/favorites/check": {
+        "/api/favorites": {
+            "post": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Get list of favorite products",
+                "description": "Retrieves a list of the user's favorite products along with associated store details, such as store ID, store name, and product-specific details (price, quantity, description, sold quantity).",
+                "operationId": "87113d886b20e66c078004acfcaaa093",
+                "responses": {
+                    "200": {
+                        "description": "Favorites retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Favorites retrieved successfully."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "product_id": {
+                                                        "type": "integer",
+                                                        "example": 4
+                                                    },
+                                                    "product_name": {
+                                                        "type": "string",
+                                                        "example": "laptop lenovo"
+                                                    },
+                                                    "category_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "store_id": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "store_name": {
+                                                        "type": "string",
+                                                        "example": "only one"
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 1000
+                                                    },
+                                                    "quantity": {
+                                                        "type": "integer",
+                                                        "example": 4
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "ram 16/ssd 512/Rtx 3050ti"
+                                                    },
+                                                    "sold_quantity": {
+                                                        "type": "integer",
+                                                        "example": 0
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occurred."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/favorites/{store_id}/products/{product_id}/check": {
             "get": {
                 "tags": [
                     "Favorites"
                 ],
                 "summary": "Check if a product is favorited",
-                "operationId": "9fe0f92acddbf9c8dd6706e27c897808",
+                "operationId": "630e471a27ee63d5e12a8e9fc6220443",
                 "parameters": [
                     {
                         "name": "store_id",
@@ -1426,7 +1428,7 @@
                 ],
                 "summary": "Delete a product from a store",
                 "description": "Allows a store admin to delete a specific product from their store.",
-                "operationId": "17d62e2fa307b413a0e7b62c39e4c35f",
+                "operationId": "fdf7a1f4b7c96bb60bd02508885b6bde",
                 "parameters": [
                     {
                         "name": "store",
