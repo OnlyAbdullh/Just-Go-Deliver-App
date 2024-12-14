@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Store;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
 /**
@@ -14,14 +15,16 @@ class StoreFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+    protected $model = Store::class;
+
+    public function definition()
     {
-        return  [
-            'user_id' => User::factory(),
+        return [
             'name' => $this->faker->company,
-            'logo' => $this->faker->image('public/storage/stores', 400, 400, null, false),
-            'description' => $this->faker->sentence(10),
-            //'location'=>$this->fake()->location,
+            'logo' => $this->faker->imageUrl(200, 200, 'business', true, 'logo'),
+            'user_id' => User::factory(), // Assuming a user factory exists
+            'location' => $this->faker->address,
+            'description' => $this->faker->sentence,
         ];
     }
 }
