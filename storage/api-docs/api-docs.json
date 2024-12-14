@@ -1127,16 +1127,32 @@
                                                         "$ref": "#/components/schemas/ProductResource"
                                                     }
                                                 },
-                                                "hasMorePage": {
-                                                    "type": "boolean",
-                                                    "example": true
+                                                "status_code": {
+                                                    "type": "integer",
+                                                    "example": 200
+                                                },
+                                                "pagination": {
+                                                    "properties": {
+                                                        "currentPage": {
+                                                            "description": "The current page number",
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "totalPages": {
+                                                            "description": "The total number of pages",
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "hasMorePage": {
+                                                            "description": "Indicates if there are more pages available",
+                                                            "type": "boolean",
+                                                            "example": false
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 200
                                         }
                                     },
                                     "type": "object"

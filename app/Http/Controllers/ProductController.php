@@ -66,28 +66,57 @@ class ProductController extends Controller
      *                     )
      *                 ),
      *                 @OA\Property(
-     *                     property="hasMorePage",
-     *                     type="boolean",
-     *                     example=true
+     *                 property="status_code",
+     *                 type="integer",
+     *                 example=200
      *                 ),
-     *             ),
-     *             @OA\Property(
-     *             property="status_code",
-     *             type="integer",
-     *             example=200
+     * *                 @OA\Property(
+     *                     property="pagination",
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="currentPage",
+     *                         type="integer",
+     *                         description="The current page number",
+     *                         example=1
+     *                     ),
+     *                     @OA\Property(
+     *                         property="totalPages",
+     *                         type="integer",
+     *                         description="The total number of pages",
+     *                         example=1
+     *                     ),
+     *                     @OA\Property(
+     *                         property="hasMorePage",
+     *                         type="boolean",
+     *                         description="Indicates if there are more pages available",
+     *                         example=false
+     *                     )
+     *                 )
      *             ),
      *         )
-     *     ),
+     *     )
      * )
      */
 
+
     public function index(Request $request)
     {
-        $items = $request->query('items', 10);
+        $items = $request->query('items', 20);
 
-        $data = $this->productService->getAllProduct($items);
+        $products = $this->productService->getAllProduct($items);
 
-        return JsonResponseHelper::successResponse('retrieve all products', $data);
+        return response()->json([
+            'successful' => true,
+            'message' => 'retrieve all products',
+            'data' => [
+                'products' => ProductResource::collection($products)
+            ],
+            'pagination' => [
+                'currentPage' => $products->currentPage(),
+                'totalPages' => $products->lastPage(),
+                'hasMorePage' => $products->hasMorePages()
+            ],
+        ]);
     }
 
 

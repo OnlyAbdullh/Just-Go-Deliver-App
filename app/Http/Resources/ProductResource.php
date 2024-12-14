@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class ProductResource extends JsonResource
 {
@@ -72,6 +73,7 @@ class ProductResource extends JsonResource
 
     public function toArray(Request $request): array
     {
+        $mainUrl = Storage::url($this->main_image);
         $data =  [
             'store_id' => $this->store_id,
             'store_name' => $this->store->name ?? null,
@@ -80,7 +82,7 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'quantity' => $this->quantity,
             'description' => $this->description,
-            'main_image' => asset($this->main_image),
+            'main_image' => asset($mainUrl),
         ];
 
         if ($request->routeIs('products.show')) {
@@ -88,7 +90,7 @@ class ProductResource extends JsonResource
                 return $this->images->map(function ($image) {
                     return [
                         'id' => $image->id,
-                        'image' => asset($image->image),
+                        'image' => asset(Storage::url($image)),
                     ];
                 });
             });

@@ -29,12 +29,7 @@ class ProductService
 
     public function getAllProduct($items)
     {
-        $products = $this->productRepository->get_all_product($items);
-        $hasMorePage = $products->hasMorePages();
-        return [
-            'products' => ProductResource::collection($products),
-            'hasMorePage' => $hasMorePage
-        ];
+        return $this->productRepository->get_all_product($items);
     }
 
     public function showProduct(Store $store, Product $product)
@@ -148,7 +143,7 @@ class ProductService
     }
     public function removeProductFromStore(Store $store, Product $product)
     {
-        $storeProduct = $this->productRepository->findProductInStore($store, $product->id);
+        $storeProduct = $this->productRepository->findStoreProductById($store->id, $product->id);
 
         if (!$storeProduct) {
             return false;

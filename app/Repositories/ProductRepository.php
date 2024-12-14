@@ -49,7 +49,7 @@ class ProductRepository implements ProductRepositoryInterface
                 'product.category:id,name',
                 'images' => function ($query) use ($storeId) {
                     $query->where('store_id', $storeId)
-                    ->select('id', 'store_id', 'product_id', 'image');
+                        ->select('id', 'store_id', 'product_id', 'image');
                 }
             ])
             ->first();
