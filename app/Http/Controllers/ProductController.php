@@ -24,18 +24,140 @@ class ProductController extends Controller
         $this->storeRepository = $storeRepository;
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/products",
+     *     summary="Retrieve all products",
+     *     description="Returns a paginated list of products with their store and category information.",
+     *     tags={"Products"},
+     *     @OA\Parameter(
+     *         name="items",
+     *         in="query",
+     *         required=false,
+     *         description="Number of items per page",
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=10
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of products with pagination information",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="successful",
+     *                 type="boolean",
+     *                 example=true
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="retrieve all products"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="products",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         ref="#/components/schemas/ProductResource"
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="hasMorePage",
+     *                     type="boolean",
+     *                     example=true
+     *                 ),
+     *             ),
+     *             @OA\Property(
+     *             property="status_code",
+     *             type="integer",
+     *             example=200
+     *             ),
+     *         )
+     *     ),
+     * )
+     */
+
     public function index(Request $request)
     {
         $items = $request->query('items', 10);
 
         $data = $this->productService->getAllProduct($items);
 
-        return JsonResponseHelper::successResponse('retreive all products', ProductResource::collection($data->flatMap->products));
+        return JsonResponseHelper::successResponse('retrieve all products', $data);
     }
 
-    public function show(Request $request, Store $store, Product $product)
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/stores/{store}/products/{product}",
+     *     summary="Retrieve product details for a specific store",
+     *     description="Returns product details, including store information and sub_images (additional images).",
+     *     operationId="getStoreProduct",
+     *     tags={"Products"},
+     *     @OA\Parameter(
+     *         name="store_id",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the store",
+     *         @OA\Schema(type="integer", example=6)
+     *     ),
+     *     @OA\Parameter(
+     *         name="product_id",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the product",
+     *         @OA\Schema(type="integer", example=7)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="successful", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="retrieve product successfully"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="store_id", type="integer", example=6),
+     *                 @OA\Property(property="store_name", type="string", example="متجر حسووون"),
+     *                 @OA\Property(property="product_id", type="integer", example=7),
+     *                 @OA\Property(property="product_name", type="string", example="clock"),
+     *                 @OA\Property(property="price", type="string", example="20.00"),
+     *                 @OA\Property(property="quantity", type="integer", example=5),
+     *                 @OA\Property(property="description", type="string", example="black color"),
+     *                 @OA\Property(property="main_image", type="string", format="url", 
+     *                     example="http://127.0.0.1:8000/products/XwLnjmoXymmCefQwKIxmYfKpVuKXjstUKGRcIM9a.jpg"
+     *                 ),
+     *                 @OA\Property(property="sub_images", type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer", example=5),
+     *                         @OA\Property(property="image", type="string", format="url", 
+     *                             example="http://127.0.0.1:8000/products/rJl1XLR4FdCGy6NXciZ0ZrCY20DTVtgnSUTb1Awl.png"
+     *                         )
+     *                     )
+     *                 ),
+     *              
+     *             ),
+     *  @OA\Property(property="status_code", type="integer", example=200),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found in store",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="successful", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Product not found in store"),
+     *              @OA\Property(property="status_code", type="integer", example=404),
+     *         )
+     *     )
+     * )
+     */
+    public function show(Store $store, Product $product)
     {
         $product = $this->productService->showProduct($store, $product);
+
         if (!$product) {
             return JsonResponseHelper::errorResponse(__('messages.product_not_found_in_store'), [], 404);
         }
@@ -45,7 +167,7 @@ class ProductController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/stores/{storeId}/products",
+     *     path="/stores/{store}/products",
      *     summary="Add a product to a store",
      *     description="Adds a new product to a store by the store's owner",
      *     operationId="addProductToStore",
@@ -127,7 +249,7 @@ class ProductController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/products/{store}/{product}",
+     *     path="/stores/{store}/products/{product}",
      *     summary="Update a product in a store",
      *     description="Update product details for a store. Only accessible by users with the store_admin role who own the store.",
      *     tags={"Products"},
@@ -184,7 +306,7 @@ class ProductController extends Controller
      *         description="Product updated successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="successful", type="boolean", example=true), 
+     *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Product details updated successfully."),
      *             @OA\Property(property="data", type="object", description="Updated product details"),
      *              @OA\Property(property="status_code", type="integer", example=200)
@@ -242,12 +364,12 @@ class ProductController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/products/{store}/{product}",
+     *     path="/api/stores/{store}/products/{product}",
      *     summary="Delete a product from a store",
      *     description="Allows a store admin to delete a specific product from their store.",
      *     tags={"Products"},
      *     security={{"bearerAuth":{}}},
-     * 
+     *
      *     @OA\Parameter(
      *         name="store",
      *         in="path",
@@ -268,7 +390,7 @@ class ProductController extends Controller
      *             example=10
      *         )
      *     ),
-     * 
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Product deleted successfully",
@@ -278,7 +400,7 @@ class ProductController extends Controller
      *            @OA\Property(property="status_code", type="integer", example=200)
      *         )
      *     ),
-     * 
+     *
      *     @OA\Response(
      *         response=403,
      *         description="Unauthorized to delete the product",
@@ -288,7 +410,7 @@ class ProductController extends Controller
      *             @OA\Property(property="status_code", type="integer", example=403)
      *         )
      *     ),
-     * 
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Product not found or Store not found",

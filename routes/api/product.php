@@ -7,12 +7,12 @@ use App\Http\Controllers\ProductController;
 use App\Models\Product;
 
 Route::get('products', [ProductController::class, 'index'])->name('products.index');
-Route::get('products/{store}/{product}', [ProductController::class, 'show'])->name('products.show')
+Route::get('stores/{store}/products/{product}', [ProductController::class, 'show'])->name('products.show')
     ->missing(fn(Request $request) => handleMissingRoute($request));
 
 
 Route::middleware(['auth.jwt', 'localization', 'blacklist'])->group(function () {
-    Route::post('products/{store}', [ProductController::class, 'store'])
+    Route::post('stores/{store}/products', [ProductController::class, 'store'])
         ->missing(function () {
             app()->setLocale(request()->header('Accept-Language', 'en'));
             return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 401);
@@ -29,8 +29,8 @@ Route::middleware(['auth.jwt', 'localization', 'blacklist'])->group(function () 
 function handleMissingRoute(Request $request)
 {
     $message = collect([
-        !$request->route('store') ? 'Store not found ' : null,
-        !$request->route('product') ? 'Product not found' : null,
+        !$request->route('store') ? __('messages.store_not_found') : null,
+        !$request->route('product') ? __('messages.product_not_found_in_store') : null,
     ])->filter()->join(' and ');
 
     return JsonResponseHelper::errorResponse($message, [], 404);

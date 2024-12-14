@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -14,9 +16,9 @@ class Product extends Model
         'category_id'
     ];
 
-    public function category()
+    public function category(): BelongsTo
     {
-        return $this->hasOne(Category::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function stores()
@@ -25,9 +27,13 @@ class Product extends Model
             ->withPivot('price', 'quantity', 'description', 'sold_quantity')
             ->withTimestamps();
     }
+    public function images(): HasMany
+    {
+        return $this->hasMany(Image::class);
+    }
+
     public function favoritedByUsers()
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
     }
-
 }

@@ -25,4 +25,9 @@ class Image extends Model
     {
         $this->belongsTo(Product::class);
     }
+
+    public function storeProduct()
+    {
+        return $this->belongsTo(Store_Product::class, 'product_id', 'product_id');
+    }
 }

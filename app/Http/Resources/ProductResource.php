@@ -12,17 +12,75 @@ class ProductResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+
+    /**
+     * @OA\Schema(
+     *     schema="ProductResource",
+     *     type="object",
+     *     @OA\Property(
+     *         property="id",
+     *         type="integer",
+     *         example=1
+     *     ),
+     *     @OA\Property(
+     *         property="store_id",
+     *         type="integer",
+     *         example=1
+     *     ),
+     *     @OA\Property(
+     *         property="store_name",
+     *         type="string",
+     *         example="Aydiiiii"
+     *     ),
+     *     @OA\Property(
+     *         property="product_id",
+     *         type="integer",
+     *         example=1
+     *     ),
+     *     @OA\Property(
+     *         property="product_name",
+     *         type="string",
+     *         example="Product Name"
+     *     ),
+     *     @OA\Property(
+     *         property="price",
+     *         type="string",
+     *         example="100.00"
+     *     ),
+     *     @OA\Property(
+     *         property="quantity",
+     *         type="integer",
+     *         example=50
+     *     ),
+     *     @OA\Property(
+     *         property="is_fav",
+     *         type="boolean",
+     *         example=true
+     *     ),
+     *     @OA\Property(
+     *         property="description",
+     *         type="string",
+     *         example="Product description for this store"
+     *     ),
+     *     @OA\Property(
+     *         property="main_image",
+     *         type="string",
+     *         example="path/to/main_image.jpg"
+     *     )
+     * )
+     */
+
     public function toArray(Request $request): array
     {
         $data =  [
-            'store_id' => $this->pivot->store_id,
-            'store_name' => $this->store->name,
-            'product_id' => $this->id,
-            'product_name' => $this->name,
-            'price' => $this->pivot->name,
-            'quantity' => $this->pivot->quantity,
-            'description' => $this->pivot->description,
-            'main_image' => asset($this->pivot->main_image),
+            'store_id' => $this->store_id,
+            'store_name' => $this->store->name ?? null,
+            'product_id' => $this->product_id,
+            'product_name' => $this->product->name ?? null,
+            'price' => $this->price,
+            'quantity' => $this->quantity,
+            'description' => $this->description,
+            'main_image' => asset($this->main_image),
         ];
 
         if ($request->routeIs('products.show')) {
@@ -30,7 +88,7 @@ class ProductResource extends JsonResource
                 return $this->images->map(function ($image) {
                     return [
                         'id' => $image->id,
-                        'image' => $image->image,
+                        'image' => asset($image->image),
                     ];
                 });
             });

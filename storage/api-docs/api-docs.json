@@ -1084,7 +1084,316 @@
                 }
             }
         },
-        "/stores/{storeId}/products": {
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Retrieve all products",
+                "description": "Returns a paginated list of products with their store and category information.",
+                "operationId": "1bfaa78d1c2c3848ab8165c5dadcad3e",
+                "parameters": [
+                    {
+                        "name": "items",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of products with pagination information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "retrieve all products"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "products": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ProductResource"
+                                                    }
+                                                },
+                                                "hasMorePage": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/stores/{store}/products/{product}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Retrieve product details for a specific store",
+                "description": "Returns product details, including store information and sub_images (additional images).",
+                "operationId": "getStoreProduct",
+                "parameters": [
+                    {
+                        "name": "store_id",
+                        "in": "path",
+                        "description": "The ID of the store",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 6
+                        }
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "path",
+                        "description": "The ID of the product",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 7
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "retrieve product successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "store_id": {
+                                                    "type": "integer",
+                                                    "example": 6
+                                                },
+                                                "store_name": {
+                                                    "type": "string",
+                                                    "example": "متجر حسووون"
+                                                },
+                                                "product_id": {
+                                                    "type": "integer",
+                                                    "example": 7
+                                                },
+                                                "product_name": {
+                                                    "type": "string",
+                                                    "example": "clock"
+                                                },
+                                                "price": {
+                                                    "type": "string",
+                                                    "example": "20.00"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "black color"
+                                                },
+                                                "main_image": {
+                                                    "type": "string",
+                                                    "format": "url",
+                                                    "example": "http://127.0.0.1:8000/products/XwLnjmoXymmCefQwKIxmYfKpVuKXjstUKGRcIM9a.jpg"
+                                                },
+                                                "sub_images": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "format": "url",
+                                                                "example": "http://127.0.0.1:8000/products/rJl1XLR4FdCGy6NXciZ0ZrCY20DTVtgnSUTb1Awl.png"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found in store",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product not found in store"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Delete a product from a store",
+                "description": "Allows a store admin to delete a specific product from their store.",
+                "operationId": "08544cf0dbd8cd2b11a3efbd9d7582ec",
+                "parameters": [
+                    {
+                        "name": "store",
+                        "in": "path",
+                        "description": "ID of the store",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "ID of the product",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The product was successfully deleted from the store."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to delete the product",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are not authorized to delete this product."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 403
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found or Store not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The product was not found in this store."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/stores/{store}/products": {
             "post": {
                 "tags": [
                     "Products"
@@ -1248,14 +1557,14 @@
                 }
             }
         },
-        "/products/{store}/{product}": {
+        "/stores/{store}/products/{product}": {
             "post": {
                 "tags": [
                     "Products"
                 ],
                 "summary": "Update a product in a store",
                 "description": "Update product details for a store. Only accessible by users with the store_admin role who own the store.",
-                "operationId": "f5b3d3769490812fd4d28c74b856f76c",
+                "operationId": "93a13042268cd55408cb79004042c1c0",
                 "parameters": [
                     {
                         "name": "store",
@@ -1406,117 +1715,6 @@
                                         "status_code": {
                                             "type": "integer",
                                             "example": 400
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/products/{store}/{product}": {
-            "delete": {
-                "tags": [
-                    "Products"
-                ],
-                "summary": "Delete a product from a store",
-                "description": "Allows a store admin to delete a specific product from their store.",
-                "operationId": "fdf7a1f4b7c96bb60bd02508885b6bde",
-                "parameters": [
-                    {
-                        "name": "store",
-                        "in": "path",
-                        "description": "ID of the store",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "product",
-                        "in": "path",
-                        "description": "ID of the product",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 10
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Product deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": "true"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The product was successfully deleted from the store."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 200
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Unauthorized to delete the product",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "You are not authorized to delete this product."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 403
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Product not found or Store not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The product was not found in this store."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 404
                                         }
                                     },
                                     "type": "object"
@@ -2693,6 +2891,51 @@
     },
     "components": {
         "schemas": {
+            "ProductResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "store_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "store_name": {
+                        "type": "string",
+                        "example": "Aydiiiii"
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_name": {
+                        "type": "string",
+                        "example": "Product Name"
+                    },
+                    "price": {
+                        "type": "string",
+                        "example": "100.00"
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "is_fav": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Product description for this store"
+                    },
+                    "main_image": {
+                        "type": "string",
+                        "example": "path/to/main_image.jpg"
+                    }
+                },
+                "type": "object"
+            },
             "StoreResource": {
                 "properties": {
                     "id": {
