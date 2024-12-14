@@ -129,7 +129,7 @@ class ProductService
 
     public function deleteMainImage($image)
     {
-        if ((!empty($image) && Storage::disk('public')->exists($image))) {
+        if ((!empty($image)) && Storage::disk('public')->exists($image)) {
             Storage::disk('public')->delete($image);
         }
     }
@@ -138,8 +138,8 @@ class ProductService
     {
         if ($images->isNotEmpty()) {
             foreach ($images as $image) {
-                if (Storage::exists($image->image)) {
-                    Storage::delete($image->image);
+                if (Storage::disk('public')->exists($image->image)) {
+                    Storage::disk('public')->delete($image->image);
                 }
 
                 $image->delete();
