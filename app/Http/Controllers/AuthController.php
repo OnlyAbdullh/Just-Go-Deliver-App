@@ -71,10 +71,23 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         if (DB::table('users')->where('email', $request->input('email'))->exists()) {
-            return JsonResponseHelper::errorResponse('This email is already registered.',[], 409);
+            return JsonResponseHelper::errorResponse('This email is already registered.', [], 409);
         }
+        $request->validate([
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
         $email = $request->input('email');
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = storage_path('app/profiles/' . $imageName);
+            $image->move(storage_path('app/profiles'), $imageName);
+        }
+
         TemporaryRegistration::where('email', $email)->delete();
+
         TemporaryRegistration::create([
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),
@@ -82,7 +95,9 @@ class AuthController extends Controller
             'password' => $request->input('password'),
             'location' => $request->input('location'),
             'phone_number' => $request->input('phone_number'),
+            'image' => $imagePath, // Save the image path
         ]);
+
         $this->otpService->sendOTP($email);
         return JsonResponseHelper::successResponse('Registration initiated. OTP sent to your email.');
     }
