@@ -5,7 +5,6 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use Intervention\Image\ImageManager;
 /*
 |--------------------------------------------------------------------------
 | API Routes
