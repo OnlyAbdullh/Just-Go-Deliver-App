@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('store_product_id')->references('id')->on('store_products')->onDelete('cascade');
             $table->unsignedBigInteger('cart_id');
             $table->foreign('cart_id')->references('id')->on('carts')->onDelete('cascade');
-            $table->integer('quantity');
+            $table->integer('amount_needed');
             $table->unique(['cart_id', 'store_product_id']);
             $table->timestamps();
         });
