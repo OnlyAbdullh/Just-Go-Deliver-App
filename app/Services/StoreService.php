@@ -16,20 +16,9 @@ class StoreService
         $this->storeRepository = $storeRepository;
     }
 
-    public function getAllStores($items): array|null
+    public function getAllStores($items)
     {
-        $stores = $this->storeRepository->all_with_pagination($items);
-
-        if (!$stores) {
-            return null;
-        }
-
-        $hasMorePages = $stores->hasMorePages();
-
-        return [
-            'stores' => StoreResource::collection($stores),
-            'hasMorePages' => $hasMorePages
-        ];
+        return $this->storeRepository->all_with_pagination($items);
     }
 
     public function createStore(array $data): Store

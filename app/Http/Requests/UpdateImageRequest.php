@@ -9,21 +9,19 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Helpers\JsonResponseHelper;
 use App\Models\Store;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 
-class createProductRequest extends FormRequest
+class UpdateImageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        $store = $this->route('store');
+        $image = $this->route('image');
 
-        if (auth()->user()->hasRole('store_admin') && $store->user_id === auth()->id()) {
-            return true;
-        }
-        return false;
+        $ownerStore = $image->store->user_id;
+
+        return auth()->user()->hasRole('store_admin') && $ownerStore === auth()->id();
     }
 
     /**
@@ -34,17 +32,9 @@ class createProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'category_name' => 'required',
-            'main_image' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048',
-            'sub_images' => 'required|array|min:1',
-            'sub_images.*' => 'image|mimes:jpeg,png,jpg,bmp|max:2048',
-            'price' => 'required',
-            'quantity' => 'required',
-            'description' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048'
         ];
     }
-
     protected function failedValidation(Validator $validator)
     {
         $errors = collect($validator->errors()->toArray())
@@ -55,6 +45,7 @@ class createProductRequest extends FormRequest
             JsonResponseHelper::errorResponse(__('messages.validation_error'), $errors, 400)
         );
     }
+
     protected function failedAuthorization()
     {
         throw new HttpResponseException(

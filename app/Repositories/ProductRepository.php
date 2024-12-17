@@ -14,17 +14,12 @@ class ProductRepository implements ProductRepositoryInterface
 {
     public function findOrCreate($name, $categoryId)
     {
-        $product = Product::where('name', $name)->where('category_id', $categoryId)->first();
-
-        Log::info('in body of findOrCreate function in product repo');
-        if (!$product) {
-            return Product::create([
+        return Product::firstOrCreate(
+            [
                 'name' => $name,
                 'category_id' => $categoryId,
-            ]);
-        }
-
-        return $product;
+            ]
+        );
     }
 
     public function get_all_product($itemsPerPage): LengthAwarePaginator
@@ -63,9 +58,11 @@ class ProductRepository implements ProductRepositoryInterface
             ->first();
     }
 
-    public function incrementQuantity(Store_Product $storeProduct, $quantity)
+    public function incrementQuantity($store, $productId, $storeProduct, $quantity)
     {
-        $storeProduct->increment('quantity', $quantity);
+        $store->products()->updateExistingPivot($productId, [
+            'quantity' => $storeProduct->pivot->quantity + $quantity,
+        ]);
     }
 
     public function updateProduct(Store_Product $storeProduct, array $data)

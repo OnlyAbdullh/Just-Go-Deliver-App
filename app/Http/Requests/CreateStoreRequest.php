@@ -30,7 +30,7 @@ class CreateStoreRequest extends FormRequest
             'logo' => 'required|image|mimes:jpg,png,jpeg',
             'location' => 'sometimes|string',
             'description' => 'sometimes',
-            'name' => 'required'
+            'name' => 'required|unique:stores,name'
         ];
     }
 
@@ -45,8 +45,10 @@ class CreateStoreRequest extends FormRequest
         );
     }
 
-    protected function failedAuthorization(): JsonResponse
+    protected function failedAuthorization()
     {
-        return JsonResponseHelper::errorResponse(__('messages.store_admin_only_create'), [], 403);
+        throw new HttpResponseException(
+            JsonResponseHelper::errorResponse(__('messages.store_admin_only_create'), [], 403)
+        );
     }
 }

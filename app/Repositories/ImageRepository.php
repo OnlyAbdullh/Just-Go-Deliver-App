@@ -24,4 +24,14 @@ class ImageRepository implements ImageRepositoryInterface
         }
         Log::info('from store function in image repo after creating images');
     }
+
+    public function update(Image $image, $newImage)
+    {
+        $image->update(['image' => $newImage]);
+    }
+
+    public function delete(Image $image)
+    {
+        $image->delete();
+    }
 }

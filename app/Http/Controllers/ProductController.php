@@ -70,7 +70,7 @@ class ProductController extends Controller
      *                 type="integer",
      *                 example=200
      *                 ),
-     * *                 @OA\Property(
+     *                  @OA\Property(
      *                     property="pagination",
      *                     type="object",
      *                     @OA\Property(
@@ -201,6 +201,7 @@ class ProductController extends Controller
      *     description="Adds a new product to a store by the store's owner",
      *     operationId="addProductToStore",
      *     tags={"Products"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="storeId",
      *         in="path",
@@ -262,17 +263,9 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        $store = $this->storeRepository->findById($store->id);
+        $this->productService->addProductToStore($validated, $store);
 
-        if (!$store) {
-            return JsonResponseHelper::successResponse(__('messages.store_not_found'), [], 404);
-        }
-
-        $result = $this->productService->addProductToStore($validated, $store);
-
-        if ($result) {
-            return JsonResponseHelper::successResponse(__('messages.product_added_success'), [], 201);
-        }
+        return JsonResponseHelper::successResponse(__('messages.product_added_success'), [], 201);
     }
 
 
@@ -282,6 +275,7 @@ class ProductController extends Controller
      *     summary="Update a product in a store",
      *     description="Update product details for a store. Only accessible by users with the store_admin role who own the store.",
      *     tags={"Products"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="store",
      *         in="path",
@@ -388,6 +382,7 @@ class ProductController extends Controller
         if ($result) {
             return JsonResponseHelper::successResponse(__('messages.product_update_success'), $result);
         }
+
         return JsonResponseHelper::errorResponse(__('messages.update_failed'), [], 404);
     }
 
@@ -397,6 +392,7 @@ class ProductController extends Controller
      *     summary="Delete a product from a store",
      *     description="Allows a store admin to delete a specific product from their store.",
      *     tags={"Products"},
+     *     security={{"bearerAuth": {}}},
      *     security={{"bearerAuth":{}}},
      *
      *     @OA\Parameter(

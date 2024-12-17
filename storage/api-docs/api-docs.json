@@ -1570,7 +1570,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/stores/{store}/products/{product}": {
@@ -2078,10 +2083,6 @@
                                                     "items": {
                                                         "$ref": "#/components/schemas/StoreResource"
                                                     }
-                                                },
-                                                "hasMorePages": {
-                                                    "type": "boolean",
-                                                    "example": true
                                                 }
                                             },
                                             "type": "object"
@@ -2089,6 +2090,26 @@
                                         "status_code": {
                                             "type": "integer",
                                             "example": 200
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "currentPage": {
+                                                    "description": "The current page number",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "totalPages": {
+                                                    "description": "The total number of pages",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "hasMorePage": {
+                                                    "description": "Indicates if there are more pages available",
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -2275,7 +2296,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/stores/{store}": {
@@ -2490,7 +2516,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -2596,7 +2627,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/users": {
@@ -2981,6 +3017,14 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Enter your Bearer token in the format 'Bearer <token>'",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     },

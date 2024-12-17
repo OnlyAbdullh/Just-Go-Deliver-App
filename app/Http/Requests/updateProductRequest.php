@@ -48,8 +48,10 @@ class updateProductRequest extends FormRequest
         );
     }
 
-    protected function failedAuthorization(): JsonResponse
+    protected function failedAuthorization()
     {
-        return JsonResponseHelper::errorResponse(__('messages.not_authorized_to_update_product'), [], 403);
+        throw new HttpResponseException(
+            JsonResponseHelper::errorResponse(__('messages.not_authorized_to_add_product'), [], 403)
+        );
     }
 }

@@ -28,6 +28,7 @@ Route::middleware(['auth.jwt', 'localization', 'blacklist'])->group(function () 
 
 function handleMissingRoute(Request $request)
 {
+    app()->setLocale(request()->header('Accept-Language', 'en'));
     $message = collect([
         !$request->route('store') ? __('messages.store_not_found') : null,
         !$request->route('product') ? __('messages.product_not_found_in_store') : null,

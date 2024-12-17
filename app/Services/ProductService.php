@@ -37,26 +37,29 @@ class ProductService
         return $this->productRepository->findStoreProductById($store->id, $product->id);
     }
 
-    public function addProductToStore($data, Store $store): bool
+    public function addProductToStore($data, Store $store): bool|null
     {
         $imagePath = $this->productRepository->uploadImage($data['main_image'], 'products');
 
         $category = $this->categoryService->findOrCreate($data['category_name']);
 
-        DB::transaction(function () use ($store, $data, $imagePath, $category) {
-            $product = $this->productRepository->findOrCreate($data['name'], $category->id);
+        $product = $this->productRepository->findOrCreate($data['name'], $category->id);
 
-            Log::info('after creating new product');
+        $storeProduct = $this->productRepository->findProductInStore($store, $product->id);
 
-            $this->imageRepository->store($store->id, $product->id, $data['sub_images']);
+        if ($storeProduct) {
+            $this->productRepository->incrementQuantity($store, $product->id, $storeProduct, $data['quantity']);
+            return true;
+        }
 
-            $store->products()->attach($product->id, [
-                'price' => $data['price'],
-                'quantity' => $data['quantity'],
-                'description' => $data['description'],
-                'main_image' => $imagePath,
-            ]);
-        });
+        $this->imageRepository->store($store->id, $product->id, $data['sub_images']);
+
+        $store->products()->attach($product->id, [
+            'price' => $data['price'],
+            'quantity' => $data['quantity'],
+            'description' => $data['description'],
+            'main_image' => $imagePath,
+        ]);
 
         return true;
     }

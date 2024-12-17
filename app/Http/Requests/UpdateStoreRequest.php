@@ -18,6 +18,7 @@ class UpdateStoreRequest extends FormRequest
     public function authorize(): bool
     {
         $store = $this->route('store');
+
         return auth()->user()->hasRole('store_admin') && $store->user_id === auth()->id();
     }
 
@@ -42,11 +43,13 @@ class UpdateStoreRequest extends FormRequest
             ->toArray();
 
         throw new HttpResponseException(
-            JsonResponseHelper::errorResponse(__('messages.validation_error'), $errors,400)
+            JsonResponseHelper::errorResponse(__('messages.validation_error'), $errors, 400)
         );
     }
-    protected function failedAuthorization(): JsonResponse
+    protected function failedAuthorization()
     {
-        return JsonResponseHelper::errorResponse(__('messages.store_update_unauthorized'), [], 403);
+        throw new HttpResponseException(
+            JsonResponseHelper::errorResponse(__('messages.store_admin_only_update'), [], 403)
+        );
     }
 }
