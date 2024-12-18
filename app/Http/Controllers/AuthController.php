@@ -73,9 +73,6 @@ class AuthController extends Controller
         if (DB::table('users')->where('email', $request->input('email'))->exists()) {
             return JsonResponseHelper::errorResponse('This email is already registered.', [], 409);
         }
-        $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
         $email = $request->input('email');
 
         $imagePath = null;
