@@ -148,7 +148,7 @@ class OTPController extends Controller
             );
         }
 
-        $this->authService->completeRegistration($registrationData->toArray(), $email);
+        $this->authService->completeRegistration($registrationData->toArray());
 
         $registrationData->delete();
 

@@ -15,5 +15,6 @@ class TemporaryRegistration extends Model
         'password',
         'location',
         'phone_number',
+        'image'
     ];
 }

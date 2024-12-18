@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Jobs\SendOtpEmailJob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -75,12 +76,12 @@ class AuthController extends Controller
         }
         $email = $request->input('email');
 
-        $imagePath = null;
+        $imageUrl = null;
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = storage_path('app/profiles/' . $imageName);
-            $image->move(storage_path('app/profiles'), $imageName);
+            $imagePath = $image->storeAs('profiles', $imageName, 'local');
+            $imageUrl = asset(Storage::url($imagePath));
         }
 
         TemporaryRegistration::where('email', $email)->delete();
@@ -92,7 +93,7 @@ class AuthController extends Controller
             'password' => $request->input('password'),
             'location' => $request->input('location'),
             'phone_number' => $request->input('phone_number'),
-            'image' => $imagePath, // Save the image path
+            'image' => $imageUrl,
         ]);
 
         $this->otpService->sendOTP($email);
@@ -267,7 +268,7 @@ class AuthController extends Controller
 
         try {
             $tokens = $this->userService->refreshToken($refreshToken, $deviceId);
-            return JsonResponseHelper::successResponse('Access token refreshed successfully.', ['access_token' => $tokens['access_token'], 'expires_in' => '15 m']);
+            return JsonResponseHelper::successResponse('Access token refreshed successfully.', ['access_token' => $tokens['access_token'], 'expires_in' => '1 hour']);
 
         } catch (\Exception $e) {
             return JsonResponseHelper::errorResponse($e->getMessage(), [], $e->getCode());

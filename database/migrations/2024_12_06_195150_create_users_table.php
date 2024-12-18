@@ -20,9 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('location', 255);
             $table->string('phone_number',10)->unique();
-            $table->string('image', 2048)->nullable();
-            $table->enum('role', ['user', 'admin'])->default('user');
-            $table->index('role');
+            $table->string('image')->nullable();
             $table->text('fcm_token')->nullable();
             $table->softDeletes();
             $table->rememberToken();

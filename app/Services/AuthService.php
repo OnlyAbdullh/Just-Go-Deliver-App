@@ -8,6 +8,7 @@ use App\Repositories\Contracts\AuthRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
@@ -27,7 +28,7 @@ class AuthService
         return $this->authRepository->createUser($data);
     }
 
-    public function completeRegistration($registrationData, string $email)
+    public function completeRegistration($registrationData)
     {
         if (!$registrationData) {
             return response()->json([
