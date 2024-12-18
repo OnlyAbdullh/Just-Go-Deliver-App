@@ -3,8 +3,10 @@ namespace App\Repositories;
 
 
 use App\Models\Cart;
+use App\Models\CartProduct;
 use App\Repositories\Contracts\CartRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CartRepository implements CartRepositoryInterface
 {
@@ -33,6 +35,37 @@ class CartRepository implements CartRepositoryInterface
                 'updated_at' => now(),
             ]
         );
+    }
+
+
+    public function getCartProducts($cartId)
+    {
+        $cartProducts = CartProduct::query()
+            ->where('cart_id', $cartId)
+            ->with([
+                'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description,main_image',
+                'storeProduct.store:id,name',
+                'storeProduct.product:id,name',
+            ])
+            ->get()
+            ->map(function ($cartProduct) {
+                $storeProduct = $cartProduct->storeProduct;
+                $mainUrl = Storage::url($storeProduct->main_image);
+                return [
+                    'store_id'        => $storeProduct->store->id,
+                    'store_name'      => $storeProduct->store->name,
+                    'order_quantity'  => $cartProduct->amount_needed,
+                    'store_product_id' => $storeProduct->id,
+                    'price'           => $storeProduct->price,
+                    'quantity'        => $storeProduct->quantity,
+                    'description'     => $storeProduct->description,
+                    'product_id'      => $storeProduct->product->id,
+                    'product_name'    => $storeProduct->product->name,
+                    'main_image'        => asset($mainUrl),
+                ];
+            });
+
+        return $cartProducts;
     }
 
 }

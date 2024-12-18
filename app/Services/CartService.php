@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Repositories\Contracts\CartRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,5 +30,22 @@ class CartService
         $this->cartRepository->updateOrInsertCartProduct($cart->id, $storeProduct->id, $quantity);
 
         return ['success' => true, 'message' => 'Product added to cart successfully'];
+    }
+    public function getAllProductsInCart(User $user): array
+    {
+        // Fetch the cart for the user or create a new one if it doesn't exist
+        $cart = $user->cart;
+
+        if (!$cart) {
+            return ['success' => false, 'message' => 'Your cart is empty'];
+        }
+
+        $products = $this->cartRepository->getCartProducts($cart->id);
+
+        if ($products->isEmpty()) {
+            return ['success' => false, 'message' => 'Your cart is empty'];
+        }
+
+        return ['success' => true, 'data' => $products];
     }
 }
