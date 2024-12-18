@@ -92,6 +92,8 @@ class AuthService
             $refreshToken = $this->authRepository->createRefreshToken();
 
             $this->authRepository->saveRefreshToken($user, $deviceId, $refreshToken, Carbon::now()->addWeeks(2));
+
+            $user->image = asset(Storage::url($user->image));
             return [
                 'successful' => true,
                 'access_token' => $accessToken,

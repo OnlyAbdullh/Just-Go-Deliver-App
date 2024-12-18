@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\JsonResponseHelper;
 use App\Models\TemporaryRegistration;
+use App\Repositories\ProductRepository;
 use App\Services\AuthService;
 use App\Services\OTPService;
 use Illuminate\Http\Request;
@@ -16,11 +17,13 @@ class AuthController extends Controller
 {
     protected $userService;
     protected $otpService;
+    protected $productRepository;
 
-    public function __construct(AuthService $userService, OTPService $otpService)
+    public function __construct(AuthService $userService, OTPService $otpService,ProductRepository $productRepository)
     {
         $this->userService = $userService;
         $this->otpService = $otpService;
+        $this->productRepository=$productRepository;
     }
 
     /**
@@ -76,14 +79,10 @@ class AuthController extends Controller
         }
         $email = $request->input('email');
 
-        $imageUrl = null;
+        $imagePath = null;
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('profiles', $imageName, 'local');
-            $imageUrl = asset(Storage::url($imagePath));
+            $imagePath = $this->productRepository->uploadImage($request->file('image'), 'profiles');
         }
-
         TemporaryRegistration::where('email', $email)->delete();
 
         TemporaryRegistration::create([
@@ -93,7 +92,7 @@ class AuthController extends Controller
             'password' => $request->input('password'),
             'location' => $request->input('location'),
             'phone_number' => $request->input('phone_number'),
-            'image' => $imageUrl,
+            'image' => $imagePath,
         ]);
 
         $this->otpService->sendOTP($email);
