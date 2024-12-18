@@ -24,8 +24,14 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function get_all_product($itemsPerPage): LengthAwarePaginator
     {
-        return Store_Product::with(['store:id,name', 'product:id,name,category_id', 'product.category:id,name'])
-            ->paginate($itemsPerPage);
+        return Store_Product::with([
+            'store:id,name',
+            'product:id,name,category_id',
+            'product.category:id,name',
+            'favorites' => function ($query) {
+                $query->where('user_id', auth()->id());
+            }
+        ])->paginate($itemsPerPage);
     }
 
     public function uploadImage(UploadedFile $file, string $directory, string $disk = 'public'): bool|string

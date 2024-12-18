@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ProductController;
 use App\Models\Product;
 
-Route::get('products', [ProductController::class, 'index'])->name('products.index');
-Route::get('stores/{store}/products/{product}', [ProductController::class, 'show'])->name('products.show')
-    ->missing(fn(Request $request) => handleMissingRoute($request));
+
+Route::middleware('guest.auth')->group(function () {
+    Route::get('stores/{store}/products/{product}', [ProductController::class, 'show'])->name('products.show')
+        ->missing(fn(Request $request) => handleMissingRoute($request));
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+});
 
 
 Route::middleware(['auth.jwt', 'localization', 'blacklist'])->group(function () {

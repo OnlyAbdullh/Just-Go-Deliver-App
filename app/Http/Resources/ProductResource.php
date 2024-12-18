@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProductResource extends JsonResource
@@ -74,6 +75,7 @@ class ProductResource extends JsonResource
     public function toArray(Request $request): array
     {
         $mainUrl = Storage::url($this->main_image);
+
         $data =  [
             'store_id' => $this->store_id,
             'store_name' => $this->store->name ?? null,
@@ -82,6 +84,7 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'quantity' => $this->quantity,
             'description' => $this->description,
+            'is_favorite' => $this->favorites->isNotEmpty() ? 1 : 0,
             'main_image' => asset($mainUrl),
         ];
 

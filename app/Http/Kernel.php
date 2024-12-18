@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\ApiLocalization;
+use App\Http\Middleware\GuestOrAuth;
 use App\Http\Middleware\ManagerRoleMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -41,7 +42,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-         //   \App\Http\Middleware\AuthenticateWithJWT::class,
+            //   \App\Http\Middleware\AuthenticateWithJWT::class,
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
@@ -70,6 +71,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'auth.jwt' => \App\Http\Middleware\AuthenticateWithJWT::class,
         'blacklist' => \App\Http\Middleware\CheckBlacklistedToken::class,
-        'localization'=>ApiLocalization::class,
+        'localization' => ApiLocalization::class,
+        'guest.auth' => GuestOrAuth::class,
     ];
 }

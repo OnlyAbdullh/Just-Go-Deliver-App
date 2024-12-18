@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DragonCode\Support\Facades\Facade;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,5 +35,10 @@ class Store_Product extends Model
     public function images(): HasMany
     {
         return $this->hasMany(Image::class, 'product_id', 'product_id');
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'product_id', 'product_id');
     }
 }

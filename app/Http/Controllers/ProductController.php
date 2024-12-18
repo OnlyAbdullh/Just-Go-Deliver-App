@@ -119,8 +119,6 @@ class ProductController extends Controller
         ]);
     }
 
-
-
     /**
      * @OA\Get(
      *     path="/api/stores/{store}/products/{product}",
