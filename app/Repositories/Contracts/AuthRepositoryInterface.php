@@ -9,7 +9,7 @@ interface AuthRepositoryInterface
 
     public function findByEmail(string $email): ?User;
 
-    public function createAccessToken(User $user): string;
+    public function createAccessToken(User $user,  $deviceId): string;
 
     public function createRefreshToken(): string;
 

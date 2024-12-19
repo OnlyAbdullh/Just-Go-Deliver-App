@@ -21,10 +21,10 @@ class AuthRepository implements AuthRepositoryInterface
         return User::where('email', $email)->first();
     }
 
-    public function createAccessToken(User $user): string
+    public function createAccessToken(User $user,  $deviceId): string
     {
         //  return JWTAuth::claims(['exp' => Carbon::now()->addMinutes(15)->timestamp])->fromUser($user);
-        return JWTAuth::fromUser($user);
+        return JWTAuth::fromUser($user, ['fcm_token' => $deviceId]);
     }
 
     public function createRefreshToken(): string
@@ -83,6 +83,37 @@ class AuthRepository implements AuthRepositoryInterface
             ->where('device_id', $deviceId)
             ->where('user_id', $userId)
             ->exists();
+    }
+    public function findFcmToken(int $userId, string $fcmToken)
+    {
+        return DB::table('device_tokens')
+            ->where('user_id', $userId)
+            ->where('fcm_token', $fcmToken)
+            ->first();
+    }
+
+    public function fcmTokenExists(int $userId, string $fcmToken): bool
+    {
+        return DB::table('device_tokens')
+            ->where('user_id', $userId)
+            ->where('fcm_token', $fcmToken)
+            ->exists();
+    }
+
+
+    public function saveFcmToken(int $userId, string $fcmToken)
+    {
+        DB::table('device_tokens')->updateOrInsert(
+            ['user_id' => $userId, 'fcm_token' => $fcmToken],
+            ['created_at' => now(), 'updated_at' => now()]
+        );
+    }
+    public function deleteFcmToken(string $fcmToken, int $userId)
+    {
+        DB::table('device_tokens')
+            ->where('user_id', $userId)
+            ->where('fcm_token', $fcmToken)
+            ->delete();
     }
 
 }

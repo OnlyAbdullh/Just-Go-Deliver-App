@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
+use App\Helpers\JsonResponseHelper;
 use App\Models\User;
 use App\Repositories\AuthRepository;
 use App\Repositories\Contracts\AuthRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
@@ -28,7 +28,7 @@ class AuthService
         return $this->authRepository->createUser($data);
     }
 
-    public function completeRegistration($registrationData)
+    public function completeRegistration($registrationData, string $email)
     {
         if (!$registrationData) {
             return response()->json([
@@ -40,73 +40,89 @@ class AuthService
         $user = $this->register($registrationData);
 
         $this->roleService->assignRoleForUser($user->id, 'user');
-
-        return response()->json([
-            "status" => true,
-            "message" => "Registration completed successfully.",
-        ], 200);
+        return JsonResponseHelper::successResponse("Registration completed successfully.");
     }
 
 
-    public function logout(string $deviceId)
+    public function logout(string $fcmToken)
     {
         $user = auth()->user();
-        $deviceExists = $this->authRepository->deviceExists($deviceId, $user->id);
+        $deviceExists = $this->authRepository->fcmTokenExists($user->id, $fcmToken);
+
         if (!$deviceExists) {
-            throw new \Exception('Device ID not found', 404);
+            throw new \Exception('Device token not found', 404);
         }
+
         $currentToken = JWTAuth::getToken();
-        DB::transaction(function () use ($currentToken, $deviceId, $user) {
+        if (!$currentToken) {
+            throw new \Exception('No token provided', 400);
+        }
+
+        $decodedToken = JWTAuth::getPayload($currentToken)->toArray();
+
+
+        if (($decodedToken['fcm_token'] ?? null) !== $fcmToken) {
+            throw new \Exception('Access token does not match the device', 403);
+        }
+
+        DB::transaction(function () use ($currentToken, $fcmToken, $user) {
             DB::table('token_blacklist')->insert([
                 'token' => $currentToken,
-                'expires_at' => Carbon::now()->addMinutes(config('jwt.ttl')),
+                'expires_at' => now()->addMinutes(config('jwt.ttl')),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
-            $this->authRepository->deleteRefreshToken($deviceId, $user->id);
+            $this->authRepository->deleteRefreshToken($fcmToken, $user->id);
+            $this->authRepository->deleteFcmToken($fcmToken, $user->id);
         });
 
         auth()->logout();
     }
 
 
-    public function login(array $credentials, string $deviceId)
+    public function login(array $credentials, string $fcmToken)
     {
         $user = $this->authRepository->findByEmail($credentials['email']);
 
         if ($user && Hash::check($credentials['password'], $user->password)) {
 
-            // Check if the user is already logged in on this device by looking for the device's refresh token
-            $existingRefreshToken = $this->authRepository->findRefreshTokenByDevice($user->id, $deviceId);
+            $existingFcmToken = $this->authRepository->findFcmToken($user->id, $fcmToken);
 
-            if ($existingRefreshToken) {
+            if ($existingFcmToken) {
                 return [
                     'successful' => false,
-                    'message' => 'You have already logged in on this device.',
-                    'status_code' => 409
+                    'message' => 'You are already logged in on this device.',
+                    'status_code' => 409,
                 ];
             }
 
-            $accessToken = $this->authRepository->createAccessToken($user);
+            $accessToken = JWTAuth::claims(['fcm_token' => $fcmToken])->fromUser($user);
+
             $refreshToken = $this->authRepository->createRefreshToken();
 
-            $this->authRepository->saveRefreshToken($user, $deviceId, $refreshToken, Carbon::now()->addWeeks(2));
+            $this->authRepository->saveFcmToken($user->id, $fcmToken);
 
-            $user->image = asset(Storage::url($user->image));
+            $this->authRepository->saveRefreshToken(
+                $user,
+                $fcmToken,
+                $refreshToken,
+                Carbon::now()->addWeeks(2)
+            );
+
             return [
                 'successful' => true,
                 'access_token' => $accessToken,
                 'refresh_token' => $refreshToken,
                 'token_type' => 'bearer',
-                'expires_in' => 15 * 60,
+                'expires_in' => config('jwt.ttl') * 60,
                 'user' => $user,
             ];
         }
         return [
             'successful' => false,
             'message' => 'Invalid credentials',
-            'status_code' => 401
+            'status_code' => 401,
         ];
     }
 
@@ -118,16 +134,19 @@ class AuthService
             throw new \Exception('Invalid or expired refresh token', 401);
         }
         $user = User::find($refreshTokenRecord->user_id);
-
+        if (!$user) {
+            throw new \Exception('User not found', 404);
+        }
         $deviceExists = $this->authRepository->deviceExists($deviceId, $user->id);
 
         if (!$deviceExists) {
-            throw new \Exception('Device ID not found', 404);
+            throw new \Exception('Device ID not found or not associated with this user', 404);
         }
-        $accessToken = $this->authRepository->createAccessToken($user);
+        $accessToken = $this->authRepository->createAccessToken($user, $deviceId);
 
         return [
             'access_token' => $accessToken,
+            'expires_in' => '1 hour'
         ];
     }
 
