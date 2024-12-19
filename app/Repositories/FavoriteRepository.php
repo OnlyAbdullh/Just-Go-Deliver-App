@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\Contracts\FavoriteRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class FavoriteRepository implements FavoriteRepositoryInterface
 {
@@ -23,34 +25,27 @@ class FavoriteRepository implements FavoriteRepositoryInterface
 
     public function getAllFavorites(User $user): array
     {
-        return $user->favoriteProducts()
-            ->with(['stores' => function ($query) {
-                $query->select(
-                    'stores.id',
-                    'stores.name'
-                )->withPivot('price', 'quantity', 'description', 'sold_quantity');
-            }])
-            ->get()
-            ->flatMap(function ($product) {
-                return $product->stores->map(function ($store) use ($product) {
-                    return [
-                        'product_id' => $product->id,
-                        'product_name' => $product->name,
-                        'category_id' => $product->category_id,
-                        'store_id' => $store->id,
-                        'store_name' => $store->name,
-                        'price' => $store->pivot->price,
-                        'quantity' => $store->pivot->quantity,
-                        'description' => $store->pivot->description,
-                        'sold_quantity' => $store->pivot->sold_quantity,
-                    ];
-                });
+        return DB::table('favorites')
+            ->join('products', 'favorites.product_id', '=', 'products.id')
+            ->join('stores', 'favorites.store_id', '=', 'stores.id')
+            ->join('store_products', function ($join) {
+                $join->on('store_products.product_id', '=', 'products.id')
+                    ->on('store_products.store_id', '=', 'favorites.store_id');
             })
-            ->unique(fn($item) => $item['product_id'] . '-' . $item['store_id'])
-            ->toArray();
+            ->where('favorites.user_id', $user->id)
+            ->select(
+                'products.id as product_id',
+                'products.name as product_name',
+                'products.category_id',
+                'stores.id as store_id',
+                'stores.name as store_name',
+                'store_products.price',
+                'store_products.quantity',
+                'store_products.description'
+            )
+            ->distinct()
+            ->get()->toArray();
     }
-
-
     /*    public function isProductInStore(int $productId, int $storeId): bool
         {
             $product = Product::find($productId);
