@@ -19,48 +19,52 @@ class CartController extends Controller
     }
     /**
      * @OA\Post(
-     *     path="/carts/{store}/products/{product}/add",
+     *     path="/carts/{store_id}/products/{product_id}/add",
      *     summary="Add a product to the cart",
      *     tags={"Cart"},
-     *     security={{"bearerAuth":{}}},
+     *     description="Adds a product to the authenticated user's cart. Validates stock availability before adding.",
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
      *     @OA\Parameter(
-     *         name="store",
+     *         name="store_id",
      *         in="path",
-     *         description="Store ID",
+     *         description="The ID of the store where the product is located",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Parameter(
-     *         name="product",
+     *         name="product_id",
      *         in="path",
-     *         description="Product ID",
+     *         description="The ID of the product to be added to the cart",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="quantity", type="integer", description="Quantity of the product to add")
+     *             @OA\Property(property="quantity", type="integer", example=2, description="The quantity of the product to add to the cart")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Product added to cart successfully",
+     *         description="Product successfully added to the cart",
      *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Product added to cart successfully")
      *         )
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Error response",
+     *         description="Error adding product to cart",
      *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean"),
-     *             @OA\Property(property="message", type="string")
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Not enough stock available")
      *         )
-     *     )
+     *     ),
      * )
      */
+
 
     public function add(int $store_id, int $product_id, Request $request)
     {
@@ -68,34 +72,48 @@ class CartController extends Controller
         $result = $this->cartService->addProductToCart($store_id, $product_id, $request->input('quantity'));
 
         if (!$result['success']) {
-            return JsonResponseHelper::errorResponse([$result['message']]);
+            return JsonResponseHelper::errorResponse('',$result['message']);
         }
-        return JsonResponseHelper::successResponse([$result['message']]);
+        return JsonResponseHelper::successResponse('',$result['message']);
     }
     /**
      * @OA\Get(
      *     path="/carts/products",
      *     summary="Retrieve all products in the user's cart",
      *     tags={"Cart"},
-     *     security={{"bearerAuth":{}}},
+     *     security={{"bearerAuth": {}}},
+     *     description="Fetch all products in the authenticated user's cart, including store and product details. Returns an empty array if the cart is empty.",
      *     @OA\Response(
      *         response=200,
-     *         description="List of cart products or empty cart message",
+     *         description="Successful retrieval of cart products",
      *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean"),
-     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="success", type="boolean", example=true, description="Indicates if the operation was successful"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *                 description="List of products in the cart",
      *                 @OA\Items(
-     *                     @OA\Property(property="id", type="integer", description="Product ID"),
-     *                     @OA\Property(property="name", type="string", description="Product name"),
-     *                     @OA\Property(property="quantity", type="integer", description="Quantity in the cart"),
-     *                     @OA\Property(property="price", type="number", format="float", description="Product price")
+     *                     @OA\Property(property="store_id", type="integer", example=1, description="ID of the store"),
+     *                     @OA\Property(property="store_name", type="string", example="Ali", description="Name of the store"),
+     *                     @OA\Property(property="order_quantity", type="integer", example=2, description="Quantity ordered"),
+     *                     @OA\Property(property="store_product_id", type="integer", example=1, description="ID of the product in the store"),
+     *                     @OA\Property(property="price", type="string", example="400.00", description="Price of the product"),
+     *                     @OA\Property(property="quantity", type="integer", example=3, description="Available quantity of the product"),
+     *                     @OA\Property(property="description", type="string", example="Black", description="Description of the product"),
+     *                     @OA\Property(property="product_id", type="integer", example=1, description="ID of the product"),
+     *                     @OA\Property(property="product_name", type="string", example="iPhone", description="Name of the product"),
+     *                     @OA\Property(
+     *                         property="main_image",
+     *                         type="string",
+     *                         example="http://127.0.0.1:8000/storage/products/5xHVC1FalLQdtMDWEnHFwyABX0OF9zo6hFd6kytS.png",
+     *                         description="URL of the main product image"
+     *                     )
      *                 )
-     *             )
+     *             ),
+     *             @OA\Property(property="status_code", type="integer", example=200, description="HTTP status code of the response"),
+     *             @OA\Property(property="total_price", type="integer", example=2750)
      *         )
-     *     )
+     *     ),
      * )
      */
     public function getCartProducts()
@@ -104,7 +122,7 @@ class CartController extends Controller
 
         $result = $this->cartService->getAllProductsInCart($user);
 
-        if ($result['message']) {
+        if (isset($result['message'])) {
             return JsonResponseHelper::successResponse($result['message']);
         } else {
             return JsonResponseHelper::successResponse('', $result['data']);

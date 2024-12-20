@@ -6,13 +6,13 @@
         "version": "1.0.0"
     },
     "paths": {
-        "api/register": {
+        "/register": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Initiate user registration and send OTP",
-                "operationId": "ab2b7d41093853c1cd75e0410e4833e8",
+                "operationId": "0903f2e0df1a8857bee538fc055417f0",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -127,13 +127,13 @@
                 }
             }
         },
-        "api/login": {
+        "/login": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Authenticate user and generate tokens",
-                "operationId": "3eb84823c3909535d41476c57a05d02f",
+                "operationId": "2dd578ff7aba2721293dac66833b27d1",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -312,13 +312,13 @@
                 }
             }
         },
-        "api/refresh": {
+        "/refresh": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Refresh the access token using a refresh token",
-                "operationId": "e3879b554cb74b4cf880cca4e2a50a79",
+                "operationId": "0c3ea3c61aed881016646810460499e9",
                 "parameters": [
                     {
                         "name": "Refresh-Token",
@@ -458,13 +458,13 @@
                 }
             }
         },
-        "api/logout": {
+        "/logout": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Logout a user and invalidate tokens",
-                "operationId": "5cdfa55259dc1bf3f992242c655088ee",
+                "operationId": "68a6108af04af5e3bc1ea68a6c6f1299",
                 "parameters": [
                     {
                         "name": "Device-ID",
@@ -553,165 +553,44 @@
                 }
             }
         },
-        "/api/categories": {
-            "get": {
-                "tags": [
-                    "Categories"
-                ],
-                "summary": "Fetch paginated list of categories",
-                "description": "Retrieve a paginated list of categories with their details, including the translated name based on the selected language.",
-                "operationId": "getCategories",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
-                        "name": "items",
-                        "in": "query",
-                        "description": "The number of items to display per page",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 10
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Categories fetched successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Categories fetched successfully"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "categories": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/CategoryResource"
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "properties": {
-                                                "currentPage": {
-                                                    "description": "The current page number",
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "totalPages": {
-                                                    "description": "The total number of pages",
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "hasMorePage": {
-                                                    "description": "Indicates if there are more pages available",
-                                                    "type": "boolean",
-                                                    "example": true
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 200
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "No categories available",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "There are no categories available"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 404
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
+        "/carts/{store_id}/products/{product_id}/add": {
             "post": {
                 "tags": [
-                    "Categories"
+                    "Cart"
                 ],
-                "summary": "Create a new category",
-                "description": "Create a new category with translated names (Arabic and English).",
-                "operationId": "storeCategory",
+                "summary": "Add a product to the cart",
+                "description": "Adds a product to the authenticated user's cart. Validates stock availability before adding.",
+                "operationId": "bf1a49b0ec799010c6dc36446fe6888e",
                 "parameters": [
                     {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
+                        "name": "store_id",
+                        "in": "path",
+                        "description": "The ID of the store where the product is located",
+                        "required": true,
                         "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "path",
+                        "description": "The ID of the product to be added to the cart",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
                 "requestBody": {
-                    "description": "Category data to be created",
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
-                                "required": [
-                                    "name_ar",
-                                    "name_en"
-                                ],
                                 "properties": {
-                                    "name_ar": {
-                                        "description": "The Arabic name of the category",
-                                        "type": "string",
-                                        "example": "اسم الفئة"
-                                    },
-                                    "name_en": {
-                                        "description": "The English name of the category",
-                                        "type": "string",
-                                        "example": "Category Name"
+                                    "quantity": {
+                                        "description": "The quantity of the product to add to the cart",
+                                        "type": "integer",
+                                        "example": 2
                                     }
                                 },
                                 "type": "object"
@@ -720,43 +599,19 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Category created successfully",
+                    "200": {
+                        "description": "Product successfully added to the cart",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "successful": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Category has been created successfully"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "description": "The ID of the created category",
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "name_ar": {
-                                                    "description": "The Arabic name of the category",
-                                                    "type": "string",
-                                                    "example": "اسم الفئة"
-                                                },
-                                                "name_en": {
-                                                    "description": "The English name of the category",
-                                                    "type": "string",
-                                                    "example": "Category Name"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 201
+                                            "example": "Product added to cart successfully"
                                         }
                                     },
                                     "type": "object"
@@ -765,41 +620,18 @@
                         }
                     },
                     "400": {
-                        "description": "Validation error",
+                        "description": "Error adding product to cart",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "successful": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": false
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "properties": {
-                                                "name_ar": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "The name_ar field is required."
-                                                    }
-                                                },
-                                                "name_en": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "The name_en field is required."
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 400
+                                            "example": "Not enough stock available"
                                         }
                                     },
                                     "type": "object"
@@ -815,261 +647,93 @@
                 ]
             }
         },
-        "/api/categories/{categoryId}": {
-            "put": {
+        "/carts/products": {
+            "get": {
                 "tags": [
-                    "Categories"
+                    "Cart"
                 ],
-                "summary": "Update an existing category",
-                "description": "Update an existing category's translated names (Arabic and English) by its ID.",
-                "operationId": "updateCategory",
-                "parameters": [
-                    {
-                        "name": "categoryId",
-                        "in": "path",
-                        "description": "The ID of the category to be updated",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "Category data to be updated",
-                    "required": true,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "required": [
-                                    "name_ar",
-                                    "name_en"
-                                ],
-                                "properties": {
-                                    "name_ar": {
-                                        "description": "The Arabic name of the category",
-                                        "type": "string",
-                                        "example": "اسم الفئة"
-                                    },
-                                    "name_en": {
-                                        "description": "The English name of the category",
-                                        "type": "string",
-                                        "example": "Category Name"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
+                "summary": "Retrieve all products in the user's cart",
+                "description": "Fetch all products in the authenticated user's cart, including store and product details. Returns an empty array if the cart is empty.",
+                "operationId": "e5024a581da0815f0c31867c2130483a",
                 "responses": {
                     "200": {
-                        "description": "Category updated successfully",
+                        "description": "Successful retrieval of cart products",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "successful": {
+                                        "success": {
+                                            "description": "Indicates if the operation was successful",
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Category has been updated successfully"
                                         },
                                         "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "description": "The ID of the updated category",
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "name_ar": {
-                                                    "description": "The updated Arabic name of the category",
-                                                    "type": "string",
-                                                    "example": "اسم الفئة الجديدة"
-                                                },
-                                                "name_en": {
-                                                    "description": "The updated English name of the category",
-                                                    "type": "string",
-                                                    "example": "Updated Category Name"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 200
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Category not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Category not found"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 404
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "properties": {
-                                                "name_ar": {
-                                                    "type": "array",
-                                                    "items": {
+                                            "description": "List of products in the cart",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "store_id": {
+                                                        "description": "ID of the store",
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "store_name": {
+                                                        "description": "Name of the store",
                                                         "type": "string",
-                                                        "example": "The name_ar field is required."
+                                                        "example": "Ali"
+                                                    },
+                                                    "order_quantity": {
+                                                        "description": "Quantity ordered",
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "store_product_id": {
+                                                        "description": "ID of the product in the store",
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "price": {
+                                                        "description": "Price of the product",
+                                                        "type": "string",
+                                                        "example": "400.00"
+                                                    },
+                                                    "quantity": {
+                                                        "description": "Available quantity of the product",
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "description": {
+                                                        "description": "Description of the product",
+                                                        "type": "string",
+                                                        "example": "Black"
+                                                    },
+                                                    "product_id": {
+                                                        "description": "ID of the product",
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "product_name": {
+                                                        "description": "Name of the product",
+                                                        "type": "string",
+                                                        "example": "iPhone"
+                                                    },
+                                                    "main_image": {
+                                                        "description": "URL of the main product image",
+                                                        "type": "string",
+                                                        "example": "http://127.0.0.1:8000/storage/products/5xHVC1FalLQdtMDWEnHFwyABX0OF9zo6hFd6kytS.png"
                                                     }
                                                 },
-                                                "name_en": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "The name_en field is required."
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
+                                                "type": "object"
+                                            }
                                         },
                                         "status_code": {
-                                            "type": "integer",
-                                            "example": 400
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Categories"
-                ],
-                "summary": "Delete a category",
-                "description": "Delete a category by its ID.",
-                "operationId": "deleteCategory",
-                "parameters": [
-                    {
-                        "name": "categoryId",
-                        "in": "path",
-                        "description": "The ID of the category to be deleted",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Category deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Category has been deleted successfully"
-                                        },
-                                        "status_code": {
+                                            "description": "HTTP status code of the response",
                                             "type": "integer",
                                             "example": 200
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Category not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
                                         },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Category not found"
-                                        },
-                                        "status_code": {
+                                        "total_price": {
                                             "type": "integer",
-                                            "example": 404
+                                            "example": 2750
                                         }
                                     },
                                     "type": "object"
@@ -1446,465 +1110,6 @@
                 }
             }
         },
-        "/images/stores/{store}/products/{product}": {
-            "post": {
-                "tags": [
-                    "Images"
-                ],
-                "summary": "Add an image to a product in a store",
-                "description": "This endpoint allows a store admin to upload an image for a specific product in a store.",
-                "operationId": "addImageToProduct",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
-                        "name": "store",
-                        "in": "path",
-                        "description": "ID of the store",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "product",
-                        "in": "path",
-                        "description": "ID of the product",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "required": [
-                                    "images"
-                                ],
-                                "properties": {
-                                    "images[0]": {
-                                        "description": "Image file to upload",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "images[1]": {
-                                        "description": "Image file to upload",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Image added successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": "true"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Image added successfully"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": "201"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Unauthorized to add image",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "You are not authorized to add image"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": "403"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Validation error"
-                                        },
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string",
-                                                "example": "The image field is required."
-                                            }
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": "400"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Product not found in store",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Store not found or Product not found in store"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": "404"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/images/{image}": {
-            "post": {
-                "tags": [
-                    "Images"
-                ],
-                "summary": "Update an image",
-                "description": "This endpoint allows a store admin to update an existing image.",
-                "operationId": "updateImage",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
-                        "name": "image",
-                        "in": "path",
-                        "description": "ID of the image to update",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "required": [
-                                    "image"
-                                ],
-                                "properties": {
-                                    "image": {
-                                        "description": "New image file to upload",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Image updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Image updated successfully"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 200
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Unauthorized to update image",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "You are not authorized to update image"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 403
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Validation error"
-                                        },
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string",
-                                                "example": "The image field is required."
-                                            }
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 400
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Image not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Image not found"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 404
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Images"
-                ],
-                "summary": "Delete an image",
-                "description": "This endpoint allows a store admin to delete an image if authorized.",
-                "operationId": "deleteImage",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
-                        "name": "image",
-                        "in": "path",
-                        "description": "ID of the image to delete",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Image deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Image deleted successfully"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 200
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Unauthorized to delete image",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "You are not authorized to delete image"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 403
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Image not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Image not found"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 404
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/resend-otp": {
             "post": {
                 "tags": [
@@ -2085,20 +1290,6 @@
                 "operationId": "1bfaa78d1c2c3848ab8165c5dadcad3e",
                 "parameters": [
                     {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
                         "name": "items",
                         "in": "query",
                         "description": "Number of items per page",
@@ -2177,20 +1368,6 @@
                 "description": "Returns product details, including store information and sub_images (additional images).",
                 "operationId": "getStoreProduct",
                 "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
                     {
                         "name": "store_id",
                         "in": "path",
@@ -2327,20 +1504,6 @@
                 "operationId": "08544cf0dbd8cd2b11a3efbd9d7582ec",
                 "parameters": [
                     {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
                         "name": "store",
                         "in": "path",
                         "description": "ID of the store",
@@ -2452,21 +1615,7 @@
                 "operationId": "addProductToStore",
                 "parameters": [
                     {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
-                        "name": "store",
+                        "name": "storeId",
                         "in": "path",
                         "description": "ID of the store",
                         "required": true,
@@ -2481,46 +1630,37 @@
                         "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "name_ar",
-                                    "name_en",
-                                    "category_name_ar",
-                                    "category_name_en",
+                                    "name",
                                     "main_image",
-                                    "sub_images",
                                     "price",
                                     "quantity",
-                                    "description_ar",
-                                    "description_en"
+                                    "description",
+                                    "sub_images"
                                 ],
                                 "properties": {
-                                    "name_ar": {
-                                        "description": "Name of the product in Arabic",
-                                        "type": "string"
-                                    },
-                                    "name_en": {
-                                        "description": "Name of the product in English",
-                                        "type": "string"
-                                    },
-                                    "category_name_ar": {
-                                        "description": "Category name in Arabic",
-                                        "type": "string"
-                                    },
-                                    "category_name_en": {
-                                        "description": "Category name in English",
+                                    "name": {
+                                        "description": "Name of the product",
                                         "type": "string"
                                     },
                                     "main_image": {
-                                        "description": "Main image of the product (JPEG, PNG, JPG, BMP) with max size 2MB",
+                                        "description": "Main image of the product",
                                         "type": "string",
                                         "format": "binary"
                                     },
-                                    "sub_images": {
-                                        "description": "Sub images of the product (JPEG, PNG, JPG, BMP) with max size 2MB each",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "binary"
-                                        }
+                                    "sub_images[0]": {
+                                        "description": "sub image of the product",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "sub_images[1]": {
+                                        "description": "sub image of the product",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "sub_images[2]": {
+                                        "description": "sub image of the product",
+                                        "type": "string",
+                                        "format": "binary"
                                     },
                                     "price": {
                                         "description": "Price of the product",
@@ -2531,12 +1671,8 @@
                                         "description": "Available quantity of the product",
                                         "type": "integer"
                                     },
-                                    "description_ar": {
-                                        "description": "Description of the product in Arabic",
-                                        "type": "string"
-                                    },
-                                    "description_en": {
-                                        "description": "Description of the product in English",
+                                    "description": {
+                                        "description": "Description of the product",
                                         "type": "string"
                                     }
                                 },
@@ -2630,12 +1766,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/stores/{store}/products/{product}": {
@@ -2647,20 +1778,6 @@
                 "description": "Update product details for a store. Only accessible by users with the store_admin role who own the store.",
                 "operationId": "93a13042268cd55408cb79004042c1c0",
                 "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
                     {
                         "name": "store",
                         "in": "path",
@@ -2825,117 +1942,6 @@
                 ]
             }
         },
-        "/api/products/{name}": {
-            "get": {
-                "tags": [
-                    "Products"
-                ],
-                "summary": "Search for products by name",
-                "description": "Retrieve a paginated list of products based on the search keyword",
-                "operationId": "154dc7d66118e0db0ee5029c87e0f3cf",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
-                        "name": "name",
-                        "in": "path",
-                        "description": "The name of the product to search for",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "items",
-                        "in": "query",
-                        "description": "Number of items per page (default is 20)",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 20
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "The page number for pagination (default is 1)",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A list of products with pagination",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Products retrieved successfully"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "products": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/ProductResource"
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "properties": {
-                                                "currentPage": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "totalPages": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "hasMorePage": {
-                                                    "type": "boolean",
-                                                    "example": true
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request parameters"
-                    },
-                    "404": {
-                        "description": "No products found matching the search criteria"
-                    }
-                }
-            }
-        },
         "/users/assign-role": {
             "post": {
                 "tags": [
@@ -2944,22 +1950,6 @@
                 "summary": "Assign a role to a user",
                 "description": "Assign a specific role to a user. Only accessible by managers.",
                 "operationId": "224ac2c928d9916411233a3dbbe4b630",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    }
-                ],
                 "requestBody": {
                     "description": "Role assignment data",
                     "required": true,
@@ -3102,22 +2092,6 @@
                 "summary": "Revoke a role from a user",
                 "description": "Revoke a specific role from a user. Only accessible by managers.",
                 "operationId": "d86d1509bf17580fbef6f08d32994cb5",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    }
-                ],
                 "requestBody": {
                     "description": "Role revocation data",
                     "required": true,
@@ -3258,20 +2232,6 @@
                 "operationId": "getStores",
                 "parameters": [
                     {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
                         "name": "page",
                         "in": "query",
                         "description": "The page number to fetch",
@@ -3314,6 +2274,10 @@
                                                     "items": {
                                                         "$ref": "#/components/schemas/StoreResource"
                                                     }
+                                                },
+                                                "hasMorePages": {
+                                                    "type": "boolean",
+                                                    "example": true
                                                 }
                                             },
                                             "type": "object"
@@ -3321,26 +2285,6 @@
                                         "status_code": {
                                             "type": "integer",
                                             "example": 200
-                                        },
-                                        "pagination": {
-                                            "properties": {
-                                                "currentPage": {
-                                                    "description": "The current page number",
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "totalPages": {
-                                                    "description": "The total number of pages",
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "hasMorePage": {
-                                                    "description": "Indicates if there are more pages available",
-                                                    "type": "boolean",
-                                                    "example": false
-                                                }
-                                            },
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -3381,22 +2325,6 @@
                 "summary": "Create a new store",
                 "description": "Creates a new store with the given details. The user must provide valid data, including a logo image, via multipart/form-data.",
                 "operationId": "5562ee6fb25788924172167093719fe9",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    }
-                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3404,43 +2332,28 @@
                             "schema": {
                                 "required": [
                                     "logo",
-                                    "name_ar",
-                                    "name_en"
+                                    "location",
+                                    "description",
+                                    "name"
                                 ],
                                 "properties": {
                                     "logo": {
                                         "description": "Image file for the store logo (jpg, png, jpeg)",
                                         "type": "string",
-                                        "format": "binary",
-                                        "example": "logo.jpg"
+                                        "format": "binary"
                                     },
-                                    "location_ar": {
-                                        "description": "Arabic location of the store (optional)",
-                                        "type": "string",
-                                        "example": "123 شارع رئيسي"
-                                    },
-                                    "location_en": {
-                                        "description": "English location of the store (optional)",
+                                    "location": {
+                                        "description": "Location of the store",
                                         "type": "string",
                                         "example": "123 Main St, City, Country"
                                     },
-                                    "description_ar": {
-                                        "description": "Arabic description of the store (optional)",
-                                        "type": "string",
-                                        "example": "وصف المتجر"
-                                    },
-                                    "name_ar": {
-                                        "description": "Arabic name of the store (required, must be unique)",
-                                        "type": "string",
-                                        "example": "متجري"
-                                    },
-                                    "description_en": {
-                                        "description": "English description of the store (optional)",
+                                    "description": {
+                                        "description": "Description of the store",
                                         "type": "string",
                                         "example": "A description of the store"
                                     },
-                                    "name_en": {
-                                        "description": "English name of the store (required, must be unique)",
+                                    "name": {
+                                        "description": "Name of the store",
                                         "type": "string",
                                         "example": "My Store"
                                     }
@@ -3463,7 +2376,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Store created successfully"
+                                            "example": "store created successfully"
                                         },
                                         "data": {
                                             "$ref": "#/components/schemas/StoreResource"
@@ -3492,11 +2405,11 @@
                                             "type": "string",
                                             "example": "Validation Error"
                                         },
-                                        "error": {
+                                        "data": {
                                             "type": "object",
                                             "additionalProperties": {
                                                 "type": "string",
-                                                "example": "The name_ar field is required.",
+                                                "example": "The name field is required.",
                                                 "property": null
                                             }
                                         },
@@ -3558,12 +2471,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/api/stores/{store}": {
@@ -3575,20 +2483,6 @@
                 "description": "Retrieve details of a specific store by its ID.",
                 "operationId": "a9949c633f955f3c2892647c05d80ac5",
                 "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
                     {
                         "name": "store",
                         "in": "path",
@@ -3667,20 +2561,6 @@
                 "operationId": "7dac60706528cc7c2bb0a5fe224f2aed",
                 "parameters": [
                     {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
                         "name": "store",
                         "in": "path",
                         "description": "ID of the store to update",
@@ -3696,47 +2576,26 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
-                                "required": [
-                                    "logo",
-                                    "name_ar",
-                                    "name_en"
-                                ],
                                 "properties": {
                                     "logo": {
-                                        "description": "Image file for the store logo (jpg, png, jpeg)",
+                                        "description": "Optional image file for the store logo (jpg, png, jpeg)",
                                         "type": "string",
-                                        "format": "binary",
-                                        "example": "logo.jpg"
+                                        "format": "binary"
                                     },
-                                    "location_ar": {
-                                        "description": "Arabic location of the store (optional)",
-                                        "type": "string",
-                                        "example": "123 شارع رئيسي"
-                                    },
-                                    "location_en": {
-                                        "description": "English location of the store (optional)",
+                                    "location": {
+                                        "description": "Optional location of the store",
                                         "type": "string",
                                         "example": "123 Main St, City, Country"
                                     },
-                                    "description_ar": {
-                                        "description": "Arabic description of the store (optional)",
-                                        "type": "string",
-                                        "example": "وصف المتجر"
-                                    },
-                                    "name_ar": {
-                                        "description": "Arabic name of the store (required, must be unique)",
-                                        "type": "string",
-                                        "example": "متجري"
-                                    },
-                                    "description_en": {
-                                        "description": "English description of the store (optional)",
+                                    "description": {
+                                        "description": "Optional description of the store",
                                         "type": "string",
                                         "example": "A description of the store"
                                     },
-                                    "name_en": {
-                                        "description": "English name of the store (required, must be unique)",
+                                    "name": {
+                                        "description": "Optional name of the store",
                                         "type": "string",
-                                        "example": "My Store"
+                                        "example": "My Updated Store"
                                     }
                                 },
                                 "type": "object"
@@ -3813,7 +2672,7 @@
                                             "type": "string",
                                             "example": "Validation Error"
                                         },
-                                        "error": {
+                                        "data": {
                                             "type": "object",
                                             "additionalProperties": {}
                                         },
@@ -3827,12 +2686,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             },
             "delete": {
                 "tags": [
@@ -3842,20 +2696,6 @@
                 "description": "Delete a store by its ID.",
                 "operationId": "d85a9563ceec3d622401123020ca99f6",
                 "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
                     {
                         "name": "store",
                         "in": "path",
@@ -3952,12 +2792,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/users": {
@@ -4268,23 +3103,6 @@
     },
     "components": {
         "schemas": {
-            "CategoryResource": {
-                "title": "Category Resource",
-                "description": "Represents a category resource with translated name based on the selected language.",
-                "properties": {
-                    "id": {
-                        "description": "The unique identifier of the category",
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "description": "The translated name of the category based on the Accept-Language header",
-                        "type": "string",
-                        "example": "Category Name in Selected Language"
-                    }
-                },
-                "type": "object"
-            },
             "ProductResource": {
                 "properties": {
                     "id": {
@@ -4360,14 +3178,6 @@
                 },
                 "type": "object"
             }
-        },
-        "securitySchemes": {
-            "bearerAuth": {
-                "type": "http",
-                "description": "Enter your Bearer token in the format 'Bearer <token>'",
-                "bearerFormat": "JWT",
-                "scheme": "bearer"
-            }
         }
     },
     "tags": [
@@ -4376,16 +3186,12 @@
             "description": "Authentication"
         },
         {
-            "name": "Categories",
-            "description": "Categories"
+            "name": "Cart",
+            "description": "Cart"
         },
         {
             "name": "Favorites",
             "description": "Favorites"
-        },
-        {
-            "name": "Images",
-            "description": "Images"
         },
         {
             "name": "OTP",
