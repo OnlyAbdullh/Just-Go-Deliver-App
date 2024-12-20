@@ -14,4 +14,6 @@ interface CartRepositoryInterface
     public function addProductToCart(int $cartId, int $storeProductId, int $quantity): void;
 
     public function updateCartProduct(int $cartId, int $storeProductId, int $quantity): void;
+
+    public function deleteCartProducts(int $cartId, array $storeProductIds): int;
 }

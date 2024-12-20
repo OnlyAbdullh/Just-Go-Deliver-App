@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 
@@ -33,6 +34,7 @@ class CartRepository implements CartRepositoryInterface
             'updated_at' => now(),
         ]);
     }
+
     public function updateCartProduct(int $cartId, int $storeProductId, int $quantity): void
     {
         DB::table('cart_products')
@@ -43,7 +45,6 @@ class CartRepository implements CartRepositoryInterface
                 'updated_at' => now(),
             ]);
     }
-
 
 
     public function getCartProducts($cartId)
@@ -60,20 +61,28 @@ class CartRepository implements CartRepositoryInterface
                 $storeProduct = $cartProduct->storeProduct;
                 $mainUrl = Storage::url($storeProduct->main_image);
                 return [
-                    'store_id'        => $storeProduct->store->id,
-                    'store_name'      => $storeProduct->store->name,
-                    'order_quantity'  => $cartProduct->amount_needed,
+                    'store_id' => $storeProduct->store->id,
+                    'store_name' => $storeProduct->store->name,
+                    'order_quantity' => $cartProduct->amount_needed,
                     'store_product_id' => $storeProduct->id,
-                    'price'           => $storeProduct->price,
-                    'quantity'        => $storeProduct->quantity,
-                    'description'     => $storeProduct->description,
-                    'product_id'      => $storeProduct->product->id,
-                    'product_name'    => $storeProduct->product->name,
-                    'main_image'        => asset($mainUrl),
+                    'price' => $storeProduct->price,
+                    'quantity' => $storeProduct->quantity,
+                    'description' => $storeProduct->description,
+                    'product_id' => $storeProduct->product->id,
+                    'product_name' => $storeProduct->product->name,
+                    'main_image' => asset($mainUrl),
                 ];
             });
 
         return $cartProducts;
+    }
+
+    public function deleteCartProducts(int $cartId, array $storeProductIds): int
+    {
+        return DB::table('cart_products')
+            ->where('cart_id', $cartId)
+            ->whereIn('store_product_id', $storeProductIds)
+            ->delete();
     }
 
 }

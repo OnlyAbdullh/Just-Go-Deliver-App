@@ -98,4 +98,15 @@ class CartService
         return $responses;
     }
 
+    public function DeleteCartProducts(int $cartId, array $items): int
+    {
+        $ids = [];
+        foreach ($items as $item) {
+            $productId = $item['product_id'];
+            $storeId = $item['store_id'];
+            $storeProduct = $this->productRepository->findStoreProductById($storeId, $productId);
+            $ids[] = $storeProduct->id;
+        }
+        return $this->cartRepository->deleteCartProducts($cartId,$ids);
+    }
 }

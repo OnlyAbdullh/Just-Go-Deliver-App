@@ -9,4 +9,5 @@ Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
     Route::get('carts/products', [CartController::class, 'getCartProducts']);
     Route::delete('carts/deleteAll', [CartController::class, 'deleteAll']);
     Route::put('carts/update', [CartController::class, 'updateQuantities']);
+    Route::delete('carts/deleteProducts', [CartController::class, 'DeleteProducts']);
 });

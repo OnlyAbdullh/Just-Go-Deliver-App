@@ -139,6 +139,13 @@ class CartController extends Controller
         return JsonResponseHelper::successResponse('', $response);
     }
 
+    public function DeleteProducts(Request $request)
+    {
+        $user = Auth::user();
+        $RowsDeleted = $this->cartService->DeleteCartProducts($user->cart->id, $request->input('data'));
+        return JsonResponseHelper::successResponse($RowsDeleted . ' products were Deleted from the Cart successfully');
+    }
+
     public function deleteAll()
     {
         $user = Auth::user();
