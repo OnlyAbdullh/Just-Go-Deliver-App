@@ -12,6 +12,7 @@ use App\Services\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+
 /**
  * @OA\SecurityScheme(
  *     securityScheme="bearerAuth",
@@ -105,10 +106,10 @@ class StoreController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-
+        $lang = $request->header('Accept-Language');
         $itemsPerPage = $request->query('items', 10);
 
-        $stores = $this->storeSrevice->getAllStores($itemsPerPage);
+        $stores = $this->storeSrevice->getAllStores($lang, $itemsPerPage);
 
         return response()->json([
             'successful' => true,
@@ -131,35 +132,54 @@ class StoreController extends Controller
      *     summary="Create a new store",
      *     description="Creates a new store with the given details. The user must provide valid data, including a logo image, via multipart/form-data.",
      *     tags={"Stores"},
-     *     security={{"bearerAuth": {}}},
+     *     security={{"bearerAuth": {}}}, 
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"logo", "location", "description", "name"},
+     *                 required={"logo", "name_ar", "name_en"},
      *                 @OA\Property(
      *                     property="logo",
      *                     type="string",
      *                     format="binary",
-     *                     description="Image file for the store logo (jpg, png, jpeg)"
+     *                     description="Image file for the store logo (jpg, png, jpeg)",
+     *                     example="logo.jpg"
      *                 ),
      *                 @OA\Property(
-     *                     property="location",
+     *                     property="location_ar",
      *                     type="string",
-     *                     description="Location of the store",
+     *                     description="Arabic location of the store (optional)",
+     *                     example="123 شارع رئيسي"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="location_en",
+     *                     type="string",
+     *                     description="English location of the store (optional)",
      *                     example="123 Main St, City, Country"
      *                 ),
      *                 @OA\Property(
-     *                     property="description",
+     *                     property="description_ar",
      *                     type="string",
-     *                     description="Description of the store",
+     *                     description="Arabic description of the store (optional)",
+     *                     example="وصف المتجر"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="name_ar",
+     *                     type="string",
+     *                     description="Arabic name of the store (required, must be unique)",
+     *                     example="متجري"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="description_en",
+     *                     type="string",
+     *                     description="English description of the store (optional)",
      *                     example="A description of the store"
      *                 ),
      *                 @OA\Property(
-     *                     property="name",
+     *                     property="name_en",
      *                     type="string",
-     *                     description="Name of the store",
+     *                     description="English name of the store (required, must be unique)",
      *                     example="My Store"
      *                 )
      *             )
@@ -170,7 +190,7 @@ class StoreController extends Controller
      *         description="Store created successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="store created successfully"),
+     *             @OA\Property(property="message", type="string", example="Store created successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/StoreResource"),
      *             @OA\Property(property="status_code", type="integer", example=201)
      *         )
@@ -181,7 +201,11 @@ class StoreController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Validation Error"),
-     *             @OA\Property(property="data", type="object", additionalProperties=@OA\Property(type="string", example="The name field is required.")),
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="object",
+     *                 additionalProperties=@OA\Property(type="string", example="The name_ar field is required.")
+     *             ),
      *             @OA\Property(property="status_code", type="integer", example=400)
      *         )
      *     ),
@@ -232,34 +256,54 @@ class StoreController extends Controller
      *         required=true,
      *         @OA\Schema(type="integer", example=1)
      *     ),
-     *     @OA\RequestBody(
+     *      @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
+     *                 required={"logo", "name_ar", "name_en"},
      *                 @OA\Property(
      *                     property="logo",
      *                     type="string",
      *                     format="binary",
-     *                     description="Optional image file for the store logo (jpg, png, jpeg)"
+     *                     description="Image file for the store logo (jpg, png, jpeg)",
+     *                     example="logo.jpg"
      *                 ),
      *                 @OA\Property(
-     *                     property="location",
+     *                     property="location_ar",
      *                     type="string",
-     *                     description="Optional location of the store",
+     *                     description="Arabic location of the store (optional)",
+     *                     example="123 شارع رئيسي"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="location_en",
+     *                     type="string",
+     *                     description="English location of the store (optional)",
      *                     example="123 Main St, City, Country"
      *                 ),
      *                 @OA\Property(
-     *                     property="description",
+     *                     property="description_ar",
      *                     type="string",
-     *                     description="Optional description of the store",
+     *                     description="Arabic description of the store (optional)",
+     *                     example="وصف المتجر"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="name_ar",
+     *                     type="string",
+     *                     description="Arabic name of the store (required, must be unique)",
+     *                     example="متجري"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="description_en",
+     *                     type="string",
+     *                     description="English description of the store (optional)",
      *                     example="A description of the store"
      *                 ),
      *                 @OA\Property(
-     *                     property="name",
+     *                     property="name_en",
      *                     type="string",
-     *                     description="Optional name of the store",
-     *                     example="My Updated Store"
+     *                     description="English name of the store (required, must be unique)",
+     *                     example="My Store"
      *                 )
      *             )
      *         )
@@ -290,7 +334,7 @@ class StoreController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Validation Error"),
-     *             @OA\Property(property="data", type="object",
+     *             @OA\Property(property="error", type="object",
      *                 @OA\AdditionalProperties(
      *                     @OA\Schema(type="string", example="The logo must be an image.")
      *                 )

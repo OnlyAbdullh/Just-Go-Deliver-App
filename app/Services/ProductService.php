@@ -41,9 +41,9 @@ class ProductService
     {
         $imagePath = $this->productRepository->uploadImage($data['main_image'], 'products');
 
-        $category = $this->categoryService->findOrCreate($data['category_name']);
+        $category = $this->categoryService->findOrCreate($data['category_name_en'], $data['category_name_ar']);
 
-        $product = $this->productRepository->findOrCreate($data['name'], $category->id);
+        $product = $this->productRepository->findOrCreate($data['name_ar'], $data['name_en'], $category->id);
 
         $storeProduct = $this->productRepository->findProductInStore($store, $product->id);
 
@@ -57,11 +57,17 @@ class ProductService
         $store->products()->attach($product->id, [
             'price' => $data['price'],
             'quantity' => $data['quantity'],
-            'description' => $data['description'],
+            'description_ar' => $data['description_ar'],
+            'description_en' => $data['description_en'],
             'main_image' => $imagePath,
         ]);
 
         return true;
+    }
+
+    public function searchForProduct($items, $name)
+    {
+        return $this->productRepository->findByName($items, $name);
     }
 
     public function updateQuantity($storeId, $productId, $quantitySold): bool
@@ -81,7 +87,7 @@ class ProductService
 
     public function updateProductDetails($store, $product, $data)
     {
-        $storeProduct = $this->productRepository->findStoreProductById($store->id, $product->id);
+        $storeProduct = $this->productRepository->findProductInStore($store, $product->id);
 
         if (!$storeProduct) {
             return null;
@@ -89,8 +95,9 @@ class ProductService
 
         $fieldUpdaters = [
             'price' => fn($value) => $this->modifyPriceForProduct($storeProduct, $value),
-            'quantity' => fn($value) => $this->addQuantityToStack($storeProduct, $value),
-            'description' => fn($value) => $this->modifyDescriptionForProduct($storeProduct, $value),
+            'quantity' => fn($value) => $this->addQuantityToStack($store, $product->id, $storeProduct, $value),
+            'description_en' => fn($value) => $this->modifyDescriptionForProduct($storeProduct, $value, 'en'),
+            'description_ar' => fn($value) => $this->modifyDescriptionForProduct($storeProduct, $value, 'ar'),
             'main_image' => fn($value) => $this->modifyMainImageForProduct($storeProduct, $value),
         ];
 
@@ -115,19 +122,19 @@ class ProductService
         return $this->productRepository->updateProduct($storeProduct, ['price' => $price]);
     }
 
-    public function addQuantityToStack(Store_Product $storeProduct, $quantity)
+    public function addQuantityToStack($store, $productId, $storeProduct, $quantity)
     {
-        return $this->productRepository->incrementQuantity($storeProduct, $quantity);
+        return $this->productRepository->incrementQuantity($store, $productId, $storeProduct, $quantity);
     }
 
-    public function modifyDescriptionForProduct(Store_Product $storeProduct, $description)
+    public function modifyDescriptionForProduct(Store_Product $storeProduct, $description, $lang)
     {
-        return $this->productRepository->updateProduct($storeProduct, ['description' => $description]);
+        return $this->productRepository->updateProduct($storeProduct, ['description_' . $lang => $description]);
     }
 
-    public function deleteMainImage($image)
+    public function deleteMainImage($image): void
     {
-        if ((!empty($image)) && Storage::disk('public')->exists($image)) {
+        if ((!empty($image)) && Storage::disk('public')->exists(path: $image)) {
             Storage::disk('public')->delete($image);
         }
     }

@@ -16,9 +16,9 @@ class StoreService
         $this->storeRepository = $storeRepository;
     }
 
-    public function getAllStores($items)
+    public function getAllStores($lang, $items)
     {
-        return $this->storeRepository->all_with_pagination($items);
+        return $this->storeRepository->all_with_pagination($lang, $items);
     }
 
     public function createStore(array $data): Store
@@ -27,15 +27,25 @@ class StoreService
 
         $storeData = [
             'user_id' => auth()->id(),
-            'name' => $data['name'],
+            'name_ar' => $data['name_ar'],
+            'name_en' => $data['name_en'],
             'logo' => $imagePath
         ];
 
-        if (!empty($data['location'])) {
-            $storeData['location'] = $data['location'];
+        if (!empty($data['location_ar'])) {
+            $storeData['location_ar'] = $data['location_ar'];
         }
-        if (!empty($data['description'])) {
-            $storeData['description'] = $data['description'];
+        
+        if (!empty($data['location_en'])) {
+            $storeData['location_en'] = $data['location_en'];
+        }
+
+        if (!empty($data['description_ar'])) {
+            $storeData['description_ar'] = $data['description_ar'];
+        }
+
+        if (!empty($data['description_en'])) {
+            $storeData['description_en'] = $data['description_en'];
         }
 
         return $this->storeRepository->store($storeData);

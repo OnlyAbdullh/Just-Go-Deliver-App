@@ -24,8 +24,7 @@ class ApiLocalization
             } else {
                 app()->setLocale('en');
             }
-
-            Log::info('app langauge is set');
+            
         }
         return $next($request);
     }

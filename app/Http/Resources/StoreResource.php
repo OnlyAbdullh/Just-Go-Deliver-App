@@ -28,18 +28,25 @@ class StoreResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $lang = $request->header('Accept-Language', 'en');
+
+        $name = 'name_' . $lang;
+        $description = 'description_' . $lang;
+        $location = 'location_' . $lang;
+
         $imagePath = $this->logo;
 
         $imageUrl = Storage::url($imagePath);
 
         $manager = $this->user;
+
         return collect([
             'id' => $this->id,
             'manager' => $manager->first_name . ' ' . $manager->last_name,
-            'name' => $this->name,
+            'name' => $this->$name,
             'image_url' => $this->logo ? asset($imageUrl) : null,
-            'location' => $this->location,
-            'description' => $this->description,
+            'location' => $this->$location,
+            'description' => $this->$description,
         ])->filter(function ($value) {
             return !is_null($value);
         })->toArray();

@@ -10,8 +10,16 @@ class Store extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'logo', 'user_id', 'location', 'description'];
-
+    protected $fillable = [
+        'name_ar',
+        'name_en',
+        'logo',
+        'user_id',
+        'location_ar',
+        'location_en',
+        'description_ar',
+        'description_en',
+    ];
 
     public function user(): BelongsTo
     {
@@ -21,7 +29,7 @@ class Store extends Model
     public function products()
     {
         return $this->belongsToMany(Product::class, 'store_products')
-            ->withPivot('price', 'quantity', 'description', 'sold_quantity') // Corrected 'quantity'
+            ->withPivot('price', 'quantity', 'description_ar', 'description_en', 'sold_quantity') // Corrected 'quantity'
             ->withTimestamps();
     }
 

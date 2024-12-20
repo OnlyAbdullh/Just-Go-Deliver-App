@@ -29,7 +29,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     }
     public function findByName($name)
     {
-        return Category::where('name', $name)->first();
+        return Category::where('name_en', $name)->first();
     }
 
     public function delete(Category $category)

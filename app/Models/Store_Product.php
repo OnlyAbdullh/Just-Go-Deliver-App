@@ -18,7 +18,8 @@ class Store_Product extends Model
         'product_id',
         'price',
         'quantity',
-        'description',
+        'description_en',
+        'description_ar',
         'sold_quantity'
     ];
 

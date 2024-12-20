@@ -32,7 +32,8 @@ class updateProductRequest extends FormRequest
         return [
             'price' => 'sometimes|numeric|between:0,99999.99',
             'quantity' => 'sometimes|min:0',
-            'description' => 'sometimes',
+            'description_ar' => 'sometimes|required_with:description_en',
+            'description_en' => 'sometimes|required_with:description_ar',
             'main_image' => 'sometimes|image',
         ];
     }
@@ -51,7 +52,7 @@ class updateProductRequest extends FormRequest
     protected function failedAuthorization()
     {
         throw new HttpResponseException(
-            JsonResponseHelper::errorResponse(__('messages.not_authorized_to_add_product'), [], 403)
+            JsonResponseHelper::errorResponse(__('messages.not_authorized_to_update_product'), [], 403)
         );
     }
 }

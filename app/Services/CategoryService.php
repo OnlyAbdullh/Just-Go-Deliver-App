@@ -33,11 +33,11 @@ class CategoryService
         ];
     }
 
-    public function findOrCreate($name)
+    public function findOrCreate($nameEn, $nameAr)
     {
-        $category = $this->categoryRepository->findByName($name);
+        $category = $this->categoryRepository->findByName($nameEn);
         if (!$category) {
-            $category = $this->categoryRepository->store(['name' => $name]);
+            $category = $this->categoryRepository->store(['name_ar' => $nameAr, 'name_en' => $nameEn]);
         }
         return $category;
     }

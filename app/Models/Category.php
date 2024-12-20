@@ -10,7 +10,10 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name_ar',
+        'name_en'
+    ];
 
     public function products(): HasMany
     {

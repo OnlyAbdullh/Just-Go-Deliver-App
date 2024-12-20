@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'or' => ' or ',
     'no_stores_available' => 'There are no stores available',
     'no_category_available' => 'There are no categories available',
     'stores_fetched' => 'Stores has been fetched successfully',
@@ -10,8 +11,10 @@ return [
     'store_displayed' => 'store has been displayed successfully',
     'store_deleted' => 'Store has been deleted successfully',
     'store_not_found' => 'Store not found',
+    'retrieve_all_products_success' => 'Retrieve all products successfully',
     'store_already_exists' => 'You already have a store and cannot create another one',
     'catgory_created' => 'Category has been created successfully',
+    'retrieve_product_successfully' => 'retrieve product successfully',
     'category_updated' => 'Category information has been updated successfully',
     'category_displayed' => 'Category has been displayed successfully',
     'category_deleted' => 'Category has been deleted successfully',
@@ -19,7 +22,7 @@ return [
     'product_added_success' => 'Product added to store successfully',
     'update_failed' => 'Update failed',
     'product_update_success' => 'Product details updated successfully',
-    'product_not_found_in_store' => 'The product was not found in this store.',
+    'product_not_found_in_store' => 'The product is not found in this store.',
     'product_deleted_successfully' => 'The product was successfully deleted from the store.',
     'not_authorized' => 'You are not authorized to modify informations for this store',
     'validation_error' => 'Validation Error',

@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('main_image');
             $table->decimal('price', 8, 2);
             $table->unsignedInteger('quantity');
-            $table->text('description');
+            $table->text('description_en');
+            $table->text('description_ar');
             $table->unsignedInteger('sold_quantity')->default(0);
             $table->timestamps();
         });

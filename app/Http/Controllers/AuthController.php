@@ -19,11 +19,11 @@ class AuthController extends Controller
     protected $otpService;
     protected $productRepository;
 
-    public function __construct(AuthService $userService, OTPService $otpService,ProductRepository $productRepository)
+    public function __construct(AuthService $userService, OTPService $otpService, ProductRepository $productRepository)
     {
         $this->userService = $userService;
         $this->otpService = $otpService;
-        $this->productRepository=$productRepository;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -258,8 +258,6 @@ class AuthController extends Controller
      *     )
      * )
      */
-
-
     public function refresh(Request $request)
     {
         $refreshToken = $request->header('Refresh-Token');
@@ -268,7 +266,6 @@ class AuthController extends Controller
         try {
             $tokens = $this->userService->refreshToken($refreshToken, $deviceId);
             return JsonResponseHelper::successResponse('Access token refreshed successfully.', ['access_token' => $tokens['access_token'], 'expires_in' => '1 hour']);
-
         } catch (\Exception $e) {
             return JsonResponseHelper::errorResponse($e->getMessage(), [], $e->getCode());
         }
@@ -326,7 +323,6 @@ class AuthController extends Controller
         try {
             $this->userService->logout($deviceId);
             return JsonResponseHelper::successResponse('User logged out successfully.');
-
         } catch (\Exception $e) {
             return JsonResponseHelper::errorResponse(
                 $e->getMessage(),

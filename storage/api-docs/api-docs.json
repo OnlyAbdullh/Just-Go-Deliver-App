@@ -1419,7 +1419,7 @@
                 "operationId": "addProductToStore",
                 "parameters": [
                     {
-                        "name": "storeId",
+                        "name": "store",
                         "in": "path",
                         "description": "ID of the store",
                         "required": true,
@@ -1434,37 +1434,46 @@
                         "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "name",
+                                    "name_ar",
+                                    "name_en",
+                                    "category_name_ar",
+                                    "category_name_en",
                                     "main_image",
+                                    "sub_images",
                                     "price",
                                     "quantity",
-                                    "description",
-                                    "sub_images"
+                                    "description_ar",
+                                    "description_en"
                                 ],
                                 "properties": {
-                                    "name": {
-                                        "description": "Name of the product",
+                                    "name_ar": {
+                                        "description": "Name of the product in Arabic",
+                                        "type": "string"
+                                    },
+                                    "name_en": {
+                                        "description": "Name of the product in English",
+                                        "type": "string"
+                                    },
+                                    "category_name_ar": {
+                                        "description": "Category name in Arabic",
+                                        "type": "string"
+                                    },
+                                    "category_name_en": {
+                                        "description": "Category name in English",
                                         "type": "string"
                                     },
                                     "main_image": {
-                                        "description": "Main image of the product",
+                                        "description": "Main image of the product (JPEG, PNG, JPG, BMP) with max size 2MB",
                                         "type": "string",
                                         "format": "binary"
                                     },
-                                    "sub_images[0]": {
-                                        "description": "sub image of the product",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "sub_images[1]": {
-                                        "description": "sub image of the product",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "sub_images[2]": {
-                                        "description": "sub image of the product",
-                                        "type": "string",
-                                        "format": "binary"
+                                    "sub_images": {
+                                        "description": "Sub images of the product (JPEG, PNG, JPG, BMP) with max size 2MB each",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
                                     },
                                     "price": {
                                         "description": "Price of the product",
@@ -1475,8 +1484,12 @@
                                         "description": "Available quantity of the product",
                                         "type": "integer"
                                     },
-                                    "description": {
-                                        "description": "Description of the product",
+                                    "description_ar": {
+                                        "description": "Description of the product in Arabic",
+                                        "type": "string"
+                                    },
+                                    "description_en": {
+                                        "description": "Description of the product in English",
                                         "type": "string"
                                     }
                                 },
@@ -1749,6 +1762,103 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/products/{name}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Search for products by name",
+                "description": "Retrieve a paginated list of products based on the search keyword",
+                "operationId": "154dc7d66118e0db0ee5029c87e0f3cf",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "The name of the product to search for",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "items",
+                        "in": "query",
+                        "description": "Number of items per page (default is 20)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number for pagination (default is 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of products with pagination",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Products retrieved successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "products": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ProductResource"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "currentPage": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "totalPages": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "hasMorePage": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameters"
+                    },
+                    "404": {
+                        "description": "No products found matching the search criteria"
+                    }
+                }
             }
         },
         "/users/assign-role": {
@@ -2157,28 +2267,43 @@
                             "schema": {
                                 "required": [
                                     "logo",
-                                    "location",
-                                    "description",
-                                    "name"
+                                    "name_ar",
+                                    "name_en"
                                 ],
                                 "properties": {
                                     "logo": {
                                         "description": "Image file for the store logo (jpg, png, jpeg)",
                                         "type": "string",
-                                        "format": "binary"
+                                        "format": "binary",
+                                        "example": "logo.jpg"
                                     },
-                                    "location": {
-                                        "description": "Location of the store",
+                                    "location_ar": {
+                                        "description": "Arabic location of the store (optional)",
+                                        "type": "string",
+                                        "example": "123 شارع رئيسي"
+                                    },
+                                    "location_en": {
+                                        "description": "English location of the store (optional)",
                                         "type": "string",
                                         "example": "123 Main St, City, Country"
                                     },
-                                    "description": {
-                                        "description": "Description of the store",
+                                    "description_ar": {
+                                        "description": "Arabic description of the store (optional)",
+                                        "type": "string",
+                                        "example": "وصف المتجر"
+                                    },
+                                    "name_ar": {
+                                        "description": "Arabic name of the store (required, must be unique)",
+                                        "type": "string",
+                                        "example": "متجري"
+                                    },
+                                    "description_en": {
+                                        "description": "English description of the store (optional)",
                                         "type": "string",
                                         "example": "A description of the store"
                                     },
-                                    "name": {
-                                        "description": "Name of the store",
+                                    "name_en": {
+                                        "description": "English name of the store (required, must be unique)",
                                         "type": "string",
                                         "example": "My Store"
                                     }
@@ -2201,7 +2326,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "store created successfully"
+                                            "example": "Store created successfully"
                                         },
                                         "data": {
                                             "$ref": "#/components/schemas/StoreResource"
@@ -2230,11 +2355,11 @@
                                             "type": "string",
                                             "example": "Validation Error"
                                         },
-                                        "data": {
+                                        "error": {
                                             "type": "object",
                                             "additionalProperties": {
                                                 "type": "string",
-                                                "example": "The name field is required.",
+                                                "example": "The name_ar field is required.",
                                                 "property": null
                                             }
                                         },
@@ -2406,26 +2531,47 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
+                                "required": [
+                                    "logo",
+                                    "name_ar",
+                                    "name_en"
+                                ],
                                 "properties": {
                                     "logo": {
-                                        "description": "Optional image file for the store logo (jpg, png, jpeg)",
+                                        "description": "Image file for the store logo (jpg, png, jpeg)",
                                         "type": "string",
-                                        "format": "binary"
+                                        "format": "binary",
+                                        "example": "logo.jpg"
                                     },
-                                    "location": {
-                                        "description": "Optional location of the store",
+                                    "location_ar": {
+                                        "description": "Arabic location of the store (optional)",
+                                        "type": "string",
+                                        "example": "123 شارع رئيسي"
+                                    },
+                                    "location_en": {
+                                        "description": "English location of the store (optional)",
                                         "type": "string",
                                         "example": "123 Main St, City, Country"
                                     },
-                                    "description": {
-                                        "description": "Optional description of the store",
+                                    "description_ar": {
+                                        "description": "Arabic description of the store (optional)",
+                                        "type": "string",
+                                        "example": "وصف المتجر"
+                                    },
+                                    "name_ar": {
+                                        "description": "Arabic name of the store (required, must be unique)",
+                                        "type": "string",
+                                        "example": "متجري"
+                                    },
+                                    "description_en": {
+                                        "description": "English description of the store (optional)",
                                         "type": "string",
                                         "example": "A description of the store"
                                     },
-                                    "name": {
-                                        "description": "Optional name of the store",
+                                    "name_en": {
+                                        "description": "English name of the store (required, must be unique)",
                                         "type": "string",
-                                        "example": "My Updated Store"
+                                        "example": "My Store"
                                     }
                                 },
                                 "type": "object"
@@ -2502,7 +2648,7 @@
                                             "type": "string",
                                             "example": "Validation Error"
                                         },
-                                        "data": {
+                                        "error": {
                                             "type": "object",
                                             "additionalProperties": {}
                                         },

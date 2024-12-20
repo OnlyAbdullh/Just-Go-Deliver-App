@@ -76,14 +76,23 @@ class ProductResource extends JsonResource
     {
         $mainUrl = Storage::url($this->main_image);
 
+        $lang = app()->getLocale();
+
+        $productName = 'name_' . $lang;
+        $storeName = 'name_' . $lang;
+        $description = 'description_' . $lang;
+        $categoryName = 'name_' . $lang;
+
         $data =  [
             'store_id' => $this->store_id,
-            'store_name' => $this->store->name ?? null,
+            'store_name' => $this->store->$storeName ?? null,
             'product_id' => $this->product_id,
-            'product_name' => $this->product->name ?? null,
+            'product_name' => $this->product->$productName ?? null,
+            'category_id' => $this->product->category->id,
+            'category_name' => $this->product->category->$categoryName,
             'price' => $this->price,
             'quantity' => $this->quantity,
-            'description' => $this->description,
+            'description' => $this->$description,
             'is_favorite' => $this->favorites->isNotEmpty() ? 1 : 0,
             'main_image' => asset($mainUrl),
         ];
@@ -93,7 +102,7 @@ class ProductResource extends JsonResource
                 return $this->images->map(function ($image) {
                     return [
                         'id' => $image->id,
-                        'image' => asset(Storage::url($image)),
+                        'image' => asset(Storage::url($image->image)),
                     ];
                 });
             });

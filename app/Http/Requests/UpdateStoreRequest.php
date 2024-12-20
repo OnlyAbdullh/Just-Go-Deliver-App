@@ -31,9 +31,12 @@ class UpdateStoreRequest extends FormRequest
     {
         return [
             'logo' => 'sometimes|image|mimes:jpg,png,jpeg',
-            'location' => 'sometimes|string',
-            'description' => 'sometimes',
-            'name' => 'sometimes',
+            'location_ar' => 'sometimes|string',
+            'location_en' => 'sometimes|string',
+            'description_ar' => 'sometimes',
+            'name_ar' => 'sometimes|:stores,name_ar',
+            'description_en' => 'sometimes',
+            'name_en' => 'sometimes|unique:stores,name_en'
         ];
     }
     protected function failedValidation(Validator $validator)

@@ -28,9 +28,12 @@ class CreateStoreRequest extends FormRequest
     {
         return [
             'logo' => 'required|image|mimes:jpg,png,jpeg',
-            'location' => 'sometimes|string',
-            'description' => 'sometimes',
-            'name' => 'required|unique:stores,name'
+            'location_ar' => 'sometimes|string',
+            'location_en' => 'sometimes|string',
+            'description_ar' => 'sometimes|required_with:description_en',
+            'name_ar' => 'required|unique:stores,name_ar',
+            'description_en' => 'sometimes|required_with:description_ar',
+            'name_en' => 'required|unique:stores,name_en'
         ];
     }
 
@@ -51,4 +54,5 @@ class CreateStoreRequest extends FormRequest
             JsonResponseHelper::errorResponse(__('messages.store_admin_only_create'), [], 403)
         );
     }
+    
 }

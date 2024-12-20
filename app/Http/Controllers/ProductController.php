@@ -101,13 +101,14 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
+        //$lang = $request->header('Accept-Language', 'en');
         $items = $request->query('items', 20);
 
         $products = $this->productService->getAllProduct($items);
 
         return response()->json([
             'successful' => true,
-            'message' => 'retrieve all products',
+            'message' => __('messages.retrieve_all_products_success'),
             'data' => [
                 'products' => ProductResource::collection($products)
             ],
@@ -189,7 +190,7 @@ class ProductController extends Controller
             return JsonResponseHelper::errorResponse(__('messages.product_not_found_in_store'), [], 404);
         }
 
-        return JsonResponseHelper::successResponse('retrieve product successfully',  ProductResource::make($product));
+        return JsonResponseHelper::successResponse(__('messages.retrieve_product_successfully'),  ProductResource::make($product));
     }
 
     /**
@@ -201,7 +202,7 @@ class ProductController extends Controller
      *     tags={"Products"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
-     *         name="storeId",
+     *         name="store",
      *         in="path",
      *         description="ID of the store",
      *         required=true,
@@ -212,15 +213,19 @@ class ProductController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"name", "main_image", "price", "quantity", "description","sub_images"},
-     *                 @OA\Property(property="name", type="string", description="Name of the product"),
-     *                 @OA\Property(property="main_image", type="string", format="binary", description="Main image of the product"),
-     *                 @OA\Property(property="sub_images[0]", type="string", format="binary", description="sub image of the product"),
-     *                 @OA\Property(property="sub_images[1]", type="string", format="binary", description="sub image of the product"),
-     *                 @OA\Property(property="sub_images[2]", type="string", format="binary", description="sub image of the product"),
+     *                 required={"name_ar", "name_en", "category_name_ar", "category_name_en", "main_image", "sub_images", "price", "quantity", "description_ar", "description_en"},
+     *                 @OA\Property(property="name_ar", type="string", description="Name of the product in Arabic"),
+     *                 @OA\Property(property="name_en", type="string", description="Name of the product in English"),
+     *                 @OA\Property(property="category_name_ar", type="string", description="Category name in Arabic"),
+     *                 @OA\Property(property="category_name_en", type="string", description="Category name in English"),
+     *                 @OA\Property(property="main_image", type="string", format="binary", description="Main image of the product (JPEG, PNG, JPG, BMP) with max size 2MB"),
+     *                 @OA\Property(property="sub_images", type="array", description="Sub images of the product (JPEG, PNG, JPG, BMP) with max size 2MB each",
+     *                     @OA\Items(type="string", format="binary")
+     *                 ),
      *                 @OA\Property(property="price", type="number", format="float", description="Price of the product"),
      *                 @OA\Property(property="quantity", type="integer", description="Available quantity of the product"),
-     *                 @OA\Property(property="description", type="string", description="Description of the product")
+     *                 @OA\Property(property="description_ar", type="string", description="Description of the product in Arabic"),
+     *                 @OA\Property(property="description_en", type="string", description="Description of the product in English")
      *             )
      *         )
      *     ),
@@ -230,7 +235,7 @@ class ProductController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Product added to store successfully"),
-     *             @OA\Property(property="data", type="object", example={}),
+     *             @OA\Property(property="data", type="object", example={} ),
      *             @OA\Property(property="status_code", type="integer", example=201)
      *         )
      *     ),
@@ -240,7 +245,7 @@ class ProductController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="You are not authorized to add a product to this store."),
-     *             @OA\Property(property="data", type="object", example={}),
+     *             @OA\Property(property="data", type="object", example={} ),
      *             @OA\Property(property="status_code", type="integer", example=401)
      *         )
      *     ),
@@ -250,12 +255,13 @@ class ProductController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Store not found"),
-     *             @OA\Property(property="data", type="object", example={}),
+     *             @OA\Property(property="data", type="object", example={} ),
      *             @OA\Property(property="status_code", type="integer", example=404)
      *         )
      *     )
      * )
      */
+
 
     public function store(createProductRequest $request, Store $store)
     {
@@ -378,10 +384,10 @@ class ProductController extends Controller
         $result = $this->productService->updateProductDetails($store, $product, $validated);
 
         if ($result) {
-            return JsonResponseHelper::successResponse(__('messages.product_update_success'), $result);
+            return JsonResponseHelper::successResponse(__('messages.product_update_success'));
         }
 
-        return JsonResponseHelper::errorResponse(__('messages.update_failed'), [], 404);
+        return JsonResponseHelper::errorResponse(__('messages.product_not_found_in_store'), [], 404);
     }
 
     /**
@@ -458,5 +464,114 @@ class ProductController extends Controller
             return JsonResponseHelper::successResponse(__('messages.product_deleted_successfully'));
         }
         return JsonResponseHelper::errorResponse(__('messages.product_not_found_in_store'), [], 404);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/products/{name}",
+     *     summary="Search for products by name",
+     *     description="Retrieve a paginated list of products based on the search keyword",
+     *     tags={"Products"},
+     *     @OA\Parameter(
+     *         name="name",
+     *         in="path",
+     *         description="The name of the product to search for",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="items",
+     *         in="query",
+     *         description="Number of items per page (default is 20)",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=20
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="The page number for pagination (default is 1)",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of products with pagination",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="successful",
+     *                 type="boolean",
+     *                 example=true
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Products retrieved successfully"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="products",
+     *                     type="array",
+     *                     @OA\Items(ref="#/components/schemas/ProductResource")
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="pagination",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="currentPage",
+     *                     type="integer",
+     *                     example=1
+     *                 ),
+     *                 @OA\Property(
+     *                     property="totalPages",
+     *                     type="integer",
+     *                     example=5
+     *                 ),
+     *                 @OA\Property(
+     *                     property="hasMorePage",
+     *                     type="boolean",
+     *                     example=true
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid request parameters"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No products found matching the search criteria"
+     *     )
+     * )
+     */
+
+    public function search(Request $request, $name)
+    {
+        $itemsPerPage = $request->query('items', 20);
+
+        $products = $this->productService->searchForProduct($itemsPerPage, $name);
+
+        return response()->json([
+            'successful' => true,
+            'message' => __('messages.retrieve_all_products_success'),
+            'data' => [
+                'products' => ProductResource::collection($products)
+            ],
+            'pagination' => [
+                'currentPage' => $products->currentPage(),
+                'totalPages' => $products->lastPage(),
+                'hasMorePage' => $products->hasMorePages()
+            ],
+        ]);
     }
 }
