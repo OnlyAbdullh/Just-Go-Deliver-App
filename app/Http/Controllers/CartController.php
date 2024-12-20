@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
@@ -17,6 +18,7 @@ class CartController extends Controller
     {
         $this->cartService = $cartService;
     }
+
     /**
      * @OA\Post(
      *     path="/carts/{store_id}/products/{product_id}/add",
@@ -72,10 +74,11 @@ class CartController extends Controller
         $result = $this->cartService->addProductToCart($store_id, $product_id, $request->input('quantity'));
 
         if (!$result['success']) {
-            return JsonResponseHelper::errorResponse('',$result['message']);
+            return JsonResponseHelper::errorResponse('', $result['message']);
         }
-        return JsonResponseHelper::successResponse('',$result['message']);
+        return JsonResponseHelper::successResponse('', $result['message']);
     }
+
     /**
      * @OA\Get(
      *     path="/carts/products",
@@ -129,4 +132,22 @@ class CartController extends Controller
         }
     }
 
+    public function updateQuantities(Request $request)
+    {
+        $user = Auth::user();
+        $response = $this->cartService->updateCartQuantities($user->cart->id, $request->input('data'));
+        return JsonResponseHelper::successResponse('', $response);
+    }
+
+    public function deleteAll()
+    {
+        $user = Auth::user();
+        /* if (!$user->cart) {
+            return JsonResponseHelper::successResponse('Your Cart is already empty');
+        }*/
+        DB::transaction(function () use ($user) {
+            $user->cart->cartProducts()->delete();
+        });
+        return JsonResponseHelper::successResponse('All products have been deleted from the cart.');
+    }
 }

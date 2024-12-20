@@ -10,33 +10,26 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 
-use function Laravel\Prompts\select;
-
 class ProductRepository implements ProductRepositoryInterface
 {
-    public function findOrCreate($nameAr, $nameEn, $categoryId): Product
+    public function findOrCreate($name, $categoryId)
     {
-        return Product::firstOrCreate(
-            [
-                'name_ar' => $nameAr,
-                'name_en' => $nameEn,
+        $product = Product::where('name', $name)->where('category_id', $categoryId)->first();
+
+        Log::info('in body of findOrCreate function in product repo');
+        if (!$product) {
+            return Product::create([
+                'name' => $name,
                 'category_id' => $categoryId,
-            ]
-        );
+            ]);
+        }
+
+        return $product;
     }
 
     public function get_all_product($itemsPerPage): LengthAwarePaginator
     {
-        $lang = app()->getLocale();
-
-        return Store_Product::with([
-            'store:id,name_' . $lang,
-            'product:id,name_' . $lang . ',category_id',
-            'product.category:id,name_' . $lang,
-            'favorites' => function ($query) {
-                $query->where('user_id', auth()->id());
-            }
-        ])->select(['id', 'store_id', 'product_id', 'description_' . $lang, 'price', 'quantity', 'main_image'])
+        return Store_Product::with(['store:id,name', 'product:id,name,category_id', 'product.category:id,name'])
             ->paginate($itemsPerPage);
     }
 
@@ -47,14 +40,13 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function findStoreProductById($storeId, $productId)
     {
-        $lang = app()->getLocale();
-        return Store_Product::select('store_id', 'product_id', 'price', 'quantity', 'description_' . $lang, 'main_image')
+        return Store_Product::select('id','store_id', 'product_id', 'price', 'quantity', 'description', 'main_image')
             ->where('store_id', $storeId)
             ->where('product_id', $productId)
             ->with([
-                'store:id,name_' . $lang,
-                'product:id,name_' . $lang . ',category_id',
-                'product.category:id,name_' . $lang,
+                'store:id,name',
+                'product:id,name,category_id',
+                'product.category:id,name',
                 'images' => function ($query) use ($storeId) {
                     $query->where('store_id', $storeId)
                         ->select('id', 'store_id', 'product_id', 'image');
@@ -71,35 +63,13 @@ class ProductRepository implements ProductRepositoryInterface
             ->first();
     }
 
-    public function incrementQuantity($store, $productId, $storeProduct, $quantity)
+    public function incrementQuantity(Store_Product $storeProduct, $quantity)
     {
-        $store->products()->updateExistingPivot($productId, [
-            'quantity' => $storeProduct->pivot->quantity + $quantity,
-        ]);
+        $storeProduct->increment('quantity', $quantity);
     }
 
     public function updateProduct(Store_Product $storeProduct, array $data)
     {
         $storeProduct->update($data);
-    }
-
-    public function findByName($items, $name)
-    {
-        $lang = app()->getLocale();
-
-        return Store_Product::query()
-            ->whereHas('product', function ($query) use ($name, $lang) {
-                $query->where('name_' . $lang, 'like', '%' . $name . '%');
-            })
-            ->with([
-                'store:id,name_' . $lang,
-                'product:id,name_' . $lang . ',category_id',
-                'product.category:id,name_' . $lang,
-                'favorites' => function ($query) {
-                    $query->where('user_id', auth()->id());
-                }
-            ])
-            ->select(['store_id', 'product_id', 'description_' . $lang, 'price', 'quantity', 'main_image'])
-            ->paginate($items);
     }
 }

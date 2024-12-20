@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Contracts;
 
 use App\Models\Cart;
@@ -10,5 +11,7 @@ interface CartRepositoryInterface
 
     public function getStoreProduct(int $storeId, int $productId);
 
-    public function updateOrInsertCartProduct(int $cartId, int $storeProductId, int $quantity): void;
+    public function addProductToCart(int $cartId, int $storeProductId, int $quantity): void;
+
+    public function updateCartProduct(int $cartId, int $storeProductId, int $quantity): void;
 }

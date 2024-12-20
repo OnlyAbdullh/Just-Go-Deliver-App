@@ -23,19 +23,27 @@ class CartRepository implements CartRepositoryInterface
             ->first();
     }
 
-    public function updateOrInsertCartProduct(int $cartId, int $storeProductId, int $quantity): void
+    public function addProductToCart(int $cartId, int $storeProductId, int $quantity): void
     {
-        DB::table('cart_products')->updateOrInsert(
-            [
-                'cart_id' => $cartId,
-                'store_product_id' => $storeProductId,
-            ],
-            [
+        DB::table('cart_products')->insert([
+            'cart_id' => $cartId,
+            'store_product_id' => $storeProductId,
+            'amount_needed' => $quantity,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+    public function updateCartProduct(int $cartId, int $storeProductId, int $quantity): void
+    {
+        DB::table('cart_products')
+            ->where('cart_id', $cartId)
+            ->where('store_product_id', $storeProductId)
+            ->update([
                 'amount_needed' => $quantity,
                 'updated_at' => now(),
-            ]
-        );
+            ]);
     }
+
 
 
     public function getCartProducts($cartId)
