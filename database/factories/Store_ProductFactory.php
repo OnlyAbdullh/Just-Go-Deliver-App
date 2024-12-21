@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\StoreProduct>
  */
-class StoreProductFactory extends Factory
+class Store_ProductFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -24,9 +24,11 @@ class StoreProductFactory extends Factory
         return [
             'store_id' => Store::factory(),
             'product_id' => Product::factory(),
-            'price' => $this->faker->randomFloat(2, 10, 500),
+            'main_image' => 'products/' . $this->faker->image('public/storage/products', 300, 300, null, false),
+            'price' => $this->faker->randomFloat(2, 10, 1000), // Random price between 10 and 1000
             'quantity' => $this->faker->numberBetween(1, 100),
-            'description' => $this->faker->sentence,
+            'description_en' => $this->faker->paragraph(),
+            'description_ar' => $this->faker->paragraph(),
             'sold_quantity' => $this->faker->numberBetween(0, 50),
         ];
     }

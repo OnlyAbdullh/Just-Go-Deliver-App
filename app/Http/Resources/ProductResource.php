@@ -97,6 +97,7 @@ class ProductResource extends JsonResource
             'main_image' => asset($mainUrl),
         ];
 
+        
         if ($request->routeIs('products.show')) {
             $data['sub_images'] = $this->whenLoaded('images', function () {
                 return $this->images->map(function ($image) {

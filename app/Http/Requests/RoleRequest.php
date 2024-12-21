@@ -39,7 +39,15 @@ class RoleRequest extends FormRequest
             ->toArray();
 
         throw new HttpResponseException(
-            JsonResponseHelper::errorResponse(__('messages.validation_errors'), $errors,400)
+            JsonResponseHelper::errorResponse(__('messages.validation_errors'), $errors, 400)
         );
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'role' => __('messages.role'),
+            'user_id' => __('messages.user_id'),
+        ];
     }
 }

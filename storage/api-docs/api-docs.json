@@ -6,13 +6,13 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/register": {
+        "api/register": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Initiate user registration and send OTP",
-                "operationId": "0903f2e0df1a8857bee538fc055417f0",
+                "operationId": "ab2b7d41093853c1cd75e0410e4833e8",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -127,13 +127,13 @@
                 }
             }
         },
-        "/login": {
+        "api/login": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Authenticate user and generate tokens",
-                "operationId": "2dd578ff7aba2721293dac66833b27d1",
+                "operationId": "3eb84823c3909535d41476c57a05d02f",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -312,13 +312,13 @@
                 }
             }
         },
-        "/refresh": {
+        "api/refresh": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Refresh the access token using a refresh token",
-                "operationId": "0c3ea3c61aed881016646810460499e9",
+                "operationId": "e3879b554cb74b4cf880cca4e2a50a79",
                 "parameters": [
                     {
                         "name": "Refresh-Token",
@@ -458,13 +458,13 @@
                 }
             }
         },
-        "/logout": {
+        "api/logout": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Logout a user and invalidate tokens",
-                "operationId": "68a6108af04af5e3bc1ea68a6c6f1299",
+                "operationId": "5cdfa55259dc1bf3f992242c655088ee",
                 "parameters": [
                     {
                         "name": "Device-ID",
@@ -551,6 +551,538 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Fetch paginated list of categories",
+                "description": "Retrieve a paginated list of categories with their details, including the translated name based on the selected language.",
+                "operationId": "getCategories",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "items",
+                        "in": "query",
+                        "description": "The number of items to display per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categories fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Categories fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/CategoryResource"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "currentPage": {
+                                                    "description": "The current page number",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "totalPages": {
+                                                    "description": "The total number of pages",
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "hasMorePage": {
+                                                    "description": "Indicates if there are more pages available",
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No categories available",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "There are no categories available"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Create a new category",
+                "description": "Create a new category with translated names (Arabic and English).",
+                "operationId": "storeCategory",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Category data to be created",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name_ar",
+                                    "name_en"
+                                ],
+                                "properties": {
+                                    "name_ar": {
+                                        "description": "The Arabic name of the category",
+                                        "type": "string",
+                                        "example": "اسم الفئة"
+                                    },
+                                    "name_en": {
+                                        "description": "The English name of the category",
+                                        "type": "string",
+                                        "example": "Category Name"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Category created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category has been created successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "The ID of the created category",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name_ar": {
+                                                    "description": "The Arabic name of the category",
+                                                    "type": "string",
+                                                    "example": "اسم الفئة"
+                                                },
+                                                "name_en": {
+                                                    "description": "The English name of the category",
+                                                    "type": "string",
+                                                    "example": "Category Name"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 201
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "name_ar": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name_ar field is required."
+                                                    }
+                                                },
+                                                "name_en": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name_en field is required."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categories/{categoryId}": {
+            "put": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Update an existing category",
+                "description": "Update an existing category's translated names (Arabic and English) by its ID.",
+                "operationId": "updateCategory",
+                "parameters": [
+                    {
+                        "name": "categoryId",
+                        "in": "path",
+                        "description": "The ID of the category to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Category data to be updated",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name_ar",
+                                    "name_en"
+                                ],
+                                "properties": {
+                                    "name_ar": {
+                                        "description": "The Arabic name of the category",
+                                        "type": "string",
+                                        "example": "اسم الفئة"
+                                    },
+                                    "name_en": {
+                                        "description": "The English name of the category",
+                                        "type": "string",
+                                        "example": "Category Name"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category has been updated successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "The ID of the updated category",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name_ar": {
+                                                    "description": "The updated Arabic name of the category",
+                                                    "type": "string",
+                                                    "example": "اسم الفئة الجديدة"
+                                                },
+                                                "name_en": {
+                                                    "description": "The updated English name of the category",
+                                                    "type": "string",
+                                                    "example": "Updated Category Name"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category not found"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "name_ar": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name_ar field is required."
+                                                    }
+                                                },
+                                                "name_en": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name_en field is required."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Delete a category",
+                "description": "Delete a category by its ID.",
+                "operationId": "deleteCategory",
+                "parameters": [
+                    {
+                        "name": "categoryId",
+                        "in": "path",
+                        "description": "The ID of the category to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category has been deleted successfully"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category not found"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api//favorites/{store_id}/products/{product_id}": {
@@ -914,6 +1446,465 @@
                 }
             }
         },
+        "/images/stores/{store}/products/{product}": {
+            "post": {
+                "tags": [
+                    "Images"
+                ],
+                "summary": "Add an image to a product in a store",
+                "description": "This endpoint allows a store admin to upload an image for a specific product in a store.",
+                "operationId": "addImageToProduct",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "store",
+                        "in": "path",
+                        "description": "ID of the store",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "ID of the product",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "images"
+                                ],
+                                "properties": {
+                                    "images[0]": {
+                                        "description": "Image file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "images[1]": {
+                                        "description": "Image file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Image added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Image added successfully"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": "201"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to add image",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are not authorized to add image"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": "403"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "The image field is required."
+                                            }
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": "400"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found in store",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Store not found or Product not found in store"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": "404"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/images/{image}": {
+            "post": {
+                "tags": [
+                    "Images"
+                ],
+                "summary": "Update an image",
+                "description": "This endpoint allows a store admin to update an existing image.",
+                "operationId": "updateImage",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "image",
+                        "in": "path",
+                        "description": "ID of the image to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "image"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "description": "New image file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Image updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Image updated successfully"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to update image",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are not authorized to update image"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 403
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "The image field is required."
+                                            }
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Image not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Image not found"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Images"
+                ],
+                "summary": "Delete an image",
+                "description": "This endpoint allows a store admin to delete an image if authorized.",
+                "operationId": "deleteImage",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "image",
+                        "in": "path",
+                        "description": "ID of the image to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Image deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Image deleted successfully"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to delete image",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are not authorized to delete image"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 403
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Image not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Image not found"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/resend-otp": {
             "post": {
                 "tags": [
@@ -1094,6 +2085,20 @@
                 "operationId": "1bfaa78d1c2c3848ab8165c5dadcad3e",
                 "parameters": [
                     {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
                         "name": "items",
                         "in": "query",
                         "description": "Number of items per page",
@@ -1172,6 +2177,20 @@
                 "description": "Returns product details, including store information and sub_images (additional images).",
                 "operationId": "getStoreProduct",
                 "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
                     {
                         "name": "store_id",
                         "in": "path",
@@ -1308,6 +2327,20 @@
                 "operationId": "08544cf0dbd8cd2b11a3efbd9d7582ec",
                 "parameters": [
                     {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
                         "name": "store",
                         "in": "path",
                         "description": "ID of the store",
@@ -1418,6 +2451,20 @@
                 "description": "Adds a new product to a store by the store's owner",
                 "operationId": "addProductToStore",
                 "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
                     {
                         "name": "store",
                         "in": "path",
@@ -1601,6 +2648,20 @@
                 "operationId": "93a13042268cd55408cb79004042c1c0",
                 "parameters": [
                     {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
                         "name": "store",
                         "in": "path",
                         "description": "ID of the store",
@@ -1774,6 +2835,20 @@
                 "operationId": "154dc7d66118e0db0ee5029c87e0f3cf",
                 "parameters": [
                     {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
                         "name": "name",
                         "in": "path",
                         "description": "The name of the product to search for",
@@ -1869,6 +2944,22 @@
                 "summary": "Assign a role to a user",
                 "description": "Assign a specific role to a user. Only accessible by managers.",
                 "operationId": "224ac2c928d9916411233a3dbbe4b630",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "description": "Role assignment data",
                     "required": true,
@@ -2011,6 +3102,22 @@
                 "summary": "Revoke a role from a user",
                 "description": "Revoke a specific role from a user. Only accessible by managers.",
                 "operationId": "d86d1509bf17580fbef6f08d32994cb5",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "description": "Role revocation data",
                     "required": true,
@@ -2151,6 +3258,20 @@
                 "operationId": "getStores",
                 "parameters": [
                     {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
                         "name": "page",
                         "in": "query",
                         "description": "The page number to fetch",
@@ -2260,6 +3381,22 @@
                 "summary": "Create a new store",
                 "description": "Creates a new store with the given details. The user must provide valid data, including a logo image, via multipart/form-data.",
                 "operationId": "5562ee6fb25788924172167093719fe9",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2439,6 +3576,20 @@
                 "operationId": "a9949c633f955f3c2892647c05d80ac5",
                 "parameters": [
                     {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
                         "name": "store",
                         "in": "path",
                         "description": "ID of the store to retrieve",
@@ -2515,6 +3666,20 @@
                 "description": "Update details of an existing store. Only authorized users can update their own stores. The request supports partial updates, including an optional logo file upload.",
                 "operationId": "7dac60706528cc7c2bb0a5fe224f2aed",
                 "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
                     {
                         "name": "store",
                         "in": "path",
@@ -2677,6 +3842,20 @@
                 "description": "Delete a store by its ID.",
                 "operationId": "d85a9563ceec3d622401123020ca99f6",
                 "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
                     {
                         "name": "store",
                         "in": "path",
@@ -3089,6 +4268,23 @@
     },
     "components": {
         "schemas": {
+            "CategoryResource": {
+                "title": "Category Resource",
+                "description": "Represents a category resource with translated name based on the selected language.",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the category",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "The translated name of the category based on the Accept-Language header",
+                        "type": "string",
+                        "example": "Category Name in Selected Language"
+                    }
+                },
+                "type": "object"
+            },
             "ProductResource": {
                 "properties": {
                     "id": {
@@ -3180,8 +4376,16 @@
             "description": "Authentication"
         },
         {
+            "name": "Categories",
+            "description": "Categories"
+        },
+        {
             "name": "Favorites",
             "description": "Favorites"
+        },
+        {
+            "name": "Images",
+            "description": "Images"
         },
         {
             "name": "OTP",

@@ -30,6 +30,13 @@ class ProductController extends Controller
      *     summary="Retrieve all products",
      *     description="Returns a paginated list of products with their store and category information.",
      *     tags={"Products"},
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\Parameter(
      *         name="items",
      *         in="query",
@@ -117,6 +124,7 @@ class ProductController extends Controller
                 'totalPages' => $products->lastPage(),
                 'hasMorePage' => $products->hasMorePages()
             ],
+            'status_code' => 200,
         ]);
     }
 
@@ -127,6 +135,13 @@ class ProductController extends Controller
      *     description="Returns product details, including store information and sub_images (additional images).",
      *     operationId="getStoreProduct",
      *     tags={"Products"},
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\Parameter(
      *         name="store_id",
      *         in="path",
@@ -201,6 +216,13 @@ class ProductController extends Controller
      *     operationId="addProductToStore",
      *     tags={"Products"},
      *     security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\Parameter(
      *         name="store",
      *         in="path",
@@ -280,6 +302,13 @@ class ProductController extends Controller
      *     description="Update product details for a store. Only accessible by users with the store_admin role who own the store.",
      *     tags={"Products"},
      *     security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\Parameter(
      *         name="store",
      *         in="path",
@@ -398,7 +427,13 @@ class ProductController extends Controller
      *     tags={"Products"},
      *     security={{"bearerAuth": {}}},
      *     security={{"bearerAuth":{}}},
-     *
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\Parameter(
      *         name="store",
      *         in="path",
@@ -472,6 +507,13 @@ class ProductController extends Controller
      *     summary="Search for products by name",
      *     description="Retrieve a paginated list of products based on the search keyword",
      *     tags={"Products"},
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\Parameter(
      *         name="name",
      *         in="path",
@@ -572,6 +614,7 @@ class ProductController extends Controller
                 'totalPages' => $products->lastPage(),
                 'hasMorePage' => $products->hasMorePages()
             ],
+            'status_code' => 200,
         ]);
     }
 }

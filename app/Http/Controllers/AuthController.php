@@ -28,7 +28,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/register",
+     *     path="api/register",
      *     summary="Initiate user registration and send OTP",
      *     tags={"Authentication"},
      *     @OA\RequestBody(
@@ -101,7 +101,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/login",
+     *     path="api/login",
      *     summary="Authenticate user and generate tokens",
      *     tags={"Authentication"},
      *     @OA\RequestBody(
@@ -195,7 +195,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/refresh",
+     *     path="api/refresh",
      *     summary="Refresh the access token using a refresh token",
      *     tags={"Authentication"},
      *     @OA\RequestBody(
@@ -274,7 +274,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/logout",
+     *     path="api/logout",
      *     summary="Logout a user and invalidate tokens",
      *     tags={"Authentication"},
      *     @OA\Parameter(

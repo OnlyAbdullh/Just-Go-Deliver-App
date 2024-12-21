@@ -15,7 +15,7 @@ class CategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->hasRole('manager');
     }
 
     /**
@@ -26,7 +26,17 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|unique:categories,name'
+            'name_ar' => 'required|unique:categories,name_ar',
+            'name_en' => 'required|unique:categories,name_en'
+
+        ];
+    }
+    
+    public function attributes(): array
+    {
+        return [
+            'name_ar' => __('messages.name_ar'),
+            'name_en' => __('messages.name_en')
         ];
     }
 
@@ -38,6 +48,12 @@ class CategoryRequest extends FormRequest
 
         throw new HttpResponseException(
             JsonResponseHelper::errorResponse(__('messages.validation_error'), $errors)
+        );
+    }
+    protected function failedAuthorization()
+    {
+        throw new HttpResponseException(
+            JsonResponseHelper::errorResponse(__('messages.category_unauthorized_action'), [], 403)
         );
     }
 }

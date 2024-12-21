@@ -19,18 +19,7 @@ class CategoryService
 
     public function getAllCategories(int $items)
     {
-        $categories = $this->categoryRepository->all_with_pagination($items);
-
-        if (!$categories) {
-            return null;
-        }
-
-        $hasMorePages = $categories->hasMorePages();
-
-        return [
-            'categories' => CategoryResource::collection($categories),
-            'hasMorePages' => $hasMorePages,
-        ];
+        return  $this->categoryRepository->all_with_pagination($items);
     }
 
     public function findOrCreate($nameEn, $nameAr)

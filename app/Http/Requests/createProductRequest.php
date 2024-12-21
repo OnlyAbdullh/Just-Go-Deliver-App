@@ -48,6 +48,24 @@ class createProductRequest extends FormRequest
         ];
     }
 
+    public function attributes(): array
+    {
+        return [
+            'name_ar' => __('messages.name_ar'),
+            'name_en' => __('messages.name_en'),
+            'category_name_ar' => __('messages.category_name_ar'),
+            'category_name_en' => __('messages.category_name_en'),
+            'main_image' => __('messages.main_image'),
+            'sub_images' => __('messages.sub_images'),
+            'sub_images.*' => __('messages.sub_images_item'),
+            'price' => __('messages.price'),
+            'quantity' => __('messages.quantity'),
+            'description_ar' => __('messages.description_ar'),
+            'description_en' => __('messages.description_en'),
+        ];
+    }
+
+
     protected function failedValidation(Validator $validator)
     {
         $errors = collect($validator->errors()->toArray())

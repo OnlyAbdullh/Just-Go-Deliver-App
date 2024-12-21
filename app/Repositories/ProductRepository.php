@@ -86,9 +86,11 @@ class ProductRepository implements ProductRepositoryInterface
     public function findByName($items, $name)
     {
         $lang = app()->getLocale();
-        $productsId =  Product::where('name_' . $lang, 'like', '%' . $name . '%')->pluck('id');
 
-        return Store_Product::whereIn('product_id', $productsId)
+        return Store_Product::query()
+            ->whereHas('product', function ($query) use ($name, $lang) {
+                $query->where('name_' . $lang, 'like', '%' . $name . '%');
+            })
             ->with([
                 'store:id,name_' . $lang,
                 'product:id,name_' . $lang . ',category_id',
@@ -96,7 +98,8 @@ class ProductRepository implements ProductRepositoryInterface
                 'favorites' => function ($query) {
                     $query->where('user_id', auth()->id());
                 }
-            ])->select(['store_id', 'product_id', 'description_' . $lang, 'price', 'quantity', 'main_image'])
+            ])
+            ->select(['store_id', 'product_id', 'description_' . $lang, 'price', 'quantity', 'main_image'])
             ->paginate($items);
     }
 }

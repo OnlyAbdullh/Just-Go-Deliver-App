@@ -29,6 +29,13 @@ class RoleController extends Controller
      *     security={
      *         {"bearerAuth": {}}
      *     },
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         description="Role assignment data",
@@ -107,6 +114,13 @@ class RoleController extends Controller
      *     security={
      *         {"bearerAuth": {}}
      *     },
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         description="Role revocation data",

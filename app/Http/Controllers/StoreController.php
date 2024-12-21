@@ -38,6 +38,13 @@ class StoreController extends Controller
      *     description="Retrieve a paginated list of stores with their details, including manager, name, image URL, location, and description.",
      *     operationId="getStores",
      *     tags={"Stores"},
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -122,6 +129,7 @@ class StoreController extends Controller
                 'totalPages' => $stores->lastPage(),
                 'hasMorePage' => $stores->hasMorePages()
             ],
+            'statuc_code' => 200,
         ]);
     }
 
@@ -133,6 +141,13 @@ class StoreController extends Controller
      *     description="Creates a new store with the given details. The user must provide valid data, including a logo image, via multipart/form-data.",
      *     tags={"Stores"},
      *     security={{"bearerAuth": {}}}, 
+     *      @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
@@ -249,6 +264,13 @@ class StoreController extends Controller
      *     description="Update details of an existing store. Only authorized users can update their own stores. The request supports partial updates, including an optional logo file upload.",
      *     tags={"Stores"},
      *     security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ), 
      *     @OA\Parameter(
      *         name="store",
      *         in="path",
@@ -359,7 +381,13 @@ class StoreController extends Controller
      *     summary="Get a specific store",
      *     description="Retrieve details of a specific store by its ID.",
      *     tags={"Stores"},
-     * 
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\Parameter(
      *         name="store",
      *         in="path",
@@ -402,6 +430,13 @@ class StoreController extends Controller
      *     description="Delete a store by its ID.",
      *     tags={"Stores"},
      *     security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
      *     @OA\Parameter(
      *         name="store",
      *         in="path",

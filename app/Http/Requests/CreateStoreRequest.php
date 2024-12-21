@@ -54,5 +54,17 @@ class CreateStoreRequest extends FormRequest
             JsonResponseHelper::errorResponse(__('messages.store_admin_only_create'), [], 403)
         );
     }
-    
+
+    public function attributes(): array
+    {
+        return [
+            'logo' => __('messages.logo'),
+            'location_ar' => __('messages.location_ar'),
+            'location_en' => __('messages.location_en'),
+            'description_ar' => __('messages.description_ar'),
+            'name_ar' => __('messages.name_ar'),
+            'description_en' => __('messages.description_en'),
+            'name_en' => __('messages.name_en'),
+        ];
+    }
 }

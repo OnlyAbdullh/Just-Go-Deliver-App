@@ -7,21 +7,17 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Helpers\JsonResponseHelper;
-use App\Models\Store;
-use Illuminate\Http\JsonResponse;
 
-class UpdateImageRequest extends FormRequest
+class CreateImageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        $image = $this->route('image');
+        $store = $this->route('store');
 
-        $ownerStore = $image->store->user_id;
-
-        return auth()->user()->hasRole('store_admin') && $ownerStore === auth()->id();
+        return auth()->user()->hasRole('store_admin') && $store->user_id === auth()->id();
     }
 
     /**
@@ -32,16 +28,19 @@ class UpdateImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048'
+            'images' => 'required|array', // Ensure it's an array for multiple images
+            'images.*' => 'image|mimes:jpeg,png,jpg,bmp|max:2048'
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'image' => __('messages.image'),
+            'images' => __('messages.images'),
+            'images.*' => __('messages.images.*'),
         ];
     }
+
     protected function failedValidation(Validator $validator)
     {
         $errors = collect($validator->errors()->toArray())
@@ -56,7 +55,7 @@ class UpdateImageRequest extends FormRequest
     protected function failedAuthorization()
     {
         throw new HttpResponseException(
-            JsonResponseHelper::errorResponse(__('messages.not_authorized_to_update_image'), [], 403)
+            JsonResponseHelper::errorResponse(__('messages.not_authorized_to_add_image'), [], 403)
         );
     }
 }

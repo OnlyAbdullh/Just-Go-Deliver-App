@@ -39,8 +39,6 @@ class ProductService
 
     public function addProductToStore($data, Store $store): bool|null
     {
-        $imagePath = $this->productRepository->uploadImage($data['main_image'], 'products');
-
         $category = $this->categoryService->findOrCreate($data['category_name_en'], $data['category_name_ar']);
 
         $product = $this->productRepository->findOrCreate($data['name_ar'], $data['name_en'], $category->id);
@@ -51,6 +49,8 @@ class ProductService
             $this->productRepository->incrementQuantity($store, $product->id, $storeProduct, $data['quantity']);
             return true;
         }
+
+        $imagePath = $this->productRepository->uploadImage($data['main_image'], 'products');
 
         $this->imageRepository->store($store->id, $product->id, $data['sub_images']);
 

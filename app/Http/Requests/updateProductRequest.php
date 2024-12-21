@@ -37,6 +37,17 @@ class updateProductRequest extends FormRequest
             'main_image' => 'sometimes|image',
         ];
     }
+    public function attributes(): array
+    {
+        return [
+            'main_image' => __('messages.main_image'),
+            'price' => __('messages.price'),
+            'quantity' => __('messages.quantity'),
+            'description_ar' => __('messages.description_ar'),
+            'description_en' => __('messages.description_en'),
+        ];
+    }
+
 
     protected function failedValidation(Validator $validator)
     {
@@ -45,7 +56,7 @@ class updateProductRequest extends FormRequest
             ->toArray();
 
         throw new HttpResponseException(
-            JsonResponseHelper::errorResponse(__('messages.validation_error'), $errors,400)
+            JsonResponseHelper::errorResponse(__('messages.validation_error'), $errors, 400)
         );
     }
 
