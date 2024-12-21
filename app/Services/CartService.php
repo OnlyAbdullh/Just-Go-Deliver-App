@@ -55,6 +55,7 @@ class CartService
     public function updateCartQuantities(int $cartId, array $items): array
     {
         $responses = [];
+        $updates = [];
 
         foreach ($items as $item) {
             $storeId = $item['store_id'];
@@ -64,39 +65,40 @@ class CartService
             $storeProduct = $this->productRepository->findStoreProductById($storeId, $productId);
 
             $availableStock = $storeProduct->quantity;
-
-            if ($availableStock == 0) {
-                $responses[] = [
-                    'message' => "There is no product available for now for Product ID {$productId}.",
-                    'product_id' => $productId,
-                    'store_id' => $storeId,
-                    'cart_amount' => $requestedQuantity,
-                ];
-                continue;
+            $quantityToUpdate = min($requestedQuantity, $availableStock);
+            if ($quantityToUpdate == 0) {
+                $quantityToUpdate = $requestedQuantity;
             }
-
-            if ($requestedQuantity > $availableStock) {
-                $this->cartRepository->updateCartProduct($cartId, $storeProduct->id, $availableStock);
-                $responses[] = [
-                    'message' => "Only {$availableStock} of Product ID {$productId} is available. Updated the quantity to {$availableStock}.",
-                    'product_id' => $productId,
-                    'store_id' => $storeId,
-                    'cart_amount' => $availableStock,
-                ];
-                continue;
-            }
-
-            $this->cartRepository->updateCartProduct($cartId, $storeProduct->id, $requestedQuantity);
-            $responses[] = [
-                'message' => "Updated Product ID {$productId} to quantity {$requestedQuantity}.",
-                'product_id' => $productId,
-                'store_id' => $storeId,
-                'cart_amount' => $requestedQuantity,
+            $updates[] = [
+                'cart_id' => $cartId,
+                'store_product_id' => $storeProduct->id,
+                'amount_needed' => $quantityToUpdate,
             ];
+
+            $responses[] = $this->generateResponse($productId, $storeId, $requestedQuantity, $availableStock, $quantityToUpdate);
         }
+
+        $this->cartRepository->UpdateCartProducts($updates);
 
         return $responses;
     }
+
+    private function generateResponse(int $productId, int $storeId, int $requestedQuantity, int $availableStock, int $quantityToUpdate): array
+    {
+        $message = match (true) {
+            $availableStock == 0 => "There is no product available for now for Product ID {$productId}.",
+            $requestedQuantity > $availableStock => "Only {$availableStock} of Product ID {$productId} is available. Updated the quantity to {$quantityToUpdate}.",
+            default => "Updated Product ID {$productId} to quantity {$quantityToUpdate}.",
+        };
+
+        return [
+            'message' => $message,
+            'product_id' => $productId,
+            'store_id' => $storeId,
+            'cart_amount' => $quantityToUpdate,
+        ];
+    }
+
 
     public function DeleteCartProducts(int $cartId, array $items): int
     {
@@ -107,6 +109,6 @@ class CartService
             $storeProduct = $this->productRepository->findStoreProductById($storeId, $productId);
             $ids[] = $storeProduct->id;
         }
-        return $this->cartRepository->deleteCartProducts($cartId,$ids);
+        return $this->cartRepository->deleteCartProducts($cartId, $ids);
     }
 }

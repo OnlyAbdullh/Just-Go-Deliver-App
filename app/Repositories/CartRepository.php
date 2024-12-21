@@ -35,16 +35,19 @@ class CartRepository implements CartRepositoryInterface
         ]);
     }
 
-    public function updateCartProduct(int $cartId, int $storeProductId, int $quantity): void
+    public function  UpdateCartProducts(array $updates): void
     {
-        DB::table('cart_products')
-            ->where('cart_id', $cartId)
-            ->where('store_product_id', $storeProductId)
-            ->update([
-                'amount_needed' => $quantity,
-                'updated_at' => now(),
-            ]);
+        foreach ($updates as $update) {
+            DB::table('cart_products')
+                ->where('cart_id', $update['cart_id'])
+                ->where('store_product_id', $update['store_product_id'])
+                ->update([
+                    'amount_needed' => $update['amount_needed'],
+                    'updated_at' => now(),
+                ]);
+        }
     }
+
 
 
     public function getCartProducts($cartId)
