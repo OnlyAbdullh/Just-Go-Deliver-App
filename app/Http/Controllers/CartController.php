@@ -131,6 +131,92 @@ class CartController extends Controller
             return JsonResponseHelper::successResponse('', $result['data']);
         }
     }
+    /**
+     * @OA\Put(
+     *     path="/api/cart/update-quantities",
+     *     summary="Update quantities of products in the cart",
+     *     description="Update the quantities of items in the user's cart based on stock availability. Updates only items with valid quantities.",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="Accept-Language",
+     *         in="header",
+     *         description="The language to return results in (ar for Arabic, en for English)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             properties={
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="array",
+     *                     description="Array of items to update",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         properties={
+     *                             @OA\Property(property="product_id", type="integer", description="ID of the product", example=101),
+     *                             @OA\Property(property="store_id", type="integer", description="ID of the store", example=1),
+     *                             @OA\Property(property="cart_amount", type="integer", description="Updated cart quantity", example=5)
+     *                         }
+     *                     )
+     *                 )
+     *             }
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success responses with multiple possibilities",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 oneOf={
+     *                     @OA\Schema(
+     *                         type="object",
+     *                         properties={
+     *                             @OA\Property(property="message", type="string", example="Updated Product ID 101 to quantity 5."),
+     *                             @OA\Property(property="store_id", type="integer", description="ID of the store", example=1),
+     *                             @OA\Property(property="product_id", type="integer", example=101),
+     *                             @OA\Property(property="cart_amount", type="integer", example=5)
+     *                         }
+     *                     ),
+     *                     @OA\Schema(
+     *                         type="object",
+     *                         properties={
+     *                             @OA\Property(property="message", type="string", example="Only 3 of Product ID 101 is available. Updated the quantity to 3."),
+     *                             @OA\Property(property="store_id", type="integer", description="ID of the store", example=1),
+     *                             @OA\Property(property="product_id", type="integer", example=101),
+     *                             @OA\Property(property="cart_amount", type="integer", example=3)
+     *                         }
+     *                     ),
+     *                     @OA\Schema(
+     *                         type="object",
+     *                         properties={
+     *                             @OA\Property(property="message", type="string", example="There is no product available for now for Product ID 3."),
+     *                             @OA\Property(property="store_id", type="integer", description="ID of the store", example=1),
+     *                             @OA\Property(property="product_id", type="integer", example=3),
+     *                             @OA\Property(property="cart_amount", type="integer", example=0)
+     *                         }
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid request",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             properties={
+     *                 @OA\Property(property="message", type="string", description="Error message describing the issue", example="Invalid input data. Please ensure all items have valid store_id, product_id, and quantity.")
+     *             }
+     *         )
+     *     )
+     * )
+     */
+
 
     public function updateQuantities(Request $request)
     {

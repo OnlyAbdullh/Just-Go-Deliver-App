@@ -8,6 +8,6 @@ Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
     Route::post('carts/{store}/products/{product}/add', [CartController::class, 'add']);
     Route::get('carts/products', [CartController::class, 'getCartProducts']);
     Route::delete('carts/deleteAll', [CartController::class, 'deleteAll']);
-    Route::put('carts/update', [CartController::class, 'updateQuantities']);
+    Route::put('/api/cart/update-quantities', [CartController::class, 'updateQuantities']);
     Route::delete('carts/deleteProducts', [CartController::class, 'DeleteProducts']);
 });
