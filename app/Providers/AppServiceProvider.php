@@ -29,18 +29,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-
-
-        // Bind the AuthRepositoryInterface to AuthRepository
-        $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
-        $this->app->bind(StoreRepositoryInterface::class, StoreRepository::class);
-        $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
-        $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
-        $this->app->bind(StoreRepositoryInterface::class, StoreRepository::class);
-        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
-        $this->app->bind(FavoriteRepositoryInterface::class, FavoriteRepository::class);
-        $this->app->bind(ImageRepositoryInterface::class, ImageRepository::class);
-        $this->app->bind(CartRepositoryInterface::class, CartRepository::class);
         if ($this->app->environment('local')) {
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);

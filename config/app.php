@@ -171,6 +171,7 @@ return [
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Ichtrojan\Otp\OtpServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
 
     ])->toArray(),
 
