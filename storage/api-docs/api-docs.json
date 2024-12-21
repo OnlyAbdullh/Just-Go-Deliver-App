@@ -553,14 +553,14 @@
                 }
             }
         },
-        "/carts/{store_id}/products/{product_id}/add": {
+        "/api/carts/{store_id}/products/{product_id}/add": {
             "post": {
                 "tags": [
                     "Cart"
                 ],
                 "summary": "Add a product to the cart",
                 "description": "Adds a product to the authenticated user's cart. Validates stock availability before adding.",
-                "operationId": "bf1a49b0ec799010c6dc36446fe6888e",
+                "operationId": "bb4c9692fce643fa6012ec0565d88898",
                 "parameters": [
                     {
                         "name": "store_id",
@@ -647,14 +647,14 @@
                 ]
             }
         },
-        "/carts/products": {
+        "/api/carts/products": {
             "get": {
                 "tags": [
                     "Cart"
                 ],
                 "summary": "Retrieve all products in the user's cart",
                 "description": "Fetch all products in the authenticated user's cart, including store and product details. Returns an empty array if the cart is empty.",
-                "operationId": "e5024a581da0815f0c31867c2130483a",
+                "operationId": "9b31ba90980df1c122f96a2fb8cb21a1",
                 "responses": {
                     "200": {
                         "description": "Successful retrieval of cart products",
@@ -749,14 +749,14 @@
                 ]
             }
         },
-        "/api/cart/update-quantities": {
+        "/api/carts/update-quantities": {
             "put": {
                 "tags": [
                     "Cart"
                 ],
                 "summary": "Update quantities of products in the cart",
                 "description": "Update the quantities of items in the user's cart based on stock availability. Updates only items with valid quantities.",
-                "operationId": "3ea66ff15ce339a1e001483424f78899",
+                "operationId": "b90aaaa46685f81e282323be7c2bb32b",
                 "parameters": [
                     {
                         "name": "Accept-Language",
@@ -900,6 +900,171 @@
                                             "description": "Error message describing the issue",
                                             "type": "string",
                                             "example": "Invalid input data. Please ensure all items have valid store_id, product_id, and quantity."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/carts/delete-products": {
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Delete specific products from the cart",
+                "description": "Deletes specific products from the user's cart based on the provided product and store IDs.",
+                "operationId": "62d938f42c9d344123c87403fe6f9e86",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "data": {
+                                        "description": "Array of items to delete",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "product_id": {
+                                                    "description": "ID of the product to delete",
+                                                    "type": "integer",
+                                                    "example": 101
+                                                },
+                                                "store_id": {
+                                                    "description": "ID of the store where the product is located",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Products deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Success message",
+                                            "type": "string",
+                                            "example": "3 products were Deleted from the Cart successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Error message describing the issue",
+                                            "type": "string",
+                                            "example": "Invalid data provided. Please check the input and try again."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/carts/delete-all": {
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Delete all products from the cart",
+                "description": "Deletes all products from the user's cart.",
+                "operationId": "12312efcb7f8a48009618712fe942f99",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All products deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Success message",
+                                            "type": "string",
+                                            "example": "All products have been deleted from the cart."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Error message describing the issue",
+                                            "type": "string",
+                                            "example": "Failed to delete products. Please try again."
                                         }
                                     },
                                     "type": "object"

@@ -21,7 +21,7 @@ class CartController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/carts/{store_id}/products/{product_id}/add",
+     *     path="/api/carts/{store_id}/products/{product_id}/add",
      *     summary="Add a product to the cart",
      *     tags={"Cart"},
      *     description="Adds a product to the authenticated user's cart. Validates stock availability before adding.",
@@ -81,7 +81,7 @@ class CartController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/carts/products",
+     *     path="/api/carts/products",
      *     summary="Retrieve all products in the user's cart",
      *     tags={"Cart"},
      *     security={{"bearerAuth": {}}},
@@ -133,7 +133,7 @@ class CartController extends Controller
     }
     /**
      * @OA\Put(
-     *     path="/api/cart/update-quantities",
+     *     path="/api/carts/update-quantities",
      *     summary="Update quantities of products in the cart",
      *     description="Update the quantities of items in the user's cart based on stock availability. Updates only items with valid quantities.",
      *     tags={"Cart"},
@@ -224,6 +224,62 @@ class CartController extends Controller
         $response = $this->cartService->updateCartQuantities($user->cart->id, $request->input('data'));
         return JsonResponseHelper::successResponse('', $response);
     }
+    /**
+     * @OA\Delete (
+     *     path="/api/carts/delete-products",
+     *     summary="Delete specific products from the cart",
+     *     description="Deletes specific products from the user's cart based on the provided product and store IDs.",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth": {}}},
+     *          @OA\Parameter(
+     *          name="Accept-Language",
+     *          in="header",
+     *          description="The language to return results in (ar for Arabic, en for English)",
+     *          required=false,
+     *          @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *      ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             properties={
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="array",
+     *                     description="Array of items to delete",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         properties={
+     *                             @OA\Property(property="product_id", type="integer", description="ID of the product to delete", example=101),
+     *                             @OA\Property(property="store_id", type="integer", description="ID of the store where the product is located", example=1)
+     *                         }
+     *                     )
+     *                 )
+     *             }
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Products deleted successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             properties={
+     *                 @OA\Property(property="message", type="string", description="Success message", example="3 products were Deleted from the Cart successfully")
+     *             }
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid request",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             properties={
+     *                 @OA\Property(property="message", type="string", description="Error message describing the issue", example="Invalid data provided. Please check the input and try again.")
+     *             }
+     *         )
+     *     ),
+     * )
+     */
 
     public function DeleteProducts(Request $request)
     {
@@ -231,6 +287,42 @@ class CartController extends Controller
         $RowsDeleted = $this->cartService->DeleteCartProducts($user->cart->id, $request->input('data'));
         return JsonResponseHelper::successResponse($RowsDeleted . ' products were Deleted from the Cart successfully');
     }
+    /**
+     * @OA\Delete(
+     *     path="/api/carts/delete-all",
+     *     summary="Delete all products from the cart",
+     *     description="Deletes all products from the user's cart.",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth": {}}},
+     *          @OA\Parameter(
+     *          name="Accept-Language",
+     *          in="header",
+     *          description="The language to return results in (ar for Arabic, en for English)",
+     *          required=false,
+     *          @OA\Schema(type="string", enum={"ar", "en"}, example="en")
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="All products deleted successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             properties={
+     *                 @OA\Property(property="message", type="string", description="Success message", example="All products have been deleted from the cart.")
+     *             }
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad Request",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             properties={
+     *                 @OA\Property(property="message", type="string", description="Error message describing the issue", example="Failed to delete products. Please try again.")
+     *             }
+     *         )
+     *     ),
+     * )
+     */
 
     public function deleteAll()
     {

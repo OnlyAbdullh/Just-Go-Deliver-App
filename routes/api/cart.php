@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
     Route::post('carts/{store}/products/{product}/add', [CartController::class, 'add']);
     Route::get('carts/products', [CartController::class, 'getCartProducts']);
-    Route::delete('carts/deleteAll', [CartController::class, 'deleteAll']);
-    Route::put('/api/cart/update-quantities', [CartController::class, 'updateQuantities']);
-    Route::delete('carts/deleteProducts', [CartController::class, 'DeleteProducts']);
+    Route::delete('/carts/delete-all', [CartController::class, 'deleteAll']);
+    Route::put('carts/update-quantities', [CartController::class, 'updateQuantities']);
+    Route::delete('carts/delete-products', [CartController::class, 'DeleteProducts']);
 });
