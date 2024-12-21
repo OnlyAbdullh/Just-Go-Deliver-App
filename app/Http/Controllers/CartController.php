@@ -110,13 +110,19 @@ class CartController extends Controller
      *                         type="string",
      *                         example="http://127.0.0.1:8000/storage/products/5xHVC1FalLQdtMDWEnHFwyABX0OF9zo6hFd6kytS.png",
      *                         description="URL of the main product image"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         example="The message is one of these: No Products available for now. OR only 3 are available for now. OR available now.",
+     *                         description="Cart quantity for this product"
      *                     )
      *                 )
      *             ),
      *             @OA\Property(property="status_code", type="integer", example=200, description="HTTP status code of the response"),
-     *             @OA\Property(property="total_price", type="integer", example=2750)
+     *             @OA\Property(property="total_price", type="integer", example=2750, description="Total price of all products in the cart")
      *         )
-     *     ),
+     *     )
      * )
      */
     public function getCartProducts()

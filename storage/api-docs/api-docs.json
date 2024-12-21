@@ -721,6 +721,11 @@
                                                         "description": "URL of the main product image",
                                                         "type": "string",
                                                         "example": "http://127.0.0.1:8000/storage/products/5xHVC1FalLQdtMDWEnHFwyABX0OF9zo6hFd6kytS.png"
+                                                    },
+                                                    "message": {
+                                                        "description": "Cart quantity for this product",
+                                                        "type": "string",
+                                                        "example": "The message is one of these: No Products available for now. OR only 3 are available for now. OR available now."
                                                     }
                                                 },
                                                 "type": "object"
@@ -732,6 +737,7 @@
                                             "example": 200
                                         },
                                         "total_price": {
+                                            "description": "Total price of all products in the cart",
                                             "type": "integer",
                                             "example": 2750
                                         }
