@@ -65,7 +65,7 @@ class OTPController extends Controller
 
         if (!$registrationData) {
             return JsonResponseHelper::errorResponse(
-                'Registration data not found. Please register again.',
+                __('messages.registration_data_not_found'),
                 [],
                 422
             );
@@ -73,7 +73,7 @@ class OTPController extends Controller
 
         $this->otpService->sendOTP($email);
 
-        return JsonResponseHelper::successResponse('OTP resent successfully.');
+        return JsonResponseHelper::successResponse(__('messages.otp_resent'));
     }
 
     /**
@@ -132,7 +132,7 @@ class OTPController extends Controller
 
         if (!$registrationData) {
             return JsonResponseHelper::errorResponse(
-                'email not found. Please register again.',
+                __('messages.email_not_found'),
                 [],
                 422
             );
@@ -152,9 +152,6 @@ class OTPController extends Controller
 
         $registrationData->delete();
 
-        return JsonResponseHelper::successResponse('Registration completed successfully.');
+        return JsonResponseHelper::successResponse(__('messages.registration_completed'));
     }
-
-
-
 }

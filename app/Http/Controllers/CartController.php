@@ -291,7 +291,7 @@ class CartController extends Controller
     {
         $user = Auth::user();
         $RowsDeleted = $this->cartService->DeleteCartProducts($user->cart->id, $request->input('data'));
-        return JsonResponseHelper::successResponse($RowsDeleted . ' products were Deleted from the Cart successfully');
+        return JsonResponseHelper::successResponse(__('messages.cart_products_deleted_success', ['count' => $RowsDeleted]));
     }
     /**
      * @OA\Delete(
@@ -339,6 +339,6 @@ class CartController extends Controller
         DB::transaction(function () use ($user) {
             $user->cart->cartProducts()->delete();
         });
-        return JsonResponseHelper::successResponse('All products have been deleted from the cart.');
+        return JsonResponseHelper::successResponse(__('messages.cart_products_deleted'));
     }
 }

@@ -201,7 +201,7 @@ class UserController extends Controller
         $image = $request->file('image');
 
         if (!$image) {
-            return JsonResponseHelper::errorResponse('No image was uploaded or the image is invalid');
+            return JsonResponseHelper::errorResponse(__('messages.no_image_uploaded_or_invalid'));
         }
 
         $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
@@ -211,6 +211,6 @@ class UserController extends Controller
         $image->move(storage_path('app/profiles'), $imageName);
         $user->image = $path;
         $user->save();
-        return JsonResponseHelper::successResponse('Image has been saved successfully', $path);
+        return JsonResponseHelper::successResponse(__('messages.image_saved_successfully'), $path);
     }
 }

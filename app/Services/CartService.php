@@ -27,12 +27,12 @@ class CartService
         $storeProduct = $this->cartRepository->getStoreProduct($store_id, $product_id);
 
         if ($storeProduct->quantity < $quantity) {
-            return ['success' => false, 'message' => 'Not enough stock available'];
+            return ['success' => false, 'message' => __('messages.not_enough_stock')];
         }
 
         $this->cartRepository->addProductToCart($cart->id, $storeProduct->id, $quantity);
 
-        return ['success' => true, 'message' => 'Product added to cart successfully'];
+        return ['success' => true, 'message' => __('messages.product_added_to_cart')];
     }
 
     public function getAllProductsInCart(User $user): array
@@ -40,13 +40,13 @@ class CartService
         $cart = $user->cart;
 
         if (!$cart) {
-            return ['message' => 'Your cart is empty'];
+            return ['message' => __('messages.cart_empty')];
         }
 
         $products = $this->cartRepository->getCartProducts($cart->id);
 
         if ($products->isEmpty()) {
-            return ['message' => 'Your cart is empty'];
+            return ['message' => __('messages.cart_empty')];
         }
 
         return ['data' => $products];
@@ -86,9 +86,16 @@ class CartService
     private function generateResponse(int $productId, int $storeId, int $requestedQuantity, int $availableStock, int $quantityToUpdate): array
     {
         $message = match (true) {
-            $availableStock == 0 => "There is no product available for now for Product ID {$productId}.",
-            $requestedQuantity > $availableStock => "Only {$availableStock} of Product ID {$productId} is available. Updated the quantity to {$quantityToUpdate}.",
-            default => "Updated Product ID {$productId} to quantity {$quantityToUpdate}.",
+            $availableStock == 0 => __('messages.no_product_available', ['productId' => $productId]),
+            $requestedQuantity > $availableStock => __('messages.only_available_stock', [
+                'availableStock' => $availableStock,
+                'productId' => $productId,
+                'quantityToUpdate' => $quantityToUpdate,
+            ]),
+            default => __('messages.updated_product_quantity', [
+                'productId' => $productId,
+                'quantityToUpdate' => $quantityToUpdate,
+            ]),
         };
 
         return [

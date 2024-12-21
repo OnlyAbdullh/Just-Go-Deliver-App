@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Repositories\AuthRepository;
 use App\Repositories\Contracts\AuthRepositoryInterface;
 use Carbon\Carbon;
+use DragonCode\PrettyArray\Services\Formatters\Json;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -28,19 +29,20 @@ class AuthService
         return $this->authRepository->createUser($data);
     }
 
-    public function completeRegistration($registrationData, string $email)
+    public function completeRegistration($registrationData)
     {
         if (!$registrationData) {
+            // return JsonResponseHelper::errorResponse(__('messages.session_expired', [], 422));
             return response()->json([
                 "status" => false,
-                "message" => "Session expired. Please register again.",
+                "message" => __('messages.session_expired'),
             ], 422);
         }
 
         $user = $this->register($registrationData);
 
         $this->roleService->assignRoleForUser($user->id, 'user');
-        return JsonResponseHelper::successResponse("Registration completed successfully.");
+        return JsonResponseHelper::successResponse(__('messages.registration_completed'));
     }
 
 
@@ -50,19 +52,19 @@ class AuthService
         $deviceExists = $this->authRepository->fcmTokenExists($user->id, $fcmToken);
 
         if (!$deviceExists) {
-            throw new \Exception('Device token not found', 404);
+            throw new \Exception(__('messages.device_token_not_found'), 404);
         }
 
         $currentToken = JWTAuth::getToken();
         if (!$currentToken) {
-            throw new \Exception('No token provided', 400);
+            throw new \Exception(__('messages.no_token_provided'), 400);
         }
 
         $decodedToken = JWTAuth::getPayload($currentToken)->toArray();
 
 
         if (($decodedToken['fcm_token'] ?? null) !== $fcmToken) {
-            throw new \Exception('Access token does not match the device', 403);
+            throw new \Exception(__('messages.access_token_mismatch'), 403);
         }
 
         DB::transaction(function () use ($currentToken, $fcmToken, $user) {
@@ -92,7 +94,7 @@ class AuthService
             if ($existingFcmToken) {
                 return [
                     'successful' => false,
-                    'message' => 'You are already logged in on this device.',
+                    'message' => __('messages.already_logged_in'),
                     'status_code' => 409,
                 ];
             }
@@ -121,7 +123,7 @@ class AuthService
         }
         return [
             'successful' => false,
-            'message' => 'Invalid credentials',
+            'message' => __('messages.invalid_credentials'),
             'status_code' => 401,
         ];
     }
@@ -131,24 +133,22 @@ class AuthService
         $refreshTokenRecord = $this->authRepository->findRefreshToken($refreshToken, $deviceId);
 
         if (!$refreshTokenRecord) {
-            throw new \Exception('Invalid or expired refresh token', 401);
+            throw new \Exception(__('messages.invalid_or_expired_refresh_token'), 401);
         }
         $user = User::find($refreshTokenRecord->user_id);
         if (!$user) {
-            throw new \Exception('User not found', 404);
+            throw new \Exception(__('messages.user_not_found'), 404);
         }
         $deviceExists = $this->authRepository->deviceExists($deviceId, $user->id);
 
         if (!$deviceExists) {
-            throw new \Exception('Device ID not found or not associated with this user', 404);
+            throw new \Exception(__('messages.device_id_not_found'), 404);
         }
         $accessToken = $this->authRepository->createAccessToken($user, $deviceId);
 
         return [
             'access_token' => $accessToken,
-            'expires_in' => '1 hour'
+            'expires_in' => __('messages.one_hour')
         ];
     }
-
-
 }

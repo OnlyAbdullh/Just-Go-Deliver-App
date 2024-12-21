@@ -51,37 +51,48 @@ class CartRepository implements CartRepositoryInterface
 
     public function getCartProducts($cartId)
     {
+        $lang = app()->getLocale();
+
         return CartProduct::query()
             ->where('cart_id', $cartId)
             ->with([
-                'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description,main_image',
-                'storeProduct.store:id,name',
-                'storeProduct.product:id,name',
+                'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description_' . $lang . ',main_image',
+                'storeProduct.store:id,name_' . $lang,
+                'storeProduct.product:id,name_' . $lang,
+                'storeProduct.product.category:id,name_' . $lang,
             ])
             ->get()
-            ->map(function ($cartProduct) {
+            ->map(function ($cartProduct) use ($lang) {
                 $storeProduct = $cartProduct->storeProduct;
                 $order_amount = $cartProduct->amount_needed;
                 $availableStock = $storeProduct->quantity;
-                if ($availableStock == 0) $message = 'No Products available for now.';
-                else if ($availableStock < $order_amount) $message = 'only ' . $availableStock . ' is available.';
-                else $message = 'available now';
+                if ($availableStock == 0) $message = __('messages.no_stock_available');
+                else if ($availableStock < $order_amount) $message = __('messages.only_available', ['quantity' => $availableStock]);
+                else $message = __('messages.available_now');
+
+                $description = $storeProduct->{'description_' . $lang};
+                $productName = $storeProduct->product->{'name_' . $lang};
+                $storeName = $storeProduct->store->{'name_' . $lang};
+                $categoryName = $storeProduct->product->category->{'name_' . $lang};
+
                 $mainUrl = Storage::url($storeProduct->main_image);
+
                 return [
                     'store_id' => $storeProduct->store->id,
-                    'store_name' => $storeProduct->store->name,
+                    'store_name' => $storeName,
                     'order_quantity' => $cartProduct->amount_needed,
                     'store_product_id' => $storeProduct->id,
                     'price' => $storeProduct->price,
                     'quantity' => $storeProduct->quantity,
-                    'description' => $storeProduct->description,
+                    'description' => $description,
                     'product_id' => $storeProduct->product->id,
-                    'product_name' => $storeProduct->product->name,
+                    'product_name' => $productName,
+                    'category_id' => $storeProduct->product->category_id,
+                    'category_name' => $categoryName,
                     'main_image' => asset($mainUrl),
                     'message' => $message
                 ];
             });
-
     }
 
     public function deleteCartProducts(int $cartId, array $storeProductIds): int
@@ -91,5 +102,4 @@ class CartRepository implements CartRepositoryInterface
             ->whereIn('store_product_id', $storeProductIds)
             ->delete();
     }
-
 }

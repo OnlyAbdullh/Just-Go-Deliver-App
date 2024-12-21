@@ -75,10 +75,10 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         if (DB::table('users')->where('email', $request->input('email'))->exists()) {
-            return JsonResponseHelper::errorResponse('This email is already registered.', [], 409);
+            return JsonResponseHelper::errorResponse(__('messages.email_already_registered'), [], 409);
         }
         if (DB::table('users')->where('phone_number', $request->input('phone_number'))->exists()) {
-            return JsonResponseHelper::errorResponse('This phone_number is already used.', [], 409);
+            return JsonResponseHelper::errorResponse(__('messages.phone_number_already_used'), [], 409);
         }
         $email = $request->input('email');
 
@@ -99,7 +99,7 @@ class AuthController extends Controller
         ]);
 
         $this->otpService->sendOTP($email);
-        return JsonResponseHelper::successResponse('Registration initiated. OTP sent to your email.');
+        return JsonResponseHelper::successResponse(__('messages.registration_otp_sent'));
     }
 
     /**
@@ -180,7 +180,7 @@ class AuthController extends Controller
 
         if ($result['successful']) {
             return JsonResponseHelper::successResponse(
-                'User logged in successfully',
+                __('messages.user_logged_in_successfully'),
                 [
                     'access_token' => $result['access_token'],
                     'refresh_token' => $result['refresh_token'],
@@ -268,7 +268,7 @@ class AuthController extends Controller
 
         try {
             $tokens = $this->userService->refreshToken($refreshToken, $deviceId);
-            return JsonResponseHelper::successResponse('Access token refreshed successfully.', ['access_token' => $tokens['access_token'], 'expires_in' => '1 hour']);
+            return JsonResponseHelper::successResponse(__('messages.access_token_refreshed'), ['access_token' => $tokens['access_token'], 'expires_in' => __('messages.one_hour')]);
         } catch (\Exception $e) {
             return JsonResponseHelper::errorResponse($e->getMessage(), [], $e->getCode());
         }
@@ -325,7 +325,7 @@ class AuthController extends Controller
 
         try {
             $this->userService->logout($deviceId);
-            return JsonResponseHelper::successResponse('User logged out successfully.');
+            return JsonResponseHelper::successResponse(__('messages.user_logged_out'));
         } catch (\Exception $e) {
             return JsonResponseHelper::errorResponse(
                 $e->getMessage(),

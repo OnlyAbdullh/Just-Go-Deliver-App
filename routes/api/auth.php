@@ -16,16 +16,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::middleware('localization')->group(function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
 
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
-Route::post('refresh', [AuthController::class, 'refresh']);
 
-
-Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
-    Route::post('logout', [AuthController::class, 'logout']);
+    Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
+        Route::post('logout', [AuthController::class, 'logout']);
+    });
 });
-/* Route::get('/api/documentation', function () {
-    \Illuminate\Support\Facades\Artisan::call('l5-swagger:generate');
+
+Route::get('/api/documentation', function () {
+    Artisan::call('l5-swagger:generate');
     return redirect('/swagger-ui');
-});*/
+});

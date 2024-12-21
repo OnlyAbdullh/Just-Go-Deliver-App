@@ -66,14 +66,14 @@ class FavoriteController extends Controller
          }*/
 
         if ($result === 'already_favorite') {
-            return JsonResponseHelper::errorResponse('Product is already in your favorites.', [], 409);
+            return JsonResponseHelper::errorResponse(__('messages.product_already_in_favorites'), [], 409);
         }
 
         if ($result === 'success') {
-            return JsonResponseHelper::successResponse('Product added to favorites successfully.', [], 201);
+            return JsonResponseHelper::successResponse(__('messages.product_added_to_favorites'), [], 201);
         }
 
-        return JsonResponseHelper::errorResponse('An unexpected error occurred.', [], 500);
+        return JsonResponseHelper::errorResponse(__('messages.unexpected_error'), [], 500);
     }
 
     /**
@@ -117,13 +117,13 @@ class FavoriteController extends Controller
         $result = $this->favoriteService->removeFromFavorites($product_id, $store_id);
 
         if ($result === 'not_in_favorites') {
-            return JsonResponseHelper::errorResponse('Product is not in your favorites.', [], 404);
+            return JsonResponseHelper::errorResponse(__('messages.product_not_in_favorites'), [], 404);
         }
         if ($result === 'success') {
-            return JsonResponseHelper::successResponse('Product removed from favorites successfully.', [], 200);
+            return JsonResponseHelper::successResponse(__('messages.product_removed_from_favorites'), [], 200);
         }
 
-        return JsonResponseHelper::errorResponse('An unexpected error occurred.', [], 500);
+        return JsonResponseHelper::errorResponse(__('messages.unexpected_error'), [], 500);
     }
 
     /**
@@ -215,7 +215,7 @@ class FavoriteController extends Controller
     public function list()
     {
         $favorites = $this->favoriteService->getFavoriteProducts();
-        return JsonResponseHelper::successResponse('Favorites retrieved successfully.', $favorites);
+        return JsonResponseHelper::successResponse(__('messages.favorites_retrieved'), $favorites);
     }
 
     /**
@@ -252,7 +252,6 @@ class FavoriteController extends Controller
     public function check(int $store_id, int $product_id)
     {
         $isFavorite = $this->favoriteService->isProductFavorited($product_id, $store_id);
-        return JsonResponseHelper::successResponse('Favorite status retrieved.', ['is_favorite' => $isFavorite]);
+        return JsonResponseHelper::successResponse(__('messages.favorite_status_retrieved'), ['is_favorite' => $isFavorite]);
     }
-
 }

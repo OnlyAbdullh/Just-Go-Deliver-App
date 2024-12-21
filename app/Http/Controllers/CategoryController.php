@@ -116,6 +116,7 @@ class CategoryController extends Controller
                 'totalPages' => $categories->lastPage(),
                 'hasMorePage' => $categories->hasMorePages()
             ],
+            'status_code' => 200,
         ]);
     }
 

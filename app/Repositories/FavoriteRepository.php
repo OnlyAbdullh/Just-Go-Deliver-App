@@ -25,6 +25,8 @@ class FavoriteRepository implements FavoriteRepositoryInterface
 
     public function getAllFavorites(User $user): array
     {
+        $lang = app()->getLocale();
+
         return DB::table('favorites')
             ->join('products', 'favorites.product_id', '=', 'products.id')
             ->join('stores', 'favorites.store_id', '=', 'stores.id')
@@ -35,13 +37,13 @@ class FavoriteRepository implements FavoriteRepositoryInterface
             ->where('favorites.user_id', $user->id)
             ->select(
                 'products.id as product_id',
-                'products.name as product_name',
+                'products.name_' . $lang . ' as product_name',
                 'products.category_id',
                 'stores.id as store_id',
-                'stores.name as store_name',
+                'stores.name_' . $lang . ' as store_name',
                 'store_products.price',
                 'store_products.quantity',
-                'store_products.description'
+                'store_products.description_' . $lang,
             )
             ->distinct()
             ->get()->toArray();
