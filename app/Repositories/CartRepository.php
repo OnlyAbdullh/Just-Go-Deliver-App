@@ -35,7 +35,7 @@ class CartRepository implements CartRepositoryInterface
         ]);
     }
 
-    public function  UpdateCartProducts(array $updates): void
+    public function UpdateCartProducts(array $updates): void
     {
         foreach ($updates as $update) {
             DB::table('cart_products')
@@ -49,10 +49,9 @@ class CartRepository implements CartRepositoryInterface
     }
 
 
-
     public function getCartProducts($cartId)
     {
-        $cartProducts = CartProduct::query()
+        return CartProduct::query()
             ->where('cart_id', $cartId)
             ->with([
                 'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description,main_image',
@@ -62,6 +61,11 @@ class CartRepository implements CartRepositoryInterface
             ->get()
             ->map(function ($cartProduct) {
                 $storeProduct = $cartProduct->storeProduct;
+                $order_amount = $cartProduct->amount_needed;
+                $availableStock = $storeProduct->quantity;
+                if ($availableStock == 0) $message = 'No Products available for now.';
+                else if ($availableStock < $order_amount) $message = 'only ' . $availableStock . ' is available.';
+                else $message = 'available now';
                 $mainUrl = Storage::url($storeProduct->main_image);
                 return [
                     'store_id' => $storeProduct->store->id,
@@ -74,10 +78,10 @@ class CartRepository implements CartRepositoryInterface
                     'product_id' => $storeProduct->product->id,
                     'product_name' => $storeProduct->product->name,
                     'main_image' => asset($mainUrl),
+                    'message' => $message
                 ];
             });
 
-        return $cartProducts;
     }
 
     public function deleteCartProducts(int $cartId, array $storeProductIds): int
