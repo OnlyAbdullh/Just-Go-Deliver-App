@@ -26,10 +26,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'location',
         'phone_number',
-        'refresh_token',
-        'refresh_token_expires_at',
         'image',
-        'fcm_token'
     ];
 
     /**
@@ -51,6 +48,7 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -60,6 +58,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
     public function refreshTokens()
     {
         return $this->hasMany(UserRefreshToken::class, 'user_id');
@@ -68,10 +67,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Product::class, 'favorites')->withTimestamps();
     }
+
     public function cart()
     {
         return $this->hasOne(Cart::class);
     }
+
     public function deviceTokens()
     {
         return $this->hasMany(DeviceToken::class);

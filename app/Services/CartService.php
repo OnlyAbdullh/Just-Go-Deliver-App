@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Cart;
 use App\Models\User;
 use App\Repositories\Contracts\CartRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
@@ -30,7 +31,7 @@ class CartService
             return ['success' => false, 'message' => __('messages.not_enough_stock')];
         }
 
-        $this->cartRepository->addProductToCart($cart->id, $storeProduct->id, $quantity);
+        $this->cartRepository->addProductToCart($cart, $storeProduct->id, $quantity);
 
         return ['success' => true, 'message' => __('messages.product_added_to_cart')];
     }
@@ -43,7 +44,7 @@ class CartService
             return ['message' => __('messages.cart_empty')];
         }
 
-        $products = $this->cartRepository->getCartProducts($cart->id);
+        $products = $this->cartRepository->getCartProducts($cart);
 
         if ($products->isEmpty()) {
             return ['message' => __('messages.cart_empty')];
@@ -107,7 +108,7 @@ class CartService
     }
 
 
-    public function DeleteCartProducts(int $cartId, array $items): int
+    public function DeleteCartProducts(Cart $cart, array $items): int
     {
         $ids = [];
         foreach ($items as $item) {
@@ -116,6 +117,6 @@ class CartService
             $storeProduct = $this->productRepository->findStoreProductById($storeId, $productId);
             $ids[] = $storeProduct->id;
         }
-        return $this->cartRepository->deleteCartProducts($cartId, $ids);
+        return $this->cartRepository->deleteCartProducts($cart, $ids);
     }
 }

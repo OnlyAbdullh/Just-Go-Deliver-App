@@ -137,6 +137,7 @@ class CartController extends Controller
             return JsonResponseHelper::successResponse('', $result['data']);
         }
     }
+
     /**
      * @OA\Put(
      *     path="/api/carts/update-quantities",
@@ -230,6 +231,7 @@ class CartController extends Controller
         $response = $this->cartService->updateCartQuantities($user->cart->id, $request->input('data'));
         return JsonResponseHelper::successResponse('', $response);
     }
+
     /**
      * @OA\Delete (
      *     path="/api/carts/delete-products",
@@ -290,9 +292,10 @@ class CartController extends Controller
     public function DeleteProducts(Request $request)
     {
         $user = Auth::user();
-        $RowsDeleted = $this->cartService->DeleteCartProducts($user->cart->id, $request->input('data'));
+        $RowsDeleted = $this->cartService->DeleteCartProducts($user->cart, $request->input('data'));
         return JsonResponseHelper::successResponse(__('messages.cart_products_deleted_success', ['count' => $RowsDeleted]));
     }
+
     /**
      * @OA\Delete(
      *     path="/api/carts/delete-all",
@@ -333,12 +336,18 @@ class CartController extends Controller
     public function deleteAll()
     {
         $user = Auth::user();
-        /* if (!$user->cart) {
-            return JsonResponseHelper::successResponse('Your Cart is already empty');
-        }*/
         DB::transaction(function () use ($user) {
-            $user->cart->cartProducts()->delete();
+            $cart = $user->cart;
+            $cart->cartProducts()->delete();
+            $cart->cart_count = 0;
+            $cart->save();
         });
         return JsonResponseHelper::successResponse(__('messages.cart_products_deleted'));
+    }
+
+    public function getCartSize()
+    {
+        $user = Auth::user();
+        return $user?->cart?->cart_count ?? 0;
     }
 }

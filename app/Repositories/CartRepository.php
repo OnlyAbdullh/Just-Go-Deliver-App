@@ -24,10 +24,11 @@ class CartRepository implements CartRepositoryInterface
             ->first();
     }
 
-    public function addProductToCart(int $cartId, int $storeProductId, int $quantity): void
+    public function addProductToCart(Cart $cart, int $storeProductId, int $quantity): void
     {
+        $cart->increment('cart_count');
         DB::table('cart_products')->insert([
-            'cart_id' => $cartId,
+            'cart_id' => $cart->id,
             'store_product_id' => $storeProductId,
             'amount_needed' => $quantity,
             'created_at' => now(),
@@ -49,12 +50,11 @@ class CartRepository implements CartRepositoryInterface
     }
 
 
-    public function getCartProducts($cartId)
+    public function getCartProducts(Cart $cart)
     {
         $lang = app()->getLocale();
-
         return CartProduct::query()
-            ->where('cart_id', $cartId)
+            ->where('cart_id', $cart->id)
             ->with([
                 'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description_' . $lang . ',main_image',
                 'storeProduct.store:id,name_' . $lang,
@@ -100,10 +100,14 @@ class CartRepository implements CartRepositoryInterface
             });
     }
 
-    public function deleteCartProducts(int $cartId, array $storeProductIds): int
+    public function deleteCartProducts(Cart $cart, array $storeProductIds): int
     {
+        $productCount = count($storeProductIds);
+
+        $cart->decrement('cart_count', $productCount);
+
         return DB::table('cart_products')
-            ->where('cart_id', $cartId)
+            ->where('cart_id', $cart->id)
             ->whereIn('store_product_id', $storeProductIds)
             ->delete();
     }

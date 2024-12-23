@@ -6,9 +6,6 @@ use App\Helpers\JsonResponseHelper;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
-use Spatie\ImageOptimizer\OptimizerChainFactory;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
 
 class UserController extends Controller
 {
