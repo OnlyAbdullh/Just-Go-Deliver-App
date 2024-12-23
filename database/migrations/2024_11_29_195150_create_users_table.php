@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('location', 255);
             $table->string('phone_number', 10)->unique();
             $table->string('image')->nullable();
-            $table->text('fcm_token')->nullable();
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
