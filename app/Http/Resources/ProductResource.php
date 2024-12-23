@@ -93,11 +93,11 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'quantity' => $this->quantity,
             'description' => $this->$description,
-            'is_favorite' => $this->favorites->isNotEmpty() ? 1 : 0,
+            'is_favorite' => $this->product->favoritedByUsers->isNotEmpty() ? 1 : 0,
             'main_image' => asset($mainUrl),
         ];
 
-        
+
         if ($request->routeIs('products.show')) {
             $data['sub_images'] = $this->whenLoaded('images', function () {
                 return $this->images->map(function ($image) {
