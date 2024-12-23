@@ -58,12 +58,16 @@ class CartRepository implements CartRepositoryInterface
             ->with([
                 'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description_' . $lang . ',main_image',
                 'storeProduct.store:id,name_' . $lang,
-                'storeProduct.product:id,name_' . $lang,
+                'storeProduct.product:id,category_id,name_' . $lang,
+                'storeProduct.product.favoritedByUsers' => function ($query) {
+                    $query->where('user_id', auth()->id());
+                },
                 'storeProduct.product.category:id,name_' . $lang,
             ])
             ->get()
             ->map(function ($cartProduct) use ($lang) {
                 $storeProduct = $cartProduct->storeProduct;
+                $isFavorite = $storeProduct->product->favoritedByUsers->isNotEmpty() ? 1 : 0;
                 $order_amount = $cartProduct->amount_needed;
                 $availableStock = $storeProduct->quantity;
                 if ($availableStock == 0) $message = __('messages.no_stock_available');
@@ -90,6 +94,7 @@ class CartRepository implements CartRepositoryInterface
                     'category_id' => $storeProduct->product->category_id,
                     'category_name' => $categoryName,
                     'main_image' => asset($mainUrl),
+                    'is_favorite' => $isFavorite,
                     'message' => $message
                 ];
             });

@@ -16,9 +16,7 @@ class JsonResponseHelper
             $responseData['message'] = $message;
         }
 
-        if (!empty($data)) {
-            $responseData['data'] = $data;
-        }
+        $responseData['data'] = $data;
 
         $responseData['status_code'] = $statusCode;
 
