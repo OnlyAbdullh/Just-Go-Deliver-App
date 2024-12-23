@@ -24,12 +24,11 @@ class StoreFactory extends Factory
             'user_id' => User::factory(),
             'name_ar' => $this->faker->unique()->words(2, true),
             'name_en' => $this->faker->unique()->words(2, true),
-            'logo' => 'stores/' . $this->faker->image('storage/app/public/stores', 100, 100, null, false),
-            'location_ar' => $this->faker->city(),
-            'location_en' => $this->faker->city(),
-            'description_ar' => $this->faker->paragraph(),
-            'description_en' => $this->faker->paragraph(),
+            'logo' => $this->faker->imageUrl(),
+            'location_ar' => $this->faker->address(),
+            'location_en' => $this->faker->address(),
+            'description_ar' => $this->faker->sentence(),
+            'description_en' => $this->faker->sentence(),
         ];
     }
-
 }

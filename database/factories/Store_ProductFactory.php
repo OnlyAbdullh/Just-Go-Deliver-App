@@ -24,11 +24,11 @@ class Store_ProductFactory extends Factory
         return [
             'store_id' => Store::factory(),
             'product_id' => Product::factory(),
-            'main_image' => 'products/' . $this->faker->image('public/storage/products', 300, 300, null, false),
-            'price' => $this->faker->randomFloat(2, 10, 1000), // Random price between 10 and 1000
+            'main_image' => $this->faker->imageUrl(),
+            'price' => $this->faker->randomFloat(2, 10, 1000),
             'quantity' => $this->faker->numberBetween(1, 100),
-            'description_en' => $this->faker->paragraph(),
-            'description_ar' => $this->faker->paragraph(),
+            'description_en' => $this->faker->sentence(),
+            'description_ar' => $this->faker->sentence(),
             'sold_quantity' => $this->faker->numberBetween(0, 50),
         ];
     }

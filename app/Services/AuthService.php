@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Helpers\JsonResponseHelper;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\AuthRepository;
 use App\Repositories\Contracts\AuthRepositoryInterface;
@@ -10,6 +11,7 @@ use Carbon\Carbon;
 use DragonCode\PrettyArray\Services\Formatters\Json;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
@@ -118,7 +120,7 @@ class AuthService
                 'refresh_token' => $refreshToken,
                 'token_type' => 'bearer',
                 'expires_in' => config('jwt.ttl') * 60,
-                'user' => $user,
+                'user' => new UserResource($user),
             ];
         }
         return [

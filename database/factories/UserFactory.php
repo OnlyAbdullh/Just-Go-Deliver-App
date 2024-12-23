@@ -23,6 +23,13 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $imageFileName = $this->faker->image(
+            storage_path('app/public/profiles'), // Path to save the image
+            100, // Width
+            100, // Height
+            null, // Category
+            false // Return filename without path
+        );
         return [
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
@@ -31,8 +38,8 @@ class UserFactory extends Factory
             'password' => Hash::make('password'),
             'location' => $this->faker->address(),
             'phone_number' => $this->faker->unique()->numerify('##########'),
-            'image' => 'profiles/' . $this->faker->image('public/storage/profiles', 100, 100, null, false),
-            'fcm_token' => $this->faker->boolean(50) ? $this->faker->sha256() : null,
+            'image' => 'profiles/' . $imageFileName,
+            'fcm_token' => $this->faker->uuid() ? $this->faker->sha256() : null,
         ];
     }
 
