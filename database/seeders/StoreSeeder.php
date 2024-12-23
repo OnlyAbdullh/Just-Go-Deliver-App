@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +19,7 @@ class StoreSeeder extends Seeder
     {
         DB::transaction(function () {
             $users = User::factory(10)->create();
-           $categories = Category::factory(3)->create();
+            $categories = Category::factory(3)->create();
             $stores = Store::factory(10)->create()->each(function ($store) use ($users) {
                 $store->user_id = $users->random()->id;
                 $store->save();
@@ -45,7 +44,7 @@ class StoreSeeder extends Seeder
                     $randomImage = $storesImages[array_rand($storesImages)];
 
                     $imageUrl = asset($randomImage);
-                    $imageUrl = str_replace("http://localhost", "", $imageUrl);
+                    $imageUrl = str_replace('http://localhost', '', $imageUrl);
                     $storeProductData[] = [
                         'store_id' => $store->id,
                         'price' => fake()->randomFloat(2, 10, 500),

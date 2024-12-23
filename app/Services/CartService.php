@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class CartService
 {
     protected $cartRepository;
+
     protected $productRepository;
 
     public function __construct(CartRepositoryInterface $cartRepository, ProductRepositoryInterface $productRepository)
@@ -40,7 +41,7 @@ class CartService
     {
         $cart = $user->cart;
 
-        if (!$cart) {
+        if (! $cart) {
             return ['message' => __('messages.cart_empty')];
         }
 
@@ -107,7 +108,6 @@ class CartService
         ];
     }
 
-
     public function DeleteCartProducts(Cart $cart, array $items): int
     {
         $ids = [];
@@ -117,6 +117,7 @@ class CartService
             $storeProduct = $this->productRepository->findStoreProductById($storeId, $productId);
             $ids[] = $storeProduct->id;
         }
+
         return $this->cartRepository->deleteCartProducts($cart, $ids);
     }
 }

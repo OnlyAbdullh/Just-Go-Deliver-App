@@ -2,23 +2,24 @@
 
 namespace App\Services;
 
-use App\Helpers\JsonResponseHelper;
-use App\Http\Resources\ProductResource;
-use App\Models\Category;
-use App\Models\Store;
 use App\Models\Product;
+use App\Models\Store;
 use App\Models\Store_Product;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\ImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\StoreRepositoryInterface;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
-    private $productRepository, $storeRepository, $imageRepository, $categoryRepository;
+    private $productRepository;
+
+    private $storeRepository;
+
+    private $imageRepository;
+
+    private $categoryRepository;
 
     public function __construct(
         ProductRepositoryInterface $productRepository,
@@ -42,7 +43,7 @@ class ProductService
         return $this->productRepository->findStoreProductById($store->id, $product->id);
     }
 
-    public function addProductToStore($data, Store $store): bool|null
+    public function addProductToStore($data, Store $store): ?bool
     {
         $category = $this->categoryRepository->findOrCreate($data['category_name_en'], $data['category_name_ar']);
 
@@ -52,6 +53,7 @@ class ProductService
 
         if ($storeProduct) {
             $this->productRepository->incrementQuantity($store, $product->id, $storeProduct, $data['quantity']);
+
             return true;
         }
 
@@ -80,7 +82,7 @@ class ProductService
 
         $storeProduct = $this->productRepository->findStoreProductById($storeId, $productId);
 
-        if (!$storeProduct || $storeProduct->quantity < $quantitySold) {
+        if (! $storeProduct || $storeProduct->quantity < $quantitySold) {
             return false;
         }
 
@@ -94,20 +96,20 @@ class ProductService
     {
         $storeProduct = $this->productRepository->findProductInStore($store, $product->id);
 
-        if (!$storeProduct) {
+        if (! $storeProduct) {
             return null;
         }
 
         $fieldUpdaters = [
-            'price' => fn($value) => $this->modifyPriceForProduct($storeProduct, $value),
-            'quantity' => fn($value) => $this->addQuantityToStack($store, $product->id, $storeProduct, $value),
-            'description_en' => fn($value) => $this->modifyDescriptionForProduct($storeProduct, $value, 'en'),
-            'description_ar' => fn($value) => $this->modifyDescriptionForProduct($storeProduct, $value, 'ar'),
-            'main_image' => fn($value) => $this->modifyMainImageForProduct($storeProduct, $value),
+            'price' => fn ($value) => $this->modifyPriceForProduct($storeProduct, $value),
+            'quantity' => fn ($value) => $this->addQuantityToStack($store, $product->id, $storeProduct, $value),
+            'description_en' => fn ($value) => $this->modifyDescriptionForProduct($storeProduct, $value, 'en'),
+            'description_ar' => fn ($value) => $this->modifyDescriptionForProduct($storeProduct, $value, 'ar'),
+            'main_image' => fn ($value) => $this->modifyMainImageForProduct($storeProduct, $value),
         ];
 
         foreach ($data as $key => $value) {
-            if (!empty($value)) {
+            if (! empty($value)) {
                 $fieldUpdaters[$key]($value);
             }
         }
@@ -134,12 +136,12 @@ class ProductService
 
     public function modifyDescriptionForProduct(Store_Product $storeProduct, $description, $lang)
     {
-        return $this->productRepository->updateProduct($storeProduct, ['description_' . $lang => $description]);
+        return $this->productRepository->updateProduct($storeProduct, ['description_'.$lang => $description]);
     }
 
     public function deleteMainImage($image): void
     {
-        if ((!empty($image)) && Storage::disk('public')->exists(path: $image)) {
+        if ((! empty($image)) && Storage::disk('public')->exists(path: $image)) {
             Storage::disk('public')->delete($image);
         }
     }
@@ -156,11 +158,12 @@ class ProductService
             }
         }
     }
+
     public function removeProductFromStore(Store $store, Product $product)
     {
         $storeProduct = $this->productRepository->findStoreProductById($store->id, $product->id);
 
-        if (!$storeProduct) {
+        if (! $storeProduct) {
             return false;
         }
         $this->deleteMainImage($storeProduct->main_image);

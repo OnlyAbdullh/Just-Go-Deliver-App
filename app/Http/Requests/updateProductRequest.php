@@ -2,13 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Helpers\JsonResponseHelper;
-use App\Models\Store;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class updateProductRequest extends FormRequest
 {
@@ -37,6 +34,7 @@ class updateProductRequest extends FormRequest
             'main_image' => 'sometimes|image',
         ];
     }
+
     public function attributes(): array
     {
         return [
@@ -48,11 +46,10 @@ class updateProductRequest extends FormRequest
         ];
     }
 
-
     protected function failedValidation(Validator $validator)
     {
         $errors = collect($validator->errors()->toArray())
-            ->map(fn($error) => $error[0]) // Get only the first error for each field
+            ->map(fn ($error) => $error[0]) // Get only the first error for each field
             ->toArray();
 
         throw new HttpResponseException(

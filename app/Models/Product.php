@@ -14,7 +14,7 @@ class Product extends Model
     protected $fillable = [
         'name_en',
         'name_ar',
-        'category_id'
+        'category_id',
     ];
 
     public function category(): BelongsTo
@@ -25,9 +25,10 @@ class Product extends Model
     public function stores()
     {
         return $this->belongsToMany(Store::class, 'store_products')
-            ->withPivot('price', 'quantity', 'description_ar','description_en', 'sold_quantity')
+            ->withPivot('price', 'quantity', 'description_ar', 'description_en', 'sold_quantity')
             ->withTimestamps();
     }
+
     public function images(): HasMany
     {
         return $this->hasMany(Image::class);

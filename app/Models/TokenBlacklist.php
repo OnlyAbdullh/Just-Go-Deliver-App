@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TokenBlacklist extends Model
 {
     use HasFactory;
+
     protected $fillable = ['token', 'expires_at'];
+
     public $timestamps = true;
 }

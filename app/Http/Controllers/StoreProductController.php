@@ -2,10 +2,4 @@
 
 namespace App\Http\Controllers;
 
-
-use Illuminate\Http\Request;
-
-class StoreProductController extends Controller
-{
-    
-}
+class StoreProductController extends Controller {}

@@ -7,14 +7,15 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Repositories\Contracts\ImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
-use App\Repositories\ImageRepository;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ImageService
 {
-    private $imageRepository, $productRepository;
+    private $imageRepository;
+
+    private $productRepository;
+
     public function __construct(ImageRepositoryInterface $imageRepository, ProductRepositoryInterface $productRepository)
     {
         $this->imageRepository = $imageRepository;
@@ -24,7 +25,7 @@ class ImageService
     public function addImage(Store $store, Product $product, $image)
     {
         $product = $this->productRepository->findProductInStore($store, $product->id);
-        if (!$product) {
+        if (! $product) {
             return false;
         }
 
@@ -32,6 +33,7 @@ class ImageService
 
         return true;
     }
+
     public function modifyImage(Image $image, UploadedFile $newImage)
     {
         if (Storage::disk('public')->exists($image->image)) {
@@ -47,7 +49,7 @@ class ImageService
 
     public function deleteImage(Image $image)
     {
-        if ((!empty($image->image)) && Storage::disk('public')->exists($image->image)) {
+        if ((! empty($image->image)) && Storage::disk('public')->exists($image->image)) {
             Storage::disk('public')->delete($image->image);
         }
 

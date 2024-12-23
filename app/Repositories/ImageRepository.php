@@ -2,13 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Repositories\Contracts\ImageRepositoryInterface;
 use App\Models\Image;
+use App\Repositories\Contracts\ImageRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 
 class ImageRepository implements ImageRepositoryInterface
 {
-
     public function store($storeId, $productId, $images)
     {
         Log::info('from store function in image repo');

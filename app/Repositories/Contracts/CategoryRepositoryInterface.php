@@ -11,7 +11,9 @@ interface CategoryRepositoryInterface
     public function store($data);
 
     public function delete(Category $category);
+
     public function findOrCreate($nameEn, $nameAr);
+
     public function findById($id);
 
     public function findByName($name);

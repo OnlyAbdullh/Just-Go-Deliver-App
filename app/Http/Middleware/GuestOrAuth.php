@@ -26,7 +26,7 @@ class GuestOrAuth
             try {
                 $user = JWTAuth::parseToken()->authenticate();
 
-                if (!$user) {
+                if (! $user) {
                     return JsonResponseHelper::errorResponse('USER_NOT_FOUND', [], 404);
                 }
             } catch (TokenExpiredException $e) {

@@ -18,12 +18,12 @@ class CategoryPolicy
     {
         $user->hasRole('store_admin');
     }
-    
+
     public function updateCategory(User $user)
     {
         $user->hasRole('store_admin');
     }
-    
+
     public function deleteCategory(User $user)
     {
         $user->hasRole('store_admin');

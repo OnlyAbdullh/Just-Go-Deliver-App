@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\Contracts\FavoriteRepositoryInterface;
@@ -27,7 +26,8 @@ class FavoriteRepository implements FavoriteRepositoryInterface
     public function getAllFavorites(User $user): array
     {
         $lang = app()->getLocale();
-        $favorites = DB::table('favorites')
+
+        return DB::table('favorites')
             ->join('products', 'favorites.product_id', '=', 'products.id')
             ->join('stores', 'favorites.store_id', '=', 'stores.id')
             ->join('store_products', function ($join) {
@@ -43,12 +43,10 @@ class FavoriteRepository implements FavoriteRepositoryInterface
                 'stores.name_'.$lang.' as store_name',
                 'store_products.price',
                 'store_products.quantity',
-                'store_products.description_'.$lang.' as description',
-                'store_products.main_image'
+                'store_products.description_'.$lang,
             )
             ->distinct()
-            ->get();
-        return ProductResource::collection($favorites)->toArray(request());
+            ->get()->toArray();
     }
     /*    public function isProductInStore(int $productId, int $storeId): bool
         {

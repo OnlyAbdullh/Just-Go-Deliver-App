@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Services\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 /**
  * @OA\SecurityScheme(
@@ -38,32 +37,41 @@ class StoreController extends Controller
      *     description="Retrieve a paginated list of stores with their details, including manager, name, image URL, location, and description.",
      *     operationId="getStores",
      *     tags={"Stores"},
+     *
      * @OA\Parameter(
      *         name="Accept-Language",
      *         in="header",
      *         description="The language to return results in (ar for Arabic, en for English)",
      *         required=false,
+     *
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
      *         description="The page number to fetch",
      *         required=false,
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="items",
      *         in="query",
      *         description="The number of items to display per page",
      *         required=false,
+     *
      *         @OA\Schema(type="integer", example=10)
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Stores fetched successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Stores fetched successfully"),
      *             @OA\Property(
@@ -72,9 +80,11 @@ class StoreController extends Controller
      *                 @OA\Property(
      *                     property="stores",
      *                     type="array",
+     *
      *                     @OA\Items(ref="#/components/schemas/StoreResource")
      *                 )
      *             ),
+     *
      *             @OA\Property(property="status_code", type="integer", example=200),
      * *                 @OA\Property(
      *                     property="pagination",
@@ -100,10 +110,13 @@ class StoreController extends Controller
      *                 )
      *         )
      *     ),
+     *
      *    @OA\Response(
      *         response=404,
      *         description="No stores available",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="There are no stores available"),
      *             @OA\Property(property="status_code", type="integer", example=404)
@@ -122,17 +135,16 @@ class StoreController extends Controller
             'successful' => true,
             'message' => 'retrieve all stores',
             'data' => [
-                'stores' => StoreResource::collection($stores)
+                'stores' => StoreResource::collection($stores),
             ],
             'pagination' => [
                 'currentPage' => $stores->currentPage(),
                 'totalPages' => $stores->lastPage(),
-                'hasMorePage' => $stores->hasMorePages()
+                'hasMorePage' => $stores->hasMorePages(),
             ],
             'statuc_code' => 200,
         ]);
     }
-
 
     /**
      * @OA\Post(
@@ -141,19 +153,25 @@ class StoreController extends Controller
      *     description="Creates a new store with the given details. The user must provide valid data, including a logo image, via multipart/form-data.",
      *     tags={"Stores"},
      *     security={{"bearerAuth": {}}},
+     *
      *      @OA\Parameter(
      *         name="Accept-Language",
      *         in="header",
      *         description="The language to return results in (ar for Arabic, en for English)",
      *         required=false,
+     *
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
+     *
      *             @OA\Schema(
      *                 required={"logo", "name_ar", "name_en"},
+     *
      *                 @OA\Property(
      *                     property="logo",
      *                     type="string",
@@ -200,20 +218,26 @@ class StoreController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Store created successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Store created successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/StoreResource"),
      *             @OA\Property(property="status_code", type="integer", example=201)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=400,
      *         description="Validation Error",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Validation Error"),
      *             @OA\Property(
@@ -224,19 +248,25 @@ class StoreController extends Controller
      *             @OA\Property(property="status_code", type="integer", example=400)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Authorization Error",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="You already have a store and cannot create another one."),
      *             @OA\Property(property="status_code", type="integer", example=401)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=403,
      *         description="Forbidden",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Only store admin can create a store"),
      *             @OA\Property(property="status_code", type="integer", example=403)
@@ -244,8 +274,6 @@ class StoreController extends Controller
      *     )
      * )
      */
-
-
     public function store(CreateStoreRequest $request)
     {
         if (auth()->user()->store) {
@@ -264,26 +292,34 @@ class StoreController extends Controller
      *     description="Update details of an existing store. Only authorized users can update their own stores. The request supports partial updates, including an optional logo file upload.",
      *     tags={"Stores"},
      *     security={{"bearerAuth": {}}},
+     *
      * @OA\Parameter(
      *         name="Accept-Language",
      *         in="header",
      *         description="The language to return results in (ar for Arabic, en for English)",
      *         required=false,
+     *
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="store",
      *         in="path",
      *         description="ID of the store to update",
      *         required=true,
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *
      *      @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
+     *
      *             @OA\Schema(
      *                 required={"logo", "name_ar", "name_en"},
+     *
      *                 @OA\Property(
      *                     property="logo",
      *                     type="string",
@@ -330,44 +366,54 @@ class StoreController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Store updated successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Store updated successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/StoreResource"),
      *             @OA\Property(property="status_code", type="integer", example=200)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=403,
      *         description="Forbidden - User not authorized to update this store",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="You are not authorized to update this store."),
      *             @OA\Property(property="data", type="object"),
      *             @OA\Property(property="status_code", type="integer", example=403)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=400,
      *         description="Validation Error",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Validation Error"),
      *             @OA\Property(property="error", type="object",
+     *
      *                 @OA\AdditionalProperties(
+     *
      *                     @OA\Schema(type="string", example="The logo must be an image.")
      *                 )
      *             ),
+     *
      *             @OA\Property(property="status_code", type="integer", example=400)
      *         )
      *     )
      * )
      */
-
-
     public function update(UpdateStoreRequest $request, Store $store)
     {
         $store = $this->storeSrevice->updateStore($store, $request->validated());
@@ -381,34 +427,44 @@ class StoreController extends Controller
      *     summary="Get a specific store",
      *     description="Retrieve details of a specific store by its ID.",
      *     tags={"Stores"},
+     *
      * @OA\Parameter(
      *         name="Accept-Language",
      *         in="header",
      *         description="The language to return results in (ar for Arabic, en for English)",
      *         required=false,
+     *
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="store",
      *         in="path",
      *         description="ID of the store to retrieve",
      *         required=true,
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Store retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="store displayed successfully"),
      *             @OA\Property(property="data", ref="#/components/schemas/StoreResource"),
      *             @OA\Property(property="status_code", type="integer", example=200)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Store not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Store not found."),
      *             @OA\Property(property="data", type="object", example={}),
@@ -417,7 +473,6 @@ class StoreController extends Controller
      *     )
      * )
      */
-
     public function show(Store $store): JsonResponse
     {
         return JsonResponseHelper::successResponse(__('messages.store_displayed'), StoreResource::make($store), 200);
@@ -430,44 +485,57 @@ class StoreController extends Controller
      *     description="Delete a store by its ID.",
      *     tags={"Stores"},
      *     security={{"bearerAuth": {}}},
+     *
      * @OA\Parameter(
      *         name="Accept-Language",
      *         in="header",
      *         description="The language to return results in (ar for Arabic, en for English)",
      *         required=false,
+     *
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="store",
      *         in="path",
      *         description="ID of the store to delete",
      *         required=true,
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Store deleted successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Store deleted successfully"),
      *             @OA\Property(property="data", type="object", example={} ),
      *             @OA\Property(property="status_code", type="integer", example=200)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Store not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Store not found."),
      *             @OA\Property(property="data", type="object", example={} ),
      *             @OA\Property(property="status_code", type="integer", example=404)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=403,
      *         description="Unauthorized to delete the store",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="You are not authorized to delete this store."),
      *             @OA\Property(property="data", type="object", example={} ),
@@ -476,16 +544,14 @@ class StoreController extends Controller
      *     )
      * )
      */
-
-
     public function destroy(Store $store): JsonResponse
     {
-        if (!auth()->user()->hasRole('store_admin') || $store->user_id !== auth()->id()) {
+        if (! auth()->user()->hasRole('store_admin') || $store->user_id !== auth()->id()) {
             return JsonResponseHelper::errorResponse(__('messages.store_delete_unauthorized'), [], 403);
         }
 
         $this->storeSrevice->deleteStore($store);
 
-        return JsonResponseHelper::successResponse(__('messages.store_deleted'),  [], 200);
+        return JsonResponseHelper::successResponse(__('messages.store_deleted'), [], 200);
     }
 }

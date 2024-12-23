@@ -2,12 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\JsonResponseHelper;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use App\Helpers\JsonResponseHelper;
 
 class CreateStoreRequest extends FormRequest
 {
@@ -33,14 +31,14 @@ class CreateStoreRequest extends FormRequest
             'description_ar' => 'sometimes|required_with:description_en',
             'name_ar' => 'required|unique:stores,name_ar',
             'description_en' => 'sometimes|required_with:description_ar',
-            'name_en' => 'required|unique:stores,name_en'
+            'name_en' => 'required|unique:stores,name_en',
         ];
     }
 
     protected function failedValidation(Validator $validator)
     {
         $errors = collect($validator->errors()->toArray())
-            ->map(fn($error) => $error[0]) // Get only the first error for each field
+            ->map(fn ($error) => $error[0]) // Get only the first error for each field
             ->toArray();
 
         throw new HttpResponseException(

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use Spatie\Permission\Contracts\Role;
 
 class RoleService
 {
@@ -16,11 +15,12 @@ class RoleService
             return 'has role';
         }
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
         $user->assignRole($role);
+
         return true;
     }
 
@@ -29,13 +29,14 @@ class RoleService
         $userId = $id;
         $user = User::find($userId);
 
-        if (!$user->hasRole($role)) {
+        if (! $user->hasRole($role)) {
             return 'has not role';
         }
-        if (!$user) {
+        if (! $user) {
             return false;
         }
         $user->removeRole($role);
+
         return true;
     }
 }

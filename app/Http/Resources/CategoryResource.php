@@ -18,6 +18,7 @@ class CategoryResource extends JsonResource
      *     type="object",
      *     title="Category Resource",
      *     description="Represents a category resource with translated name based on the selected language.",
+     *
      *     @OA\Property(
      *         property="id",
      *         type="integer",
@@ -35,7 +36,8 @@ class CategoryResource extends JsonResource
     public function toArray(Request $request): array
     {
         $lang = app()->getLocale();
-        $name = 'name_' . $lang;
+        $name = 'name_'.$lang;
+
         return [
             'id' => $this->id,
             'name' => $this->$name,

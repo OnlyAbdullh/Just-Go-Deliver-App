@@ -21,7 +21,7 @@ class Store_Product extends Model
         'description_en',
         'description_ar',
         'sold_quantity',
-        'main_image'
+        'main_image',
     ];
 
     public function store()
@@ -38,6 +38,7 @@ class Store_Product extends Model
     {
         return $this->hasMany(Image::class, 'product_id', 'product_id');
     }
+
     public function cartProducts()
     {
         return $this->hasMany(CartProduct::class, 'store_product_id');

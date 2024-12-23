@@ -7,9 +7,7 @@ use Ichtrojan\Otp\Otp;
 
 class OTPService
 {
-    public function __construct( )
-    {
-    }
+    public function __construct() {}
 
     public function sendOTP(string $email): void
     {
@@ -17,12 +15,11 @@ class OTPService
         SendOtpEmailJob::dispatch($email, $otpDetails->token);
     }
 
-
     public function validateOTP(string $inputOtp, string $email): array
     {
         $validationResult = (new Otp)->validate($email, $inputOtp);
 
-        if (!$validationResult->status) {
+        if (! $validationResult->status) {
             return [
                 'successful' => false,
                 'message' => $validationResult->message,
@@ -36,5 +33,4 @@ class OTPService
             'status_code' => 200,
         ];
     }
-
 }

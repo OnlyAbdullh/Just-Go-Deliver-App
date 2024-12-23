@@ -21,13 +21,17 @@ class UserController extends Controller
      *     path="/users",
      *     summary="Get a list of all users",
      *     tags={"Users"},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of users",
+     *
      *         @OA\JsonContent(
      *             type="array",
+     *
      *             @OA\Items(
      *                 type="object",
+     *
      *                 @OA\Property(property="id", type="integer", example=10),
      *                 @OA\Property(property="first_name", type="string", example="abdullah"),
      *                 @OA\Property(property="last_name", type="string", example="alksm"),
@@ -44,6 +48,7 @@ class UserController extends Controller
     public function index()
     {
         $users = $this->userService->getAllUsers();
+
         return response()->json($users);
     }
 
@@ -52,18 +57,23 @@ class UserController extends Controller
      *     path="api/users/{id}/show",
      *     summary="Get details of a specific user",
      *     tags={"Users"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="User ID",
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="User details",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="id", type="integer", example=10),
      *             @OA\Property(property="first_name", type="string", example="abdullah"),
      *             @OA\Property(property="last_name", type="string", example="alksm"),
@@ -79,6 +89,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $userDetails = $this->userService->getUserDetails($user);
+
         return response()->json($userDetails);
     }
 
@@ -87,13 +98,16 @@ class UserController extends Controller
      *     path="api/users/{id}/delete",
      *     summary="Delete a user",
      *     tags={"Users"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="User ID",
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(
      *         response=204,
      *         description="User deleted successfully"
@@ -110,17 +124,22 @@ class UserController extends Controller
      *     path="/users/{id}",
      *     summary="Update a user's information",
      *     tags={"Users"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="User ID",
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="first_name", type="string", example="abdullah"),
      *             @OA\Property(property="last_name", type="string", example="alksm"),
      *             @OA\Property(property="email", type="string", example="abdallaalkasm9@gmail.com"),
@@ -130,11 +149,14 @@ class UserController extends Controller
      *             @OA\Property(property="role", type="string", example="admin")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Updated user details",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="id", type="integer", example=10),
      *             @OA\Property(property="first_name", type="string", example="abdullah"),
      *             @OA\Property(property="last_name", type="string", example="alksm"),
@@ -150,6 +172,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $updatedUser = $this->userService->updateUser($user, $request->all());
+
         return response()->json($updatedUser);
     }
 
@@ -158,18 +181,24 @@ class UserController extends Controller
      *     path="/users/{id}/upload",
      *     summary="Upload a profile image for a user",
      *     tags={"Users"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="User ID",
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
+     *
      *             @OA\Schema(
+     *
      *                 @OA\Property(
      *                     property="image",
      *                     description="Profile image file",
@@ -179,11 +208,14 @@ class UserController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Image uploaded successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="path", type="any path")
      *         )
      *     )
@@ -197,17 +229,18 @@ class UserController extends Controller
 
         $image = $request->file('image');
 
-        if (!$image) {
+        if (! $image) {
             return JsonResponseHelper::errorResponse(__('messages.no_image_uploaded_or_invalid'));
         }
 
-        $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
+        $imageName = 'profile_'.time().'.'.$image->getClientOriginalExtension();
 
-        $path = storage_path('app/profiles/' . $imageName);
+        $path = storage_path('app/profiles/'.$imageName);
 
         $image->move(storage_path('app/profiles'), $imageName);
         $user->image = $path;
         $user->save();
+
         return JsonResponseHelper::successResponse(__('messages.image_saved_successfully'), $path);
     }
 }

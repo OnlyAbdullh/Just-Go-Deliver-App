@@ -4,7 +4,6 @@ namespace App\Http;
 
 use App\Http\Middleware\ApiLocalization;
 use App\Http\Middleware\GuestOrAuth;
-use App\Http\Middleware\ManagerRoleMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel

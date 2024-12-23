@@ -9,19 +9,19 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class StoreRepository implements StoreRepositoryInterface
 {
-
     public function all_with_pagination($items): LengthAwarePaginator
     {
         $lang = app()->getLocale();
+
         return Store::with(['user' => function ($query) {
             $query->select('id', 'first_name', 'last_name');
         }])->select([
             'id',
-            'name_' . $lang,
-            'description_' . $lang,
-            'location_' . $lang,
+            'name_'.$lang,
+            'description_'.$lang,
+            'location_'.$lang,
             'user_id',
-            'logo'
+            'logo',
         ])->paginate($items);
     }
 

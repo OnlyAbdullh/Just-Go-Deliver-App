@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\JsonResponseHelper;
 use App\Models\Product;
 use App\Models\Store;
-use Illuminate\Http\Request;
 use App\Services\FavoriteService;
 
 class FavoriteController extends Controller
@@ -23,34 +22,46 @@ class FavoriteController extends Controller
      *     tags={"Favorites"},
      *     summary="Add a product to favorites",
      *     description="Adds a product to the user's favorites if it belongs to the specified store and is not already in favorites.",
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"store_id", "product_id"},
+     *
      *             @OA\Property(property="store_id", type="integer", example=1, description="ID of the store"),
      *             @OA\Property(property="product_id", type="integer", example=42, description="ID of the product")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Product added to favorites successfully.",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Product added to favorites successfully."),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=409,
      *         description="Product is already in your favorites.",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Product is already in your favorites."),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=500,
      *         description="An unexpected error occurred.",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="An unexpected error occurred."),
      *         )
@@ -81,32 +92,44 @@ class FavoriteController extends Controller
      *     path="api/favorites/{store_id}/{product_id}",
      *     summary="Remove a product from favorites",
      *     tags={"Favorites"},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"store_id", "product_id"},
+     *
      *             @OA\Property(property="store_id", type="integer", example=1, description="ID of the store"),
      *             @OA\Property(property="product_id", type="integer", example=101, description="ID of the product")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Product removed from favorites successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Product removed from favorites successfully."),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Product is not in your favorites",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Product is not in your favorites."),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=500,
      *         description="An unexpected error occurred",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="An unexpected error occurred."),
      *         )
      *     )
@@ -229,6 +252,7 @@ class FavoriteController extends Controller
     public function list()
     {
         $favorites = $this->favoriteService->getFavoriteProducts();
+
         return JsonResponseHelper::successResponse(__('messages.favorites_retrieved'), $favorites);
     }
 
@@ -237,24 +261,31 @@ class FavoriteController extends Controller
      *     path="/favorites/{store_id}/{product_id}/check",
      *     summary="Check if a product is favorited",
      *     tags={"Favorites"},
+     *
      *     @OA\Parameter(
      *         name="store_id",
      *         in="query",
      *         required=true,
+     *
      *         @OA\Schema(type="integer"),
      *         description="ID of the store"
      *     ),
+     *
      *     @OA\Parameter(
      *         name="product_id",
      *         in="query",
      *         required=true,
+     *
      *         @OA\Schema(type="integer"),
      *         description="ID of the product"
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Favorite status retrieved",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Favorite status retrieved."),
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="is_favorite", type="boolean", example=true)
@@ -266,6 +297,7 @@ class FavoriteController extends Controller
     public function check(int $store_id, int $product_id)
     {
         $isFavorite = $this->favoriteService->isProductFavorited($product_id, $store_id);
+
         return JsonResponseHelper::successResponse(__('messages.favorite_status_retrieved'), ['is_favorite' => $isFavorite]);
     }
 }

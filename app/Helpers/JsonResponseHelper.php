@@ -6,13 +6,12 @@ use Illuminate\Http\JsonResponse;
 
 class JsonResponseHelper
 {
-
     public static function successResponse($message = '', $data = [], $statusCode = 200): JsonResponse
     {
         $responseData = [];
 
         $responseData['successful'] = true;
-        if (!empty($message)) {
+        if (! empty($message)) {
             $responseData['message'] = $message;
         }
 
@@ -29,11 +28,11 @@ class JsonResponseHelper
 
         $responseData['successful'] = false;
 
-        if (!empty($message)) {
+        if (! empty($message)) {
             $responseData['message'] = $message;
         }
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             $responseData['errors'] = $errors;
         }
 

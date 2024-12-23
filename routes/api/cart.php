@@ -3,7 +3,6 @@
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::group(['middleware' => ['auth.jwt', 'blacklist', 'localization']], function () {
     Route::post('carts/{store}/{product}', [CartController::class, 'add']);
     Route::get('carts', [CartController::class, 'getCartProducts']);

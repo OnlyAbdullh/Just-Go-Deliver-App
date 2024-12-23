@@ -6,17 +6,15 @@ use App\Helpers\JsonResponseHelper;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\AuthRepository;
-use App\Repositories\Contracts\AuthRepositoryInterface;
 use Carbon\Carbon;
-use DragonCode\PrettyArray\Services\Formatters\Json;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
     protected $authRepository;
+
     protected $roleService;
 
     public function __construct(AuthRepository $authRepository, RoleService $roleService)
@@ -28,42 +26,42 @@ class AuthService
     public function register(array $data)
     {
         $data['password'] = Hash::make($data['password']);
+
         return $this->authRepository->createUser($data);
     }
 
     public function completeRegistration($registrationData)
     {
-        if (!$registrationData) {
+        if (! $registrationData) {
             // return JsonResponseHelper::errorResponse(__('messages.session_expired', [], 422));
             return response()->json([
-                "status" => false,
-                "message" => __('messages.session_expired'),
+                'status' => false,
+                'message' => __('messages.session_expired'),
             ], 422);
         }
 
         $user = $this->register($registrationData);
 
         $this->roleService->assignRoleForUser($user->id, 'user');
+
         return JsonResponseHelper::successResponse(__('messages.registration_completed'));
     }
-
 
     public function logout(string $fcmToken)
     {
         $user = auth()->user();
         $deviceExists = $this->authRepository->fcmTokenExists($user->id, $fcmToken);
 
-        if (!$deviceExists) {
+        if (! $deviceExists) {
             throw new \Exception(__('messages.device_token_not_found'), 404);
         }
 
         $currentToken = JWTAuth::getToken();
-        if (!$currentToken) {
+        if (! $currentToken) {
             throw new \Exception(__('messages.no_token_provided'), 400);
         }
 
         $decodedToken = JWTAuth::getPayload($currentToken)->toArray();
-
 
         if (($decodedToken['fcm_token'] ?? null) !== $fcmToken) {
             throw new \Exception(__('messages.access_token_mismatch'), 403);
@@ -83,7 +81,6 @@ class AuthService
 
         auth()->logout();
     }
-
 
     public function login(array $credentials, string $fcmToken)
     {
@@ -123,6 +120,7 @@ class AuthService
                 'user' => new UserResource($user),
             ];
         }
+
         return [
             'successful' => false,
             'message' => __('messages.invalid_credentials'),
@@ -134,23 +132,23 @@ class AuthService
     {
         $refreshTokenRecord = $this->authRepository->findRefreshToken($refreshToken, $deviceId);
 
-        if (!$refreshTokenRecord) {
+        if (! $refreshTokenRecord) {
             throw new \Exception(__('messages.invalid_or_expired_refresh_token'), 401);
         }
         $user = User::find($refreshTokenRecord->user_id);
-        if (!$user) {
+        if (! $user) {
             throw new \Exception(__('messages.user_not_found'), 404);
         }
         $deviceExists = $this->authRepository->deviceExists($deviceId, $user->id);
 
-        if (!$deviceExists) {
+        if (! $deviceExists) {
             throw new \Exception(__('messages.device_id_not_found'), 404);
         }
         $accessToken = $this->authRepository->createAccessToken($user, $deviceId);
 
         return [
             'access_token' => $accessToken,
-            'expires_in' => __('messages.one_hour')
+            'expires_in' => __('messages.one_hour'),
         ];
     }
 }

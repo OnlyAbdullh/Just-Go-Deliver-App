@@ -31,6 +31,7 @@ class CleanOtp extends Command
             ->delete();
 
         $this->info('Expired OTPs have been cleaned.');
+
         return 0;
     }
 }

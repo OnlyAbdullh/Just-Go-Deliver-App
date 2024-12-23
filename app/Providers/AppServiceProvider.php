@@ -2,24 +2,6 @@
 
 namespace App\Providers;
 
-use App\Helpers\JsonResponseHelper;
-use App\Repositories\CartRepository;
-use App\Repositories\Contracts\AuthRepositoryInterface;
-use App\Repositories\Contracts\CartRepositoryInterface;
-use App\Repositories\Contracts\FavoriteRepositoryInterface;
-use App\Repositories\Contracts\UserRepositoryInterface;
-use App\Repositories\AuthRepository;
-use App\Repositories\CategoryRepository;
-use App\Repositories\Contracts\CategoryRepositoryInterface;
-use App\Repositories\Contracts\ImageRepositoryInterface;
-use App\Repositories\Contracts\ProductRepositoryInterface;
-use App\Repositories\Contracts\StoreRepositoryInterface;
-use App\Repositories\FavoriteRepository;
-use App\Repositories\ImageRepository;
-use App\Repositories\ProductRepository;
-use App\Repositories\StoreRepository;
-use App\Repositories\UserRepository;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

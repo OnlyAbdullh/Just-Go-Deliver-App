@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Helpers\JsonResponseHelper;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
@@ -20,6 +19,7 @@ class UserRepository implements UserRepositoryInterface
             'phone_number',
             'image',
         ])->paginate($perPage);
+
         return UserResource::collection($users);
     }
 
@@ -27,13 +27,12 @@ class UserRepository implements UserRepositoryInterface
     {
         $userDetails = User::with('roles')->find($user->id);
 
-        if (!$userDetails) {
+        if (! $userDetails) {
             return response()->json(['error' => 'User not found'], 404);
         }
 
         return new UserResource($userDetails);
     }
-
 
     public function deleteUser(User $user)
     {
@@ -43,6 +42,7 @@ class UserRepository implements UserRepositoryInterface
     public function updateUser(User $user, array $data)
     {
         $user->fill($data)->save();
+
         return new UserResource($user);
     }
 }

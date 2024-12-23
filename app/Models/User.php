@@ -7,13 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     protected $guard_name = 'api';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -63,6 +65,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(UserRefreshToken::class, 'user_id');
     }
+
+    public function store()
+    {
+        return $this->hasOne(Store::class);
+    }
+
     public function favoriteProducts()
     {
         return $this->belongsToMany(Product::class, 'favorites')->withTimestamps();

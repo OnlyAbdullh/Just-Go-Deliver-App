@@ -2,11 +2,7 @@
 
 namespace App\Services;
 
-use App\Helpers\JsonResponseHelper;
-use App\Http\Resources\CategoryResource;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
-use App\Models\Category;
-use Illuminate\Http\Request;
 
 class CategoryService
 {
@@ -19,15 +15,16 @@ class CategoryService
 
     public function getAllCategories(int $items)
     {
-        return  $this->categoryRepository->all_with_pagination($items);
+        return $this->categoryRepository->all_with_pagination($items);
     }
 
     public function findOrCreate($nameEn, $nameAr)
     {
         $category = $this->categoryRepository->findByName($nameEn);
-        if (!$category) {
+        if (! $category) {
             $category = $this->categoryRepository->store(['name_ar' => $nameAr, 'name_en' => $nameEn]);
         }
+
         return $category;
     }
 
@@ -40,7 +37,7 @@ class CategoryService
     {
         $category = $this->categoryRepository->findById($categoryId);
 
-        if (!$category) {
+        if (! $category) {
             return null;
         }
 
@@ -51,7 +48,7 @@ class CategoryService
     {
         $category = $this->categoryRepository->findById($categoryId);
 
-        if (!$category) {
+        if (! $category) {
             return null;
         }
 

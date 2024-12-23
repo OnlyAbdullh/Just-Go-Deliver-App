@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('device_id');
-            $table->string('refresh_token',1024)->unique();
+            $table->string('refresh_token', 1024)->unique();
             $table->timestamp('expires_at');
             $table->timestamps();
 

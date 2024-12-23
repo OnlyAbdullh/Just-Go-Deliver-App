@@ -2,13 +2,12 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use App\Models\Store;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
 
 class StoreControllerTest extends TestCase
 {
@@ -29,7 +28,7 @@ class StoreControllerTest extends TestCase
                     'stores',
                     'hasMorePages',
                 ],
-                'status_code'
+                'status_code',
             ]);
     }
 
@@ -90,7 +89,7 @@ class StoreControllerTest extends TestCase
                 'location',
                 'description',
             ],
-            'status_code'
+            'status_code',
         ]);
 
         $this->assertDatabaseHas('stores', [
@@ -107,15 +106,14 @@ class StoreControllerTest extends TestCase
         $this->assertTrue(Storage::disk('public')->exists($relativeFilePath));
     }
 
-    public function test_it_fails_validation_when_required_fields_are_missing(){
+    public function test_it_fails_validation_when_required_fields_are_missing()
+    {
 
-        $response = $this->postJson(route('stores.store'),[]);
+        $response = $this->postJson(route('stores.store'), []);
 
         $response->assertStatus(400);
 
-        $response->assertJsonValidationErrors(['name','logo','user_id']);
+        $response->assertJsonValidationErrors(['name', 'logo', 'user_id']);
 
     }
-
-    
 }

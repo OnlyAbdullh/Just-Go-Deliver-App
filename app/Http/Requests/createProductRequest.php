@@ -2,14 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Helpers\JsonResponseHelper;
-use App\Models\Store;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class createProductRequest extends FormRequest
 {
@@ -23,6 +19,7 @@ class createProductRequest extends FormRequest
         if (auth()->user()->hasRole('store_admin') && $store->user_id === auth()->id()) {
             return true;
         }
+
         return false;
     }
 
@@ -65,17 +62,17 @@ class createProductRequest extends FormRequest
         ];
     }
 
-
     protected function failedValidation(Validator $validator)
     {
         $errors = collect($validator->errors()->toArray())
-            ->map(fn($error) => $error[0]) // Get only the first error for each field
+            ->map(fn ($error) => $error[0]) // Get only the first error for each field
             ->toArray();
 
         throw new HttpResponseException(
             JsonResponseHelper::errorResponse(__('messages.validation_error'), $errors, 400)
         );
     }
+
     protected function failedAuthorization()
     {
         throw new HttpResponseException(

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class TemporaryRegistration extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'first_name',
         'last_name',
@@ -15,6 +16,6 @@ class TemporaryRegistration extends Model
         'password',
         'location',
         'phone_number',
-        'image'
+        'image',
     ];
 }

@@ -2,13 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Helpers\JsonResponseHelper;
-use App\Models\Store;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateImageRequest extends FormRequest
 {
@@ -32,7 +29,7 @@ class UpdateImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048'
+            'image' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048',
         ];
     }
 
@@ -42,10 +39,11 @@ class UpdateImageRequest extends FormRequest
             'image' => __('messages.image'),
         ];
     }
+
     protected function failedValidation(Validator $validator)
     {
         $errors = collect($validator->errors()->toArray())
-            ->map(fn($error) => $error[0]) // Get only the first error for each field
+            ->map(fn ($error) => $error[0]) // Get only the first error for each field
             ->toArray();
 
         throw new HttpResponseException(

@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\OTPController;
 use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,7 +20,6 @@ Route::middleware('localization')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('refresh', [AuthController::class, 'refresh']);
 
-
     Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {
         Route::post('logout', [AuthController::class, 'logout']);
     });
@@ -29,5 +27,6 @@ Route::middleware('localization')->group(function () {
 
 Route::get('/api/documentation', function () {
     Artisan::call('l5-swagger:generate');
+
     return redirect('/swagger-ui');
 });

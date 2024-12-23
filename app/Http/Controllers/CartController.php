@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\JsonResponseHelper;
-use App\Models\Store;
 use App\Models\Product;
+use App\Models\Store;
 use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,54 +28,66 @@ class CartController extends Controller
      *     security={
      *         {"bearerAuth": {}}
      *     },
+     *
      *     @OA\Parameter(
      *         name="store_id",
      *         in="path",
      *         description="The ID of the store where the product is located",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="product_id",
      *         in="path",
      *         description="The ID of the product to be added to the cart",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="quantity", type="integer", example=2, description="The quantity of the product to add to the cart")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Product successfully added to the cart",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Product added to cart successfully")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=400,
      *         description="Error adding product to cart",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Not enough stock available")
      *         )
      *     ),
      * )
      */
-
-
     public function add(int $store_id, int $product_id, Request $request)
     {
 
         $result = $this->cartService->addProductToCart($store_id, $product_id, $request->input('quantity'));
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return JsonResponseHelper::errorResponse('', $result['message']);
         }
+
         return JsonResponseHelper::successResponse('', $result['message']);
     }
 
@@ -86,16 +98,21 @@ class CartController extends Controller
      *     tags={"Cart"},
      *     security={{"bearerAuth": {}}},
      *     description="Fetch all products in the authenticated user's cart, including store and product details. Returns an empty array if the cart is empty.",
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Successful retrieval of cart products",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="success", type="boolean", example=true, description="Indicates if the operation was successful"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
      *                 description="List of products in the cart",
+     *
      *                 @OA\Items(
+     *
      *                     @OA\Property(property="store_id", type="integer", example=1, description="ID of the store"),
      *                     @OA\Property(property="store_name", type="string", example="Ali", description="Name of the store"),
      *                     @OA\Property(property="order_quantity", type="integer", example=2, description="Quantity ordered"),
@@ -145,25 +162,32 @@ class CartController extends Controller
      *     description="Update the quantities of items in the user's cart based on stock availability. Updates only items with valid quantities.",
      *     tags={"Cart"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\Parameter(
      *         name="Accept-Language",
      *         in="header",
      *         description="The language to return results in (ar for Arabic, en for English)",
      *         required=false,
+     *
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(
      *                     property="data",
      *                     type="array",
      *                     description="Array of items to update",
+     *
      *                     @OA\Items(
      *                         type="object",
      *                         properties={
+     *
      *                             @OA\Property(property="product_id", type="integer", description="ID of the product", example=101),
      *                             @OA\Property(property="store_id", type="integer", description="ID of the store", example=1),
      *                             @OA\Property(property="cart_amount", type="integer", description="Updated cart quantity", example=5)
@@ -173,34 +197,43 @@ class CartController extends Controller
      *             }
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Success responses with multiple possibilities",
+     *
      *         @OA\JsonContent(
      *             type="array",
+     *
      *             @OA\Items(
      *                 oneOf={
+     *
      *                     @OA\Schema(
      *                         type="object",
      *                         properties={
+     *
      *                             @OA\Property(property="message", type="string", example="Updated Product ID 101 to quantity 5."),
      *                             @OA\Property(property="store_id", type="integer", description="ID of the store", example=1),
      *                             @OA\Property(property="product_id", type="integer", example=101),
      *                             @OA\Property(property="cart_amount", type="integer", example=5)
      *                         }
      *                     ),
+     *
      *                     @OA\Schema(
      *                         type="object",
      *                         properties={
+     *
      *                             @OA\Property(property="message", type="string", example="Only 3 of Product ID 101 is available. Updated the quantity to 3."),
      *                             @OA\Property(property="store_id", type="integer", description="ID of the store", example=1),
      *                             @OA\Property(property="product_id", type="integer", example=101),
      *                             @OA\Property(property="cart_amount", type="integer", example=3)
      *                         }
      *                     ),
+     *
      *                     @OA\Schema(
      *                         type="object",
      *                         properties={
+     *
      *                             @OA\Property(property="message", type="string", example="There is no product available for now for Product ID 3."),
      *                             @OA\Property(property="store_id", type="integer", description="ID of the store", example=1),
      *                             @OA\Property(property="product_id", type="integer", example=3),
@@ -211,24 +244,26 @@ class CartController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=400,
      *         description="Invalid request",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(property="message", type="string", description="Error message describing the issue", example="Invalid input data. Please ensure all items have valid store_id, product_id, and quantity.")
      *             }
      *         )
      *     )
      * )
      */
-
-
     public function updateQuantities(Request $request)
     {
         $user = Auth::user();
         $response = $this->cartService->updateCartQuantities($user->cart->id, $request->input('data'));
+
         return JsonResponseHelper::successResponse('', $response);
     }
 
@@ -239,25 +274,32 @@ class CartController extends Controller
      *     description="Deletes specific products from the user's cart based on the provided product and store IDs.",
      *     tags={"Cart"},
      *     security={{"bearerAuth": {}}},
+     *
      *          @OA\Parameter(
      *          name="Accept-Language",
      *          in="header",
      *          description="The language to return results in (ar for Arabic, en for English)",
      *          required=false,
+     *
      *          @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *      ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(
      *                     property="data",
      *                     type="array",
      *                     description="Array of items to delete",
+     *
      *                     @OA\Items(
      *                         type="object",
      *                         properties={
+     *
      *                             @OA\Property(property="product_id", type="integer", description="ID of the product to delete", example=101),
      *                             @OA\Property(property="store_id", type="integer", description="ID of the store where the product is located", example=1)
      *                         }
@@ -266,33 +308,39 @@ class CartController extends Controller
      *             }
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Products deleted successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(property="message", type="string", description="Success message", example="3 products were Deleted from the Cart successfully")
      *             }
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=400,
      *         description="Invalid request",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(property="message", type="string", description="Error message describing the issue", example="Invalid data provided. Please check the input and try again.")
      *             }
      *         )
      *     ),
      * )
      */
-
     public function DeleteProducts(Request $request)
     {
         $user = Auth::user();
         $RowsDeleted = $this->cartService->DeleteCartProducts($user->cart, $request->input('data'));
+
         return JsonResponseHelper::successResponse(__('messages.cart_products_deleted_success', ['count' => $RowsDeleted]));
     }
 
@@ -303,36 +351,43 @@ class CartController extends Controller
      *     description="Deletes all products from the user's cart.",
      *     tags={"Cart"},
      *     security={{"bearerAuth": {}}},
+     *
      *          @OA\Parameter(
      *          name="Accept-Language",
      *          in="header",
      *          description="The language to return results in (ar for Arabic, en for English)",
      *          required=false,
+     *
      *          @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *      ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="All products deleted successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(property="message", type="string", description="Success message", example="All products have been deleted from the cart.")
      *             }
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=400,
      *         description="Bad Request",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(property="message", type="string", description="Error message describing the issue", example="Failed to delete products. Please try again.")
      *             }
      *         )
      *     ),
      * )
      */
-
     public function deleteAll()
     {
         $user = Auth::user();
@@ -342,6 +397,7 @@ class CartController extends Controller
             $cart->cart_count = 0;
             $cart->save();
         });
+
         return JsonResponseHelper::successResponse(__('messages.cart_products_deleted'));
     }
 
@@ -354,11 +410,14 @@ class CartController extends Controller
      *     security={
      *         {"BearerAuth": {}}
      *     },
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Cart size retrieved successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="data", type="integer", example=3)
      *         )
      *     ),
@@ -367,6 +426,7 @@ class CartController extends Controller
     public function getCartSize()
     {
         $user = Auth::user();
+
         return JsonResponseHelper::successResponse('Cart size retrieved successfully', $user?->cart?->cart_count ?? 0);
     }
 }

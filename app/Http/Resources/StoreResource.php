@@ -18,6 +18,7 @@ class StoreResource extends JsonResource
      * @OA\Schema(
      *     schema="StoreResource",
      *     type="object",
+     *
      *     @OA\Property(property="id", type="integer", example=1),
      *     @OA\Property(property="manager", type="string", example="John Doe"),
      *     @OA\Property(property="name", type="string", example="My Store"),
@@ -30,9 +31,9 @@ class StoreResource extends JsonResource
     {
         $lang = $request->header('Accept-Language', 'en');
 
-        $name = 'name_' . $lang;
-        $description = 'description_' . $lang;
-        $location = 'location_' . $lang;
+        $name = 'name_'.$lang;
+        $description = 'description_'.$lang;
+        $location = 'location_'.$lang;
 
         $imagePath = $this->logo;
 
@@ -42,13 +43,13 @@ class StoreResource extends JsonResource
 
         return collect([
             'id' => $this->id,
-            'manager' => $manager->first_name . ' ' . $manager->last_name,
+            'manager' => $manager->first_name.' '.$manager->last_name,
             'name' => $this->$name,
             'image_url' => $this->logo ? asset($imageUrl) : null,
             'location' => $this->$location,
             'description' => $this->$description,
         ])->filter(function ($value) {
-            return !is_null($value);
+            return ! is_null($value);
         })->toArray();
     }
 }

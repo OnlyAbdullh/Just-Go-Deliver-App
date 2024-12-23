@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Resources\StoreResource;
 use App\Models\Store;
 use App\Repositories\Contracts\StoreRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
@@ -16,9 +15,9 @@ class StoreService
         $this->storeRepository = $storeRepository;
     }
 
-    public function getAllStores( $items)
+    public function getAllStores($items)
     {
-        return $this->storeRepository->all_with_pagination(  $items);
+        return $this->storeRepository->all_with_pagination($items);
     }
 
     public function createStore(array $data): Store
@@ -29,32 +28,32 @@ class StoreService
             'user_id' => auth()->id(),
             'name_ar' => $data['name_ar'],
             'name_en' => $data['name_en'],
-            'logo' => $imagePath
+            'logo' => $imagePath,
         ];
 
-        if (!empty($data['location_ar'])) {
+        if (! empty($data['location_ar'])) {
             $storeData['location_ar'] = $data['location_ar'];
         }
 
-        if (!empty($data['location_en'])) {
+        if (! empty($data['location_en'])) {
             $storeData['location_en'] = $data['location_en'];
         }
 
-        if (!empty($data['description_ar'])) {
+        if (! empty($data['description_ar'])) {
             $storeData['description_ar'] = $data['description_ar'];
         }
 
-        if (!empty($data['description_en'])) {
+        if (! empty($data['description_en'])) {
             $storeData['description_en'] = $data['description_en'];
         }
 
         return $this->storeRepository->store($storeData);
     }
 
-    public function updateStore(Store $store, array $data): Store|null
+    public function updateStore(Store $store, array $data): ?Store
     {
         if (isset($data['logo'])) {
-            if ((!empty($store->logo)) && Storage::disk('public')->exists($store->logo)) {
+            if ((! empty($store->logo)) && Storage::disk('public')->exists($store->logo)) {
                 Storage::disk('public')->delete($store->logo);
             }
 
@@ -68,7 +67,7 @@ class StoreService
 
     public function deleteLogoImage(Store $store)
     {
-        if ((!empty($store->logo)) && Storage::disk('public')->exists($store->logo)) {
+        if ((! empty($store->logo)) && Storage::disk('public')->exists($store->logo)) {
             Storage::disk('public')->delete($store->logo);
         }
     }
@@ -83,7 +82,7 @@ class StoreService
     {
         $store = $this->storeRepository->findById($storeId);
 
-        if (!$store) {
+        if (! $store) {
             return null;
         }
 

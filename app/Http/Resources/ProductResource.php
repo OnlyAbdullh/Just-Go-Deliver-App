@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProductResource extends JsonResource
@@ -19,6 +18,7 @@ class ProductResource extends JsonResource
      * @OA\Schema(
      *     schema="ProductResource",
      *     type="object",
+     *
      *     @OA\Property(
      *         property="id",
      *         type="integer",
@@ -71,19 +71,18 @@ class ProductResource extends JsonResource
      *     )
      * )
      */
-
     public function toArray(Request $request): array
     {
         $mainUrl = Storage::url($this->main_image);
 
         $lang = app()->getLocale();
 
-        $productName = 'name_' . $lang;
-        $storeName = 'name_' . $lang;
-        $description = 'description_' . $lang;
-        $categoryName = 'name_' . $lang;
+        $productName = 'name_'.$lang;
+        $storeName = 'name_'.$lang;
+        $description = 'description_'.$lang;
+        $categoryName = 'name_'.$lang;
 
-        $data =  [
+        $data = [
             'store_id' => $this->store_id,
             'store_name' => $this->store->$storeName ?? null,
             'product_id' => $this->product_id,
@@ -96,7 +95,6 @@ class ProductResource extends JsonResource
             'is_favorite' => $this->product->favoritedByUsers->isNotEmpty() ? 1 : 0,
             'main_image' => asset($mainUrl),
         ];
-
 
         if ($request->routeIs('products.show')) {
             $data['sub_images'] = $this->whenLoaded('images', function () {

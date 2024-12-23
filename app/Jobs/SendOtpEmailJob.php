@@ -15,13 +15,11 @@ class SendOtpEmailJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $email;
+
     public $otp;
 
     /**
      * Create a new job instance.
-     *
-     * @param string $email
-     * @param string $otp
      */
     public function __construct(string $email, string $otp)
     {

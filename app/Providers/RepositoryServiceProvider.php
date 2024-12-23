@@ -2,23 +2,23 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use App\Repositories\Contracts\AuthRepositoryInterface;
 use App\Repositories\AuthRepository;
-use App\Repositories\Contracts\StoreRepositoryInterface;
-use App\Repositories\StoreRepository;
-use App\Repositories\Contracts\CategoryRepositoryInterface;
-use App\Repositories\CategoryRepository;
-use App\Repositories\Contracts\ProductRepositoryInterface;
-use App\Repositories\ProductRepository;
-use App\Repositories\Contracts\UserRepositoryInterface;
-use App\Repositories\UserRepository;
-use App\Repositories\Contracts\FavoriteRepositoryInterface;
-use App\Repositories\FavoriteRepository;
-use App\Repositories\Contracts\ImageRepositoryInterface;
-use App\Repositories\ImageRepository;
-use App\Repositories\Contracts\CartRepositoryInterface;
 use App\Repositories\CartRepository;
+use App\Repositories\CategoryRepository;
+use App\Repositories\Contracts\AuthRepositoryInterface;
+use App\Repositories\Contracts\CartRepositoryInterface;
+use App\Repositories\Contracts\CategoryRepositoryInterface;
+use App\Repositories\Contracts\FavoriteRepositoryInterface;
+use App\Repositories\Contracts\ImageRepositoryInterface;
+use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Repositories\Contracts\StoreRepositoryInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\FavoriteRepository;
+use App\Repositories\ImageRepository;
+use App\Repositories\ProductRepository;
+use App\Repositories\StoreRepository;
+use App\Repositories\UserRepository;
+use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
 {

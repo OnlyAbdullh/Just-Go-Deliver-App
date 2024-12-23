@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Store;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -26,7 +26,8 @@ class StoreFactory extends Factory
         $randomImage = $storesImages[array_rand($storesImages)];
 
         $imageUrl = asset($randomImage);
-        $imageUrl = str_replace("http://localhost", "", $imageUrl);
+        $imageUrl = str_replace('http://localhost', '', $imageUrl);
+
         return [
             'user_id' => User::factory(),
             'name_ar' => $this->faker->unique()->words(2, true),

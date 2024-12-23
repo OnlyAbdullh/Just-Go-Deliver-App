@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Models\Category;
+use App\Repositories\Contracts\CategoryRepositoryInterface;
 
 class CategoryRepository implements CategoryRepositoryInterface
 {
@@ -27,6 +27,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         return Category::where('id', $id)->first();
     }
+
     public function findByName($name)
     {
         return Category::where('name_en', $name)->first();
@@ -35,9 +36,10 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function findOrCreate($nameEn, $nameAr)
     {
         $category = $this->findByName($nameEn);
-        if (!$category) {
+        if (! $category) {
             $category = $this->store(['name_ar' => $nameAr, 'name_en' => $nameEn]);
         }
+
         return $category;
     }
 

@@ -9,12 +9,11 @@ class Favorite extends Model
 {
     use HasFactory;
 
-    protected $table = "favorites";
+    protected $table = 'favorites';
 
     protected $fillable = [
         'user_id',
         'product_id',
-        'store_id'
+        'store_id',
     ];
-    
 }

@@ -6,8 +6,8 @@ use App\Helpers\JsonResponseHelper;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
+
 class CheckBlacklistedToken
 {
     /**
@@ -19,7 +19,7 @@ class CheckBlacklistedToken
     {
         try {
             $token = JWTAuth::getToken();
-            if (!$token) {
+            if (! $token) {
                 return JsonResponseHelper::errorResponse('Token not provided', [], 401);
             }
             $isBlacklisted = DB::table('token_blacklist')->where('token', $token)->exists();

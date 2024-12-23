@@ -2,14 +2,13 @@
 
 namespace App\Http\Middleware;
 
-
+use App\Helpers\JsonResponseHelper;
 use Closure;
 use Exception;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use App\Helpers\JsonResponseHelper;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthenticateWithJWT
 {
@@ -18,7 +17,7 @@ class AuthenticateWithJWT
         try {
             $user = JWTAuth::parseToken()->authenticate();
 
-            if (!$user) {
+            if (! $user) {
                 return JsonResponseHelper::errorResponse('USER_NOT_FOUND', [], 404);
             }
         } catch (TokenExpiredException $e) {
@@ -32,5 +31,4 @@ class AuthenticateWithJWT
         // Proceed with the request if no exception is thrown
         return $next($request);
     }
-
 }

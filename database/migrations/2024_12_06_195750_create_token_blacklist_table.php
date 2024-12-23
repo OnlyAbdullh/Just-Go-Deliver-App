@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('token_blacklist', function (Blueprint $table) {
             $table->id();
-            $table->string('token',512)->unique();
+            $table->string('token', 512)->unique();
             $table->timestamp('expires_at');
             $table->timestamps();
         });

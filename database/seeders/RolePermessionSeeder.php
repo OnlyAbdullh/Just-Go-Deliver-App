@@ -2,12 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class RolePermessionSeeder extends Seeder
 {
@@ -18,9 +16,8 @@ class RolePermessionSeeder extends Seeder
     {
         $roles = ['user', 'manager', 'store_admin'];
 
-
         foreach ($roles as $roleName) {
-             Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+            Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
         }
 
         $manager = User::create([
@@ -29,9 +26,8 @@ class RolePermessionSeeder extends Seeder
             'location' => 'medain',
             'email' => 'hzaeter01@gmail.com',
             'password' => Hash::make('password123'),
-            'phone_number' => '0935917557'
+            'phone_number' => '0935917557',
         ]);
-
 
         $manager->assignRole('manager');
     }

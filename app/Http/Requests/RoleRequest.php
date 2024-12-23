@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Helpers\ApiResponse;
 use App\Helpers\JsonResponseHelper;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class RoleRequest extends FormRequest
@@ -18,7 +17,6 @@ class RoleRequest extends FormRequest
         return true;
     }
 
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -28,14 +26,14 @@ class RoleRequest extends FormRequest
     {
         return [
             'role' => 'required|exists:roles,name',
-            'user_id' => 'required'
+            'user_id' => 'required',
         ];
     }
 
     protected function failedValidation(Validator $validator)
     {
         $errors = collect($validator->errors()->toArray())
-            ->map(fn($error) => $error[0]) // Get only the first error for each field
+            ->map(fn ($error) => $error[0]) // Get only the first error for each field
             ->toArray();
 
         throw new HttpResponseException(
