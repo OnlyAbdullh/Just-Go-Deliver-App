@@ -26,7 +26,6 @@ class UserFactory extends Factory
     {
         $profileImages = Storage::disk('public')->files('profiles');
 
-        // Select a random image from the folder
         $randomImage = $profileImages[array_rand($profileImages)];
 
         $imageUrl = asset($randomImage);

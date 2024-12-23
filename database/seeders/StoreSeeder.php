@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class StoreSeeder extends Seeder
 {
@@ -19,7 +20,7 @@ class StoreSeeder extends Seeder
     {
         DB::transaction(function () {
             $users = User::factory(3)->create();
-          /*  $categories = Category::factory(3)->create();
+           $categories = Category::factory(3)->create();
             $stores = Store::factory(5)->create()->each(function ($store) use ($users) {
                 $store->user_id = $users->random()->id;
                 $store->save();
@@ -28,7 +29,7 @@ class StoreSeeder extends Seeder
             $allProductsData = [];
             $storeProductData = [];
             $productCounter = Product::max('id') + 1;
-
+            $storesImages = Storage::disk('public')->files('products');
             foreach ($stores as $store) {
                 for ($i = 0; $i < 10; $i++) {
                     $category = $categories->random();
@@ -41,6 +42,10 @@ class StoreSeeder extends Seeder
                         'updated_at' => now(),
                     ];
 
+                    $randomImage = $storesImages[array_rand($storesImages)];
+
+                    $imageUrl = asset($randomImage);
+                    $imageUrl = str_replace("http://localhost", "", $imageUrl);
                     $storeProductData[] = [
                         'store_id' => $store->id,
                         'price' => fake()->randomFloat(2, 10, 500),
@@ -48,14 +53,14 @@ class StoreSeeder extends Seeder
                         'description_en' => fake()->sentence(),
                         'description_ar' => fake()->sentence(),
                         'sold_quantity' => fake()->numberBetween(0, 50),
-                        'main_image' => 'https://via.placeholder.com/150',
+                        'main_image' => $imageUrl,
                         'product_id' => $productCounter++,
                     ];
                 }
             }
 
             Product::insert($allProductsData);
-            DB::table('store_products')->insert($storeProductData);*/
+            DB::table('store_products')->insert($storeProductData);
 
         });
     }
