@@ -603,6 +603,14 @@ class ProductController extends Controller
 
         $products = $this->productService->searchForProduct($itemsPerPage, $name);
 
+        if ($products->isEmpty()) {
+            return response()->json([
+                'successful' => false,
+                'message' => __('messages.no_products_available'),
+                'status_code' => 404,
+            ]);
+        }
+
         return response()->json([
             'successful' => true,
             'message' => __('messages.retrieve_all_products_success'),

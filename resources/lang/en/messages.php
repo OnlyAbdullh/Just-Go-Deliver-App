@@ -107,4 +107,5 @@ return [
     'updated_product_quantity' => 'Updated Product ID :productId to quantity :quantityToUpdate.',
     'cart_products_deleted' => 'All products have been deleted from the cart.',
     'cart_products_deleted_success' => ':count products were deleted from the cart successfully.',
+    'no_products_available' => 'No products available.',
 ];

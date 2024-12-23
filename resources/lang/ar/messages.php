@@ -107,4 +107,5 @@ return [
     'updated_product_quantity' => 'تم تحديث المنتج ذو المعرف :productId إلى الكمية :quantityToUpdate',
     'cart_products_deleted' => 'تم حذف جميع المنتجات من السلة',
     'cart_products_deleted_success' => 'تم حذف :count منتجًا من السلة بنجاح',
+    'no_products_available' => 'لا توجد منتجات متاحة',
 ];

@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Store;
 use App\Models\Product;
 use App\Models\Store_Product;
+use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\ImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\StoreRepositoryInterface;
@@ -17,14 +18,18 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
-    private $productRepository, $storeRepository, $categoryService, $imageRepository;
+    private $productRepository, $storeRepository, $imageRepository, $categoryRepository;
 
-    public function __construct(ProductRepositoryInterface $productRepository, ImageRepositoryInterface $imageRepository, StoreRepositoryInterface $storeRepository, CategoryService $categoryService)
-    {
+    public function __construct(
+        ProductRepositoryInterface $productRepository,
+        ImageRepositoryInterface $imageRepository,
+        StoreRepositoryInterface $storeRepository,
+        CategoryRepositoryInterface $categoryRepository
+    ) {
         $this->productRepository = $productRepository;
         $this->storeRepository = $storeRepository;
         $this->imageRepository = $imageRepository;
-        $this->categoryService = $categoryService;
+        $this->categoryRepository = $categoryRepository;
     }
 
     public function getAllProduct($items)
@@ -39,7 +44,7 @@ class ProductService
 
     public function addProductToStore($data, Store $store): bool|null
     {
-        $category = $this->categoryService->findOrCreate($data['category_name_en'], $data['category_name_ar']);
+        $category = $this->categoryRepository->findOrCreate($data['category_name_en'], $data['category_name_ar']);
 
         $product = $this->productRepository->findOrCreate($data['name_ar'], $data['name_en'], $category->id);
 

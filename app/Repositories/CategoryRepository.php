@@ -32,6 +32,15 @@ class CategoryRepository implements CategoryRepositoryInterface
         return Category::where('name_en', $name)->first();
     }
 
+    public function findOrCreate($nameEn, $nameAr)
+    {
+        $category = $this->findByName($nameEn);
+        if (!$category) {
+            $category = $this->store(['name_ar' => $nameAr, 'name_en' => $nameEn]);
+        }
+        return $category;
+    }
+
     public function delete(Category $category)
     {
         return $category->delete();
