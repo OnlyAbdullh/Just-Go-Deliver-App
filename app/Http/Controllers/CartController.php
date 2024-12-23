@@ -345,9 +345,28 @@ class CartController extends Controller
         return JsonResponseHelper::successResponse(__('messages.cart_products_deleted'));
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/carts/getSize",
+     *     summary="Get the number of products in the cart",
+     *     tags={"Cart"},
+     *     description="Returns the total number of products in the user's cart. If the user is not authenticated or the cart does not exist, it returns 0.",
+     *     security={
+     *         {"BearerAuth": {}}
+     *     },
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cart size retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="data", type="integer", example=3)
+     *         )
+     *     ),
+     * )
+     */
     public function getCartSize()
     {
         $user = Auth::user();
-        return $user?->cart?->cart_count ?? 0;
+        return JsonResponseHelper::successResponse('Cart size retrieved successfully', $user?->cart?->cart_count ?? 0);
     }
 }
