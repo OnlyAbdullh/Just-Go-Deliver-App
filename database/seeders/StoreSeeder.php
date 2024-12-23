@@ -18,8 +18,8 @@ class StoreSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
-            $users = User::factory(5)->create();
-            $categories = Category::factory(3)->create();
+            $users = User::factory(3)->create();
+          /*  $categories = Category::factory(3)->create();
             $stores = Store::factory(5)->create()->each(function ($store) use ($users) {
                 $store->user_id = $users->random()->id;
                 $store->save();
@@ -55,7 +55,7 @@ class StoreSeeder extends Seeder
             }
 
             Product::insert($allProductsData);
-            DB::table('store_products')->insert($storeProductData);
+            DB::table('store_products')->insert($storeProductData);*/
 
         });
     }

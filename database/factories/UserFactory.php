@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -23,13 +24,13 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $imageFileName = $this->faker->image(
-            storage_path('app/public/profiles'), // Path to save the image
-            100, // Width
-            100, // Height
-            null, // Category
-            false // Return filename without path
-        );
+        $profileImages = Storage::disk('public')->files('profiles');
+
+        // Select a random image from the folder
+        $randomImage = $profileImages[array_rand($profileImages)];
+
+        $imageUrl = asset($randomImage);
+        $imageUrl = str_replace("http://localhost", "", $imageUrl);
         return [
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
@@ -38,7 +39,7 @@ class UserFactory extends Factory
             'password' => Hash::make('password'),
             'location' => $this->faker->address(),
             'phone_number' => $this->faker->unique()->numerify('##########'),
-            'image' => 'profiles/' . $imageFileName,
+            'image' => $imageUrl,
             'fcm_token' => $this->faker->uuid() ? $this->faker->sha256() : null,
         ];
     }
