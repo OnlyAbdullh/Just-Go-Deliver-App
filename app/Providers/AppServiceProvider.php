@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +24,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        /*
+                if (app()->environment('local', 'staging')) {
+                    DB::listen(function ($query) {
+                        if ($query->time > 2) {
+                          //  Log::info('hEREEEEEE');
+                            Log::warning('Slow Query Detected', [
+                                'sql' => $query->sql,
+                                'bindings' => $query->bindings,
+                                'time' => $query->time,
+                            ]);
+                        }
+                    });
+                }*/
     }
 }
