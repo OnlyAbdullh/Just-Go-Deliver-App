@@ -17,19 +17,15 @@ class StoreProductSeeder extends Seeder
      */
     public function run()
     {
-        // Create a Faker instance
         $faker = Faker::create();
 
-        // Create categories using the factory, if they don't exist already
-        Category::factory()->count(30)->create();  // Create 5 categories for example
+        Category::factory()->count(5)->create();
 
-        // Create products with valid category_ids
-        $products = Product::factory()->count(30)->create();
+        $products = Product::factory()->count(5)->create();
 
         // Create stores
-        $stores = Store::factory()->count(30)->create();
+        $stores = Store::factory()->count(5)->create();
 
-        // Assign products to stores with store_product table data
         foreach ($stores as $store) {
             foreach ($products as $product) {
                 \App\Models\Store_Product::create([

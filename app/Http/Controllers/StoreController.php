@@ -116,7 +116,7 @@ class StoreController extends Controller
         $lang = $request->header('Accept-Language');
         $itemsPerPage = $request->query('items', 10);
 
-        $stores = $this->storeSrevice->getAllStores($lang, $itemsPerPage);
+        $stores = $this->storeSrevice->getAllStores($itemsPerPage);
 
         return response()->json([
             'successful' => true,
@@ -140,7 +140,7 @@ class StoreController extends Controller
      *     summary="Create a new store",
      *     description="Creates a new store with the given details. The user must provide valid data, including a logo image, via multipart/form-data.",
      *     tags={"Stores"},
-     *     security={{"bearerAuth": {}}}, 
+     *     security={{"bearerAuth": {}}},
      *      @OA\Parameter(
      *         name="Accept-Language",
      *         in="header",
@@ -270,7 +270,7 @@ class StoreController extends Controller
      *         description="The language to return results in (ar for Arabic, en for English)",
      *         required=false,
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
-     *     ), 
+     *     ),
      *     @OA\Parameter(
      *         name="store",
      *         in="path",

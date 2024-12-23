@@ -16,9 +16,9 @@ class StoreService
         $this->storeRepository = $storeRepository;
     }
 
-    public function getAllStores($lang, $items)
+    public function getAllStores( $items)
     {
-        return $this->storeRepository->all_with_pagination($lang, $items);
+        return $this->storeRepository->all_with_pagination(  $items);
     }
 
     public function createStore(array $data): Store
@@ -35,7 +35,7 @@ class StoreService
         if (!empty($data['location_ar'])) {
             $storeData['location_ar'] = $data['location_ar'];
         }
-        
+
         if (!empty($data['location_en'])) {
             $storeData['location_en'] = $data['location_en'];
         }

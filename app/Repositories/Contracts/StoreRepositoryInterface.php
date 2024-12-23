@@ -7,7 +7,7 @@ use Illuminate\Http\UploadedFile;
 
 interface StoreRepositoryInterface
 {
-    public function all_with_pagination($lang, $items);
+    public function all_with_pagination($items);
 
     public function store(array $data);
 

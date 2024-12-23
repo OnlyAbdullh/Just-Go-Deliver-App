@@ -10,8 +10,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class StoreRepository implements StoreRepositoryInterface
 {
 
-    public function all_with_pagination($lang, $items): LengthAwarePaginator
+    public function all_with_pagination($items): LengthAwarePaginator
     {
+        $lang = app()->getLocale();
         return Store::with(['user' => function ($query) {
             $query->select('id', 'first_name', 'last_name');
         }])->select([
