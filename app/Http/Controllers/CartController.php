@@ -142,11 +142,11 @@ class CartController extends Controller
      *     )
      * )
      */
-    public function getCartProducts()
+    public function getCartProducts(bool $onlyUnavailable)
     {
         $user = Auth::user();
 
-        $result = $this->cartService->getAllProductsInCart($user);
+        $result = $this->cartService->getAllProductsInCart($user,$onlyUnavailable);
 
         if (isset($result['message'])) {
             return JsonResponseHelper::successResponse($result['message']);

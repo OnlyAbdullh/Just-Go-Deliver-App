@@ -48,12 +48,20 @@ class CartRepository implements CartRepositoryInterface
         }
     }
 
-    public function getCartProducts(Cart $cart)
+    public function getCartProducts(Cart $cart, $onlyUnavailable = false)
     {
         $lang = app()->getLocale();
 
-        return CartProduct::query()
-            ->where('cart_id', $cart->id)
+        $query = CartProduct::query()
+            ->where('cart_id', $cart->id);
+
+        if ($onlyUnavailable) {
+            $query->whereHas('storeProduct', function ($query) {
+                $query->whereColumn('quantity', '<', 'amount_needed');
+            });
+        }
+
+        return $query
             ->with([
                 'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description_'.$lang.',main_image',
                 'storeProduct.store:id,name_'.$lang,
@@ -69,13 +77,12 @@ class CartRepository implements CartRepositoryInterface
                 $isFavorite = $storeProduct->product->favoritedByUsers->isNotEmpty() ? 1 : 0;
                 $order_amount = $cartProduct->amount_needed;
                 $availableStock = $storeProduct->quantity;
-                if ($availableStock == 0) {
-                    $message = __('messages.no_stock_available');
-                } elseif ($availableStock < $order_amount) {
-                    $message = __('messages.only_available', ['quantity' => $availableStock]);
-                } else {
-                    $message = __('messages.available_now');
-                }
+
+                $message = $availableStock == 0
+                    ? __('messages.no_stock_available')
+                    : ($availableStock < $order_amount
+                        ? __('messages.only_available', ['quantity' => $availableStock])
+                        : __('messages.available_now'));
 
                 $description = $storeProduct->{'description_'.$lang};
                 $productName = $storeProduct->product->{'name_'.$lang};
