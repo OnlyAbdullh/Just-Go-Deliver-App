@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Events\NotifyQuantityAvailable;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\Store_Product;
@@ -27,13 +28,13 @@ class ProductRepository implements ProductRepositoryInterface
         $lang = app()->getLocale();
 
         return Store_Product::with([
-            'store:id,name_'.$lang,
-            'product:id,name_'.$lang.',category_id',
-            'product.category:id,name_'.$lang,
+            'store:id,name_' . $lang,
+            'product:id,name_' . $lang . ',category_id',
+            'product.category:id,name_' . $lang,
             'product.favoritedByUsers' => function ($query) {
                 $query->where('user_id', auth()->id());
             },
-        ])->select(['id', 'store_id', 'product_id', 'description_'.$lang, 'price', 'quantity', 'main_image'])
+        ])->select(['id', 'store_id', 'product_id', 'description_' . $lang, 'price', 'quantity', 'main_image'])
             ->paginate($itemsPerPage);
     }
 
@@ -46,13 +47,13 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $lang = app()->getLocale();
 
-        return Store_Product::select('id', 'store_id', 'product_id', 'price', 'quantity', 'description_'.$lang, 'main_image')
+        return Store_Product::select('id', 'store_id', 'product_id', 'price', 'quantity', 'description_' . $lang, 'main_image')
             ->where('store_id', $storeId)
             ->where('product_id', $productId)
             ->with([
-                'store:id,name_'.$lang,
-                'product:id,name_'.$lang.',category_id',
-                'product.category:id,name_'.$lang,
+                'store:id,name_' . $lang,
+                'product:id,name_' . $lang . ',category_id',
+                'product.category:id,name_' . $lang,
                 'images' => function ($query) use ($storeId) {
                     $query->where('store_id', $storeId)
                         ->select('id', 'store_id', 'product_id', 'image');
@@ -71,6 +72,7 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function incrementQuantity($store, $productId, $storeProduct, $quantity)
     {
+        event(new NotifyQuantityAvailable($storeProduct->id));
         $store->products()->updateExistingPivot($productId, [
             'quantity' => $storeProduct->pivot->quantity + $quantity,
         ]);
@@ -87,17 +89,17 @@ class ProductRepository implements ProductRepositoryInterface
 
         return Store_Product::query()
             ->whereHas('product', function ($query) use ($name, $lang) {
-                $query->where('name_'.$lang, 'like', '%'.$name.'%');
+                $query->where('name_' . $lang, 'like', '%' . $name . '%');
             })
             ->with([
-                'store:id,name_'.$lang,
-                'product:id,name_'.$lang.',category_id',
-                'product.category:id,name_'.$lang,
+                'store:id,name_' . $lang,
+                'product:id,name_' . $lang . ',category_id',
+                'product.category:id,name_' . $lang,
                 'favorites' => function ($query) {
                     $query->where('user_id', auth()->id());
                 },
             ])
-            ->select(['store_id', 'product_id', 'description_'.$lang, 'price', 'quantity', 'main_image'])
+            ->select(['store_id', 'product_id', 'description_' . $lang, 'price', 'quantity', 'main_image'])
             ->paginate($items);
     }
 }
