@@ -49,7 +49,7 @@ class UserController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/users/{id}",
+     *     path="api/users/{id}/show",
      *     summary="Get details of a specific user",
      *     tags={"Users"},
      *     @OA\Parameter(
@@ -84,7 +84,7 @@ class UserController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/users/{id}",
+     *     path="api/users/{id}/delete",
      *     summary="Delete a user",
      *     tags={"Users"},
      *     @OA\Parameter(

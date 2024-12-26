@@ -21,7 +21,7 @@ class CartController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/carts/{store_id}/products/{product_id}/add",
+     *     path="/api/carts/{store}/{product}",
      *     summary="Add a product to the cart",
      *     tags={"Cart"},
      *     description="Adds a product to the authenticated user's cart. Validates stock availability before adding.",
@@ -81,7 +81,7 @@ class CartController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/carts/products",
+     *     path="/api/carts",
      *     summary="Retrieve all products in the user's cart",
      *     tags={"Cart"},
      *     security={{"bearerAuth": {}}},

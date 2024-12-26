@@ -377,7 +377,7 @@ class StoreController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/stores/{store}",
+     *     path="/api/stores/{store}/show",
      *     summary="Get a specific store",
      *     description="Retrieve details of a specific store by its ID.",
      *     tags={"Stores"},
@@ -425,7 +425,7 @@ class StoreController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/stores/{store}",
+     *     path="/api/stores/{store}/delete",
      *     summary="Delete a specific store",
      *     description="Delete a store by its ID.",
      *     tags={"Stores"},

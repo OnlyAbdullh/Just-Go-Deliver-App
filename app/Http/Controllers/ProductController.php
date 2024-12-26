@@ -130,7 +130,7 @@ class ProductController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/stores/{store}/products/{product}",
+     *     path="/api/stores/{store}/{product}/show",
      *     summary="Retrieve product details for a specific store",
      *     description="Returns product details, including store information and sub_images (additional images).",
      *     operationId="getStoreProduct",
@@ -170,18 +170,18 @@ class ProductController extends Controller
      *                 @OA\Property(property="price", type="string", example="20.00"),
      *                 @OA\Property(property="quantity", type="integer", example=5),
      *                 @OA\Property(property="description", type="string", example="black color"),
-     *                 @OA\Property(property="main_image", type="string", format="url", 
+     *                 @OA\Property(property="main_image", type="string", format="url",
      *                     example="http://127.0.0.1:8000/products/XwLnjmoXymmCefQwKIxmYfKpVuKXjstUKGRcIM9a.jpg"
      *                 ),
      *                 @OA\Property(property="sub_images", type="array",
      *                     @OA\Items(
      *                         @OA\Property(property="id", type="integer", example=5),
-     *                         @OA\Property(property="image", type="string", format="url", 
+     *                         @OA\Property(property="image", type="string", format="url",
      *                             example="http://127.0.0.1:8000/products/rJl1XLR4FdCGy6NXciZ0ZrCY20DTVtgnSUTb1Awl.png"
      *                         )
      *                     )
      *                 ),
-     *              
+     *
      *             ),
      *  @OA\Property(property="status_code", type="integer", example=200),
      *         )
@@ -210,7 +210,7 @@ class ProductController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/stores/{store}/products",
+     *     path="/stores/{store}",
      *     summary="Add a product to a store",
      *     description="Adds a new product to a store by the store's owner",
      *     operationId="addProductToStore",
@@ -297,7 +297,7 @@ class ProductController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/stores/{store}/products/{product}",
+     *     path="api/stores/{store}/{product}",
      *     summary="Update a product in a store",
      *     description="Update product details for a store. Only accessible by users with the store_admin role who own the store.",
      *     tags={"Products"},
@@ -421,7 +421,7 @@ class ProductController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/stores/{store}/products/{product}",
+     *     path="/api/stores/{store}/{product}/delete",
      *     summary="Delete a product from a store",
      *     description="Allows a store admin to delete a specific product from their store.",
      *     tags={"Products"},
