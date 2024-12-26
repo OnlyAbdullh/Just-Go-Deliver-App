@@ -1840,7 +1840,7 @@
                     "Favorites"
                 ],
                 "summary": "Get list of favorite products",
-                "description": "Retrieves a list of the user's favorite products along with associated store details, such as store ID, store name, and product-specific details (price, quantity, description, sold quantity).",
+                "description": "Retrieves a list of the user's favorite products along with associated store details, such as store ID, store name, and product-specific details (price, quantity, description, sold quantity, and main image).",
                 "operationId": "87113d886b20e66c078004acfcaaa093",
                 "responses": {
                     "200": {
@@ -1897,6 +1897,10 @@
                                                     "sold_quantity": {
                                                         "type": "integer",
                                                         "example": 0
+                                                    },
+                                                    "main_image": {
+                                                        "type": "string",
+                                                        "example": "path/to/main_image.jpg"
                                                     }
                                                 },
                                                 "type": "object"
