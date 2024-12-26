@@ -6,10 +6,10 @@ use App\Events\NotifyQuantityAvailable;
 use App\Models\CartProduct;
 use App\Models\User;
 use App\Services\FcmService;
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
-class SendNotification
+class SendNotification implements ShouldQueue, ShouldHandleEventsAfterCommit
 {
     /**
      * Create the event listener.
