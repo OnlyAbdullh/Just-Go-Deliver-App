@@ -39,7 +39,6 @@ class UserFactory extends Factory
             'location' => $this->faker->address(),
             'phone_number' => $this->faker->unique()->numerify('##########'),
             'image' => $imageUrl,
-            'fcm_token' => $this->faker->uuid() ? $this->faker->sha256() : null,
         ];
     }
 

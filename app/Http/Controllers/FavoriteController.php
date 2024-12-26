@@ -131,13 +131,16 @@ class FavoriteController extends Controller
      *     path="/api/favorites",
      *     tags={"Favorites"},
      *     summary="Get list of favorite products",
-     *     description="Retrieves a list of the user's favorite products along with associated store details, such as store ID, store name, and product-specific details (price, quantity, description, sold quantity).",
+     *     description="Retrieves a list of the user's favorite products along with associated store details, such as store ID, store name, and product-specific details (price, quantity, description, sold quantity, and main image).",
      *     security={{"BearerAuth": {}}},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Favorites retrieved successfully.",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="boolean",
@@ -151,59 +154,70 @@ class FavoriteController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(
      *                     type="object",
+     *
      *                     @OA\Property(
      *                         property="product_id", type="integer", example=4
      *                     ),
      *                     @OA\Property(
-     *                         property="product_name",type="string",  example="laptop lenovo"
+     *                         property="product_name", type="string", example="laptop lenovo"
      *                     ),
      *                     @OA\Property(
-     *                         property="category_id",type="integer", example=1
+     *                         property="category_id", type="integer", example=1
      *                     ),
      *                     @OA\Property(
-     *                         property="store_id", type="integer",  example=3
+     *                         property="store_id", type="integer", example=3
      *                     ),
      *                     @OA\Property(
      *                         property="store_name", type="string", example="only one"
      *                     ),
      *                     @OA\Property(
-     *                         property="price", type="number",  format="float",example=1000.00
+     *                         property="price", type="number", format="float", example=1000.00
      *                     ),
      *                     @OA\Property(
      *                         property="quantity", type="integer", example=4
      *                     ),
      *                     @OA\Property(
-     *                         property="description",type="string", example="ram 16/ssd 512/Rtx 3050ti"
+     *                         property="description", type="string", example="ram 16/ssd 512/Rtx 3050ti"
      *                     ),
      *                     @OA\Property(
      *                         property="sold_quantity", type="integer", example=0
+     *                     ),
+     *                     @OA\Property(
+     *                         property="main_image", type="string", example="path/to/main_image.jpg"
      *                     ),
      *                 )
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
-     *                 property="successful", type="boolean",example=false
+     *                 property="successful", type="boolean", example=false
      *             ),
      *             @OA\Property(
-     *                 property="message",type="string", example="Unauthenticated."
+     *                 property="message", type="string", example="Unauthenticated."
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=500,
      *         description="Internal Server Error",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
-     *                 property="successful",type="boolean",example=false
+     *                 property="successful", type="boolean", example=false
      *             ),
      *             @OA\Property(
      *                 property="message", type="string", example="An error occurred."
