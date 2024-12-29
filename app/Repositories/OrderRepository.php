@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Events\OrderCreated;
 use App\Models\Order;
 use App\Models\Order_Product;
 use App\Models\Store_Product;
@@ -13,7 +14,8 @@ class OrderRepository implements OrderRepositoryInterface
     {
         return Store_Product::whereIn('id', $storeProductIds)
             ->lockForUpdate()
-            ->pluck('price', 'id')->toArray();
+            ->pluck('price', 'id')
+            ->toArray();
     }
 
     public function createOrders(array $ordersData, array $orderProductsData)
@@ -28,6 +30,7 @@ class OrderRepository implements OrderRepositoryInterface
 
         Order_Product::insert($orderProductsData);
 
+        event(new OrderCreated($orderProductsData));
         return ['order_count' => count($ordersData)];
     }
 }

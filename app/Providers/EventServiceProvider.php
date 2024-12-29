@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\NotifyQuantityAvailable;
+use App\Events\OrderCreated;
 use App\Listeners\SendNotification;
+use App\Listeners\UpdateStockListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         NotifyQuantityAvailable::class => [
             SendNotification::class,
+        ],
+        OrderCreated::class => [
+            UpdateStockListener::class,
         ],
     ];
 
