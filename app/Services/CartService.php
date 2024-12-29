@@ -120,4 +120,9 @@ class CartService
 
         return $this->cartRepository->deleteCartProducts($cart, $ids);
     }
+    public function deleteAll()
+    {
+        $user=Auth::user();
+        $this->cartRepository->deleteAll($user);
+    }
 }

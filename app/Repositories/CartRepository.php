@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Cart;
 use App\Models\CartProduct;
+use App\Models\User;
 use App\Repositories\Contracts\CartRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -120,5 +121,14 @@ class CartRepository implements CartRepositoryInterface
             ->where('cart_id', $cart->id)
             ->whereIn('store_product_id', $storeProductIds)
             ->delete();
+    }
+    public function deleteAll(User $user)
+    {
+        DB::transaction(function () use ($user) {
+            $cart = $user->cart;
+            $cart->cartProducts()->delete();
+            $cart->cart_count = 0;
+            $cart->save();
+        });
     }
 }

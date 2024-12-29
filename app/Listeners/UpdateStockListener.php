@@ -4,9 +4,6 @@ namespace App\Listeners;
 
 use App\Events\OrderCreated;
 use App\Models\Store_Product;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-
 class UpdateStockListener
 {
     /**

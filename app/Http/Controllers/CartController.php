@@ -390,14 +390,7 @@ class CartController extends Controller
      */
     public function deleteAll()
     {
-        $user = Auth::user();
-        DB::transaction(function () use ($user) {
-            $cart = $user->cart;
-            $cart->cartProducts()->delete();
-            $cart->cart_count = 0;
-            $cart->save();
-        });
-
+        $this->cartService->deleteAll();
         return JsonResponseHelper::successResponse(__('messages.cart_products_deleted'));
     }
 
