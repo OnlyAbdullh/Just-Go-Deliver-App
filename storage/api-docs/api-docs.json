@@ -2997,9 +2997,9 @@
                 "tags": [
                     "Order"
                 ],
-                "summary": "Create orders for grouped products",
-                "description": "This endpoint allows users to create orders based on grouped products. Each product is associated with a store and includes details like quantity.",
-                "operationId": "createOrders",
+                "summary": "Create new orders",
+                "description": "Creates orders for grouped products from different stores. Requires authentication.",
+                "operationId": "4a3f5832ed35acdaf0c01c3acddb4158",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3010,6 +3010,7 @@
                                 ],
                                 "properties": {
                                     "data": {
+                                        "description": "Array of products with store and quantity details",
                                         "type": "array",
                                         "items": {
                                             "required": [
@@ -3019,17 +3020,19 @@
                                             ],
                                             "properties": {
                                                 "store_product_id": {
-                                                    "description": "The ID of the store product",
-                                                    "type": "integer"
+                                                    "description": "ID of the product in the store",
+                                                    "type": "integer",
+                                                    "example": 1
                                                 },
                                                 "store_id": {
-                                                    "description": "The ID of the store",
-                                                    "type": "integer"
+                                                    "description": "ID of the store",
+                                                    "type": "integer",
+                                                    "example": 1
                                                 },
                                                 "quantity": {
-                                                    "description": "The quantity of the product to order",
+                                                    "description": "Quantity of the product",
                                                     "type": "integer",
-                                                    "minimum": 1
+                                                    "example": 5
                                                 }
                                             },
                                             "type": "object"
@@ -3048,10 +3051,6 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "Orders created successfully."
@@ -3059,7 +3058,7 @@
                                         "data": {
                                             "properties": {
                                                 "order_count": {
-                                                    "description": "The number of orders created",
+                                                    "description": "Number of orders created",
                                                     "type": "integer",
                                                     "example": 2
                                                 }
@@ -3072,53 +3071,15 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "error"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Validation error occurred."
-                                        },
-                                        "errors": {
-                                            "type": "object",
-                                            "example": {
-                                                "data.0.store_product_id": [
-                                                    "The store_product_id field is required."
-                                                ]
-                                            },
-                                            "additionalProperties": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
                     "500": {
-                        "description": "Internal server error",
+                        "description": "Server error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "error"
-                                        },
                                         "message": {
                                             "type": "string",
-                                            "example": "An error occurred while creating orders."
+                                            "example": "Failed to create orders."
                                         }
                                     },
                                     "type": "object"
@@ -3129,7 +3090,7 @@
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "BearerAuth": []
                     }
                 ]
             }

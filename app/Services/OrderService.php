@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class OrderService
@@ -17,44 +18,47 @@ class OrderService
     public function createOrders(array $data)
     {
         $user = Auth::user();
-
-        $groupedProducts = collect($data)->groupBy('store_id');
-        $storeProductIds = $groupedProducts->flatMap(fn($products) => $products->pluck('store_product_id'));
-
-        $storeProductDetails = $this->orderRepository->getStoreProductPrices($storeProductIds);
-
-        $ordersData = [];
-        $orderProductsData = [];
         $now = now();
 
-        $orderCounter = 0;
-        foreach ($groupedProducts as $storeProducts) {
-            $totalPrice = $storeProducts->sum(fn($product) => $storeProductDetails[$product['store_product_id']] * $product['quantity']);
+        return DB::transaction(function () use ($data, $user, $now) {
+            $groupedProducts = collect($data)->groupBy('store_id');
+            $storeProductIds = $groupedProducts->flatMap(fn($products) => $products->pluck('store_product_id'));
 
-            $ordersData[$orderCounter] = [
-                'user_id' => $user->id,
-                'total_price' => $totalPrice,
-                'status' => 'pending',
-                'order_date' => $now,
-                'order_reference' => $this->generateOrderReference(),
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+            $storeProductDetails = $this->orderRepository->getStoreProductPrices($storeProductIds);
 
-            foreach ($storeProducts as $product) {
-                $orderProductsData[] = [
-                    'store_product_id' => $product['store_product_id'],
-                    'quantity' => $product['quantity'],
-                    'price' => $storeProductDetails[$product['store_product_id']],
-                    'order_reference_index' => $orderCounter,
+            $ordersData = [];
+            $orderProductsData = [];
+            $orderCounter = 0;
+
+            foreach ($groupedProducts as $storeProducts) {
+                $totalPrice = $storeProducts->sum(fn($product) => $storeProductDetails[$product['store_product_id']] * $product['quantity']);
+
+                $ordersData[$orderCounter] = [
+                    'user_id' => $user->id,
+                    'total_price' => $totalPrice,
+                    'status' => 'pending',
+                    'order_date' => $now,
+                    'order_reference' => $this->generateOrderReference(),
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
-            }
-            $orderCounter++;
-        }
 
-        return $this->orderRepository->createOrders($ordersData, $orderProductsData);
+                foreach ($storeProducts as $product) {
+                    $orderProductsData[] = [
+                        'store_product_id' => $product['store_product_id'],
+                        'quantity' => $product['quantity'],
+                        'price' => $storeProductDetails[$product['store_product_id']],
+                        'order_reference_index' => $orderCounter,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                }
+
+                $orderCounter++;
+            }
+
+            return $this->orderRepository->createOrders($ordersData, $orderProductsData);
+        });
     }
 
     private function generateOrderReference()

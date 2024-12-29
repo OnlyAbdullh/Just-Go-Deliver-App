@@ -18,41 +18,48 @@ class OrderController extends Controller
         $this->orderService = $orderService;
     }
     /**
-     * @OA\Post (
+     * @OA\Post(
      *     path="/api/orders/create",
      *     tags={"Order"},
-     *     summary="Create orders for grouped products",
-     *     description="This endpoint allows users to create orders based on grouped products. Each product is associated with a store and includes details like quantity.",
-     *     operationId="createOrders",
+     *     summary="Create new orders",
+     *     description="Creates orders for grouped products from different stores. Requires authentication.",
+     *     security={{"BearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
      *             type="object",
-     *             required={"data"},
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"store_product_id", "store_id", "quantity"},
-     *                     @OA\Property(
-     *                         property="store_product_id",
-     *                         type="integer",
-     *                         description="The ID of the store product"
-     *                     ),
-     *                     @OA\Property(
-     *                         property="store_id",
-     *                         type="integer",
-     *                         description="The ID of the store"
-     *                     ),
-     *                     @OA\Property(
-     *                         property="quantity",
-     *                         type="integer",
-     *                         minimum=1,
-     *                         description="The quantity of the product to order"
+     *             properties={
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="array",
+     *                     description="Array of products with store and quantity details",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         properties={
+     *                             @OA\Property(
+     *                                 property="store_product_id",
+     *                                 type="integer",
+     *                                 description="ID of the product in the store",
+     *                                 example=1
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="store_id",
+     *                                 type="integer",
+     *                                 description="ID of the store",
+     *                                 example=1
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="quantity",
+     *                                 type="integer",
+     *                                 description="Quantity of the product",
+     *                                 example=5
+     *                             )
+     *                         },
+     *                         required={"store_product_id", "store_id", "quantity"}
      *                     )
      *                 )
-     *             )
+     *             },
+     *             required={"data"}
      *         )
      *     ),
      *     @OA\Response(
@@ -60,46 +67,41 @@ class OrderController extends Controller
      *         description="Orders created successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(
-     *                 property="status",
-     *                 type="string",
-     *                 example="success"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Orders created successfully."
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
+     *             properties={
      *                 @OA\Property(
-     *                     property="order_count",
-     *                     type="integer",
-     *                     description="The number of orders created",
-     *                     example=2
+     *                     property="message",
+     *                     type="string",
+     *                     example="Orders created successfully."
+     *                 ),
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="object",
+     *                     properties={
+     *                         @OA\Property(
+     *                             property="order_count",
+     *                             type="integer",
+     *                             description="Number of orders created",
+     *                             example=2
+     *                         )
+     *                     }
      *                 )
-     *             )
+     *             }
      *         )
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Internal server error",
+     *         description="Server error",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(
-     *                 property="status",
-     *                 type="string",
-     *                 example="error"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="An error occurred while creating orders."
-     *             )
+     *             properties={
+     *                 @OA\Property(
+     *                     property="message",
+     *                     type="string",
+     *                     example="Failed to create orders."
+     *                 )
+     *             }
      *         )
-     *     ),
-     *     security={{"bearerAuth": {}}}
+     *     )
      * )
      */
 
