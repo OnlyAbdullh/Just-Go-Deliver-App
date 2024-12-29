@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Models\Order;
@@ -10,7 +11,9 @@ class OrderRepository implements OrderRepositoryInterface
 {
     public function getStoreProductPrices($storeProductIds)
     {
-        return Store_Product::whereIn('id', $storeProductIds)->pluck('price', 'id')->toArray();
+        return Store_Product::whereIn('id', $storeProductIds)
+            ->lockForUpdate()
+            ->pluck('price', 'id')->toArray();
     }
 
     public function createOrders(array $ordersData, array $orderProductsData)
