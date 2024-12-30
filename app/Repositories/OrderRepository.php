@@ -8,6 +8,8 @@ use App\Models\Order_Product;
 use App\Models\Store_Product;
 use App\Models\User;
 use App\Repositories\Contracts\OrderRepositoryInterface;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -36,10 +38,20 @@ class OrderRepository implements OrderRepositoryInterface
     }
     public function getUserOrders(User $user)
     {
-        return $user->orders()->withCount('orderProducts')->with([
-            'orderProducts.storeProduct' => function ($query) {
-                $query->select('id', 'main_image'); // Only select id and main_image
-            }
-        ])->get();
+        return DB::table('orders')
+            ->join('order_products', 'orders.id', '=', 'order_products.order_id')
+            ->join('store_products', 'order_products.store_product_id', '=', 'store_products.id')
+            ->select(
+                'orders.id',
+                'orders.order_date',
+                'orders.status',
+                'orders.total_price',
+                'orders.order_reference',
+                DB::raw('COUNT(order_products.id) as number_of_products'),
+                DB::raw('MAX(store_products.main_image) as main_image')
+            )
+            ->where('orders.user_id', $user->id)
+            ->groupBy('orders.id', 'orders.order_date', 'orders.status', 'orders.total_price', 'orders.order_reference')
+            ->get();
     }
 }
