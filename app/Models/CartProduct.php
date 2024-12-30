@@ -13,4 +13,5 @@ class CartProduct extends Model
     {
         return $this->belongsTo(Store_Product::class, 'store_product_id');
     }
+    
 }

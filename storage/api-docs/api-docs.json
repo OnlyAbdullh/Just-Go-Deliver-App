@@ -553,14 +553,14 @@
                 }
             }
         },
-        "/api/carts/{store_id}/products/{product_id}/add": {
+        "/api/carts/{store}/{product}": {
             "post": {
                 "tags": [
                     "Cart"
                 ],
                 "summary": "Add a product to the cart",
                 "description": "Adds a product to the authenticated user's cart. Validates stock availability before adding.",
-                "operationId": "bb4c9692fce643fa6012ec0565d88898",
+                "operationId": "a6614039f7ad8ef0caaf5b90c114314e",
                 "parameters": [
                     {
                         "name": "store_id",
@@ -647,14 +647,14 @@
                 ]
             }
         },
-        "/api/carts/products": {
+        "/api/carts": {
             "get": {
                 "tags": [
                     "Cart"
                 ],
                 "summary": "Retrieve all products in the user's cart",
                 "description": "Fetch all products in the authenticated user's cart, including store and product details. Returns an empty array if the cart is empty.",
-                "operationId": "9b31ba90980df1c122f96a2fb8cb21a1",
+                "operationId": "ed4b4779cc486ebbf0050bce4b714e5a",
                 "responses": {
                     "200": {
                         "description": "Successful retrieval of cart products",
@@ -1651,14 +1651,14 @@
                 ]
             }
         },
-        "/api//favorites/{store_id}/products/{product_id}": {
+        "/api//favorites/{store_id}/{product_id}": {
             "get": {
                 "tags": [
                     "Favorites"
                 ],
                 "summary": "Add a product to favorites",
                 "description": "Adds a product to the user's favorites if it belongs to the specified store and is not already in favorites.",
-                "operationId": "0e9500953ff76e5a4d72e7b1ab28bbe0",
+                "operationId": "b2d516f7d75b177c284aeb27ae4e3cb6",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1749,13 +1749,13 @@
                 }
             }
         },
-        "/favorites/{store_id}/products/{product_id}/remove": {
+        "api/favorites/{store_id}/{product_id}": {
             "delete": {
                 "tags": [
                     "Favorites"
                 ],
                 "summary": "Remove a product from favorites",
-                "operationId": "ace46bb51f5e0872427bd2e361e454cf",
+                "operationId": "2264ef17677788c7e845c518200823a8",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1960,13 +1960,13 @@
                 ]
             }
         },
-        "/favorites/{store_id}/products/{product_id}/check": {
+        "/favorites/{store_id}/{product_id}/check": {
             "get": {
                 "tags": [
                     "Favorites"
                 ],
                 "summary": "Check if a product is favorited",
-                "operationId": "630e471a27ee63d5e12a8e9fc6220443",
+                "operationId": "c1dcf5909598118a6d033b78473c85e7",
                 "parameters": [
                     {
                         "name": "store_id",
@@ -2738,7 +2738,7 @@
                 }
             }
         },
-        "/api/stores/{store}/products/{product}": {
+        "/api/stores/{store}/{product}/show": {
             "get": {
                 "tags": [
                     "Products"
@@ -2887,132 +2887,9 @@
                         }
                     }
                 }
-            },
-            "delete": {
-                "tags": [
-                    "Products"
-                ],
-                "summary": "Delete a product from a store",
-                "description": "Allows a store admin to delete a specific product from their store.",
-                "operationId": "08544cf0dbd8cd2b11a3efbd9d7582ec",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
-                        "name": "store",
-                        "in": "path",
-                        "description": "ID of the store",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "product",
-                        "in": "path",
-                        "description": "ID of the product",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 10
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Product deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": "true"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The product was successfully deleted from the store."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 200
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Unauthorized to delete the product",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "You are not authorized to delete this product."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 403
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Product not found or Store not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The product was not found in this store."
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 404
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
             }
         },
-        "/stores/{store}/products": {
+        "/stores/{store}": {
             "post": {
                 "tags": [
                     "Products"
@@ -3208,14 +3085,14 @@
                 ]
             }
         },
-        "/stores/{store}/products/{product}": {
+        "api/stores/{store}/{product}": {
             "post": {
                 "tags": [
                     "Products"
                 ],
                 "summary": "Update a product in a store",
                 "description": "Update product details for a store. Only accessible by users with the store_admin role who own the store.",
-                "operationId": "93a13042268cd55408cb79004042c1c0",
+                "operationId": "bf2a78ea96c1beaaa2ffed89822582a9",
                 "parameters": [
                     {
                         "name": "Accept-Language",
@@ -3380,6 +3257,131 @@
                                         "status_code": {
                                             "type": "integer",
                                             "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/stores/{store}/{product}/delete": {
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Delete a product from a store",
+                "description": "Allows a store admin to delete a specific product from their store.",
+                "operationId": "579437567d2dbf2be2a26b510fdd8cb4",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "store",
+                        "in": "path",
+                        "description": "ID of the store",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "ID of the product",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The product was successfully deleted from the store."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to delete the product",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are not authorized to delete this product."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 403
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found or Store not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The product was not found in this store."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
                                         }
                                     },
                                     "type": "object"
@@ -4137,97 +4139,6 @@
             }
         },
         "/api/stores/{store}": {
-            "get": {
-                "tags": [
-                    "Stores"
-                ],
-                "summary": "Get a specific store",
-                "description": "Retrieve details of a specific store by its ID.",
-                "operationId": "a9949c633f955f3c2892647c05d80ac5",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "The language to return results in (ar for Arabic, en for English)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "ar",
-                                "en"
-                            ],
-                            "example": "en"
-                        }
-                    },
-                    {
-                        "name": "store",
-                        "in": "path",
-                        "description": "ID of the store to retrieve",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Store retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "store displayed successfully"
-                                        },
-                                        "data": {
-                                            "$ref": "#/components/schemas/StoreResource"
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 200
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Store not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "successful": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Store not found."
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "example": []
-                                        },
-                                        "status_code": {
-                                            "type": "integer",
-                                            "example": 404
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
             "post": {
                 "tags": [
                     "Stores"
@@ -4403,14 +4314,109 @@
                         "bearerAuth": []
                     }
                 ]
-            },
+            }
+        },
+        "/api/stores/{store}/show": {
+            "get": {
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Get a specific store",
+                "description": "Retrieve details of a specific store by its ID.",
+                "operationId": "ea120aee6f25c68a4cd83eba579a01db",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "store",
+                        "in": "path",
+                        "description": "ID of the store to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Store retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "store displayed successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/StoreResource"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Store not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Store not found."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/stores/{store}/delete": {
             "delete": {
                 "tags": [
                     "Stores"
                 ],
                 "summary": "Delete a specific store",
                 "description": "Delete a store by its ID.",
-                "operationId": "d85a9563ceec3d622401123020ca99f6",
+                "operationId": "9066b815fef36e6a41b52589194a9bc5",
                 "parameters": [
                     {
                         "name": "Accept-Language",
@@ -4588,13 +4594,13 @@
                 }
             }
         },
-        "/users/{id}": {
+        "api/users/{id}/show": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Get details of a specific user",
-                "operationId": "910a0c7cf580e1c605648d82a4e57f46",
+                "operationId": "181544cd5adba189c578edfcf05b836b",
                 "parameters": [
                     {
                         "name": "id",
@@ -4652,7 +4658,34 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "api/users/{id}/delete": {
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete a user",
+                "operationId": "fd50eb39af5b2d3c3f188b9fed366106",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User deleted successfully"
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
             "put": {
                 "tags": [
                     "Users"
@@ -4754,29 +4787,6 @@
                                 }
                             }
                         }
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Delete a user",
-                "operationId": "43dd20becb1f47444e484cbb18ce345c",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "User ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "User deleted successfully"
                     }
                 }
             }

@@ -9,6 +9,5 @@ Route::group(['middleware' => ['auth.jwt', 'blacklist', 'localization']], functi
     Route::delete('carts/delete-all', [CartController::class, 'deleteAll']);
     Route::put('carts/update-quantities', [CartController::class, 'updateQuantities']);
     Route::delete('carts/delete-products', [CartController::class, 'DeleteProducts']);
-
 });
 Route::middleware('guest.auth')->get('carts/getSize', [CartController::class, 'getCartSize']);

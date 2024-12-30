@@ -43,6 +43,7 @@ class Store_Product extends Model
     {
         return $this->hasMany(CartProduct::class, 'store_product_id');
     }
+    
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'order_products')
