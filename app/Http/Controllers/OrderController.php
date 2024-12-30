@@ -114,6 +114,74 @@ class OrderController extends Controller
 
         return JsonResponseHelper::successResponse('Orders created successfully.', $result);
     }
+    /**
+     * @OA\Post(
+     *     path="/api/orders",
+     *     summary="Get user orders",
+     *     description="Retrieve all orders for the authenticated user, including details like order date, status, total price, and the number of products in each order.",
+     *     tags={"Order"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of user orders retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     * @OA\Property(
+     *       property="id",
+     *       type="integer",
+     *      description="Order ID",
+     *       example=10
+     *  ),
+     *   @OA\Property(
+     *      property="order_date",
+     *       type="string",
+     *      format="date",
+     *   description="Date of the order",
+     *      example="2024-12-31"
+     *  ),
+     *   @OA\Property(
+     *      property="status",
+     *     type="string",
+     *      description="Status of the order",
+     *       example="pending"
+     *   ),
+     *   @OA\Property(
+     *       property="total_price",
+     *      type="number",
+     *       format="float",
+     *      description="Total price of the order",
+     *       example=1525.50
+     *   ),
+     *   @OA\Property(
+     *       property="order_reference",
+     *       type="string",
+     *       description="Unique order reference",
+     *       example="ORD-12345-XYZ"
+     *   ),
+     *   @OA\Property(
+     *       property="number_of_products",
+     *       type="integer",
+     *       description="Number of products in the order",
+     *       example=7
+     *   ),
+     *   @OA\Property(
+     *       property="image",
+     *       type="string",
+     *       format="url",
+     *       description="Main image of the order's products",
+     *       example="https://example.com/images/main-image.jpg"
+     *   )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error"
+     *     )
+     * )
+     */
 
     public function getUserOrders()
     {

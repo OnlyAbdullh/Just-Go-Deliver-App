@@ -52,6 +52,7 @@ class OrderRepository implements OrderRepositoryInterface
             )
             ->where('orders.user_id', $user->id)
             ->groupBy('orders.id', 'orders.order_date', 'orders.status', 'orders.total_price', 'orders.order_reference')
+            ->orderBy('orders.order_date', 'desc')
             ->get();
     }
 }

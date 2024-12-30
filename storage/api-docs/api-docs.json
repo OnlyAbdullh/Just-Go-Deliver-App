@@ -3095,6 +3095,79 @@
                 ]
             }
         },
+        "/api/orders": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get user orders",
+                "description": "Retrieve all orders for the authenticated user, including details like order date, status, total price, and the number of products in each order.",
+                "operationId": "ba48151528e151483e5485734192c2c6",
+                "responses": {
+                    "200": {
+                        "description": "List of user orders retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "Order ID",
+                                                "type": "integer",
+                                                "example": 10
+                                            },
+                                            "order_date": {
+                                                "description": "Date of the order",
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2024-12-31"
+                                            },
+                                            "status": {
+                                                "description": "Status of the order",
+                                                "type": "string",
+                                                "example": "pending"
+                                            },
+                                            "total_price": {
+                                                "description": "Total price of the order",
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 1525.5
+                                            },
+                                            "order_reference": {
+                                                "description": "Unique order reference",
+                                                "type": "string",
+                                                "example": "ORD-12345-XYZ"
+                                            },
+                                            "number_of_products": {
+                                                "description": "Number of products in the order",
+                                                "type": "integer",
+                                                "example": 7
+                                            },
+                                            "image": {
+                                                "description": "Main image of the order's products",
+                                                "type": "string",
+                                                "format": "url",
+                                                "example": "https://example.com/images/main-image.jpg"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/products": {
             "get": {
                 "tags": [
@@ -5563,6 +5636,10 @@
         {
             "name": "Order",
             "description": "Order"
+        },
+        {
+            "name": "Orders",
+            "description": "Orders"
         },
         {
             "name": "Products",
