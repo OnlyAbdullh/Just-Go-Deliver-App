@@ -54,4 +54,26 @@ class OrderRepository implements OrderRepositoryInterface
             ->orderBy('orders.order_date', 'desc')
             ->get();
     }
+    public function findUserOrder(int $orderId, int $userId): ?object
+    {
+        return DB::table('orders')
+            ->where('id', $orderId)
+            ->where('user_id', $userId)
+            ->lockForUpdate()
+            ->first();
+    }
+
+    public function getOrderProducts(int $orderId)
+    {
+        return DB::table('order_products')
+            ->where('order_id', $orderId)
+            ->get();
+    }
+
+    public function deleteOrder(int $orderId): void
+    {
+        DB::table('orders')
+            ->where('id', $orderId)
+            ->delete();
+    }
 }

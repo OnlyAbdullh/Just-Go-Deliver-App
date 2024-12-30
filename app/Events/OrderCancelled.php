@@ -21,7 +21,7 @@ class OrderCancelled
     public $user;
     public $orderProducts;
 
-    public function __construct($orderId, $user, $orderProducts)
+    public function __construct($user, $orderId, $orderProducts)
     {
         $this->orderId = $orderId;
         $this->user = $user;

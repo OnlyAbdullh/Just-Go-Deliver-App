@@ -192,36 +192,17 @@ class OrderController extends Controller
         return JsonResponseHelper::successResponse('', $orders);
     }
 
-    public function cancelOrder(int $id)
+    public function cancelOrder(int $orderId)
     {
-        $user = Auth::user();
+        $response = $this->orderService->cancelOrder($orderId);
 
-        $order = DB::table('orders')
-            ->where('id', $id)
-            ->where('user_id', $user->id)
-            ->lockForUpdate()
-            ->first();
-
-        if (!$order) {
-            return JsonResponseHelper::errorResponse('Order not found or does not belong to the user', [], 404);
+        if (!$response['success']) {
+            return JsonResponseHelper::errorResponse($response['message'], [], $response['code'] ?? 400);
         }
 
-        if ($order->status !== 'pending') {
-            return JsonResponseHelper::errorResponse('Order cannot be cancelled');
-        }
-
-        DB::transaction(function () use ($order, $user) {
-
-            $orderProducts = DB::table('order_products')
-                ->where('order_id', $order->id)
-                ->get();
-
-            DB::table('orders')->where('id', $order->id)->delete();
-            event(new OrderCancelled($order->id, $user, $orderProducts));
-
-        });
-        return JsonResponseHelper::successResponse('Order cancelled and deleted successfully');
+        return JsonResponseHelper::successResponse($response['message']);
     }
+
 
 }
 
