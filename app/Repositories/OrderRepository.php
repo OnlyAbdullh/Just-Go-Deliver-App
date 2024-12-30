@@ -9,7 +9,6 @@ use App\Models\Store_Product;
 use App\Models\User;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class OrderRepository implements OrderRepositoryInterface
 {

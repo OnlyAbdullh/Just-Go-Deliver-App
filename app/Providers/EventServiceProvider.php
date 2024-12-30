@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\NotifyQuantityAvailable;
+use App\Events\OrderCancelled;
 use App\Events\OrderCreated;
+use App\Listeners\RestockProducts;
 use App\Listeners\SendNotification;
 use App\Listeners\UpdateStockListener;
 use Illuminate\Auth\Events\Registered;
@@ -27,6 +29,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         OrderCreated::class => [
             UpdateStockListener::class,
+        ],
+        OrderCancelled::class => [
+            RestockProducts::class,
         ],
     ];
 

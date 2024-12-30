@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 namespace App\Http\Controllers;
 
 
+use App\Events\OrderCancelled;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use App\Helpers\JsonResponseHelper;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
@@ -114,6 +116,7 @@ class OrderController extends Controller
 
         return JsonResponseHelper::successResponse('Orders created successfully.', $result);
     }
+
     /**
      * @OA\Post(
      *     path="/api/orders",
@@ -188,5 +191,36 @@ class OrderController extends Controller
         $orders = $this->orderService->getUserOrders();
         return JsonResponseHelper::successResponse('', $orders);
     }
+    public function cancelOrder(int $id)
+    {
+        $userId = auth()->id();
+
+        $order = DB::table('orders')
+            ->where('id', $id)
+            ->where('user_id', $userId)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$order) {
+            return JsonResponseHelper::errorResponse('Order not found or does not belong to the user', [], 404);
+        }
+
+        if ($order->status !== 'pending') {
+            return JsonResponseHelper::errorResponse('Order cannot be cancelled');
+        }
+
+        DB::transaction(function () use ($order) {
+
+            $orderProducts = DB::table('order_products')
+                ->where('order_id', $order->id)
+                ->get();
+
+            DB::table('orders')->where('id', $order->id)->delete();
+
+            event(new OrderCancelled($order->id, $order->user_id, $orderProducts));
+        });
+        return JsonResponseHelper::successResponse('Order cancelled and deleted successfully');
+    }
+
 }
 
