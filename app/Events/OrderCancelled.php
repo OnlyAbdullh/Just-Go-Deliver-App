@@ -18,13 +18,13 @@ class OrderCancelled
      * Create a new event instance.
      */
     public $orderId;
-    public $userId;
+    public $user;
     public $orderProducts;
 
-    public function __construct($orderId, $userId, $orderProducts)
+    public function __construct($orderId, $user, $orderProducts)
     {
         $this->orderId = $orderId;
-        $this->userId = $userId;
+        $this->user = $user;
         $this->orderProducts = $orderProducts;
     }
 

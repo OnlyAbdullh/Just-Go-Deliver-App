@@ -191,13 +191,14 @@ class OrderController extends Controller
         $orders = $this->orderService->getUserOrders();
         return JsonResponseHelper::successResponse('', $orders);
     }
+
     public function cancelOrder(int $id)
     {
-        $userId = auth()->id();
+        $user = Auth::user();
 
         $order = DB::table('orders')
             ->where('id', $id)
-            ->where('user_id', $userId)
+            ->where('user_id', $user->id)
             ->lockForUpdate()
             ->first();
 
@@ -209,15 +210,15 @@ class OrderController extends Controller
             return JsonResponseHelper::errorResponse('Order cannot be cancelled');
         }
 
-        DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order, $user) {
 
             $orderProducts = DB::table('order_products')
                 ->where('order_id', $order->id)
                 ->get();
 
             DB::table('orders')->where('id', $order->id)->delete();
+            event(new OrderCancelled($order->id, $user, $orderProducts));
 
-            event(new OrderCancelled($order->id, $order->user_id, $orderProducts));
         });
         return JsonResponseHelper::successResponse('Order cancelled and deleted successfully');
     }

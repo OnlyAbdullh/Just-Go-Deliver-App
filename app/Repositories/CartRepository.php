@@ -24,6 +24,14 @@ class CartRepository implements CartRepositoryInterface
             ->first();
     }
 
+    public function addProductsToCartBatch(Cart $cart, array $cartProducts): void
+    {
+        DB::transaction(function () use ($cart, $cartProducts) {
+            $cart->increment('cart_count', count($cartProducts));
+            DB::table('cart_products')->insert($cartProducts);
+        });
+    }
+
     public function addProductToCart(Cart $cart, int $storeProductId, int $quantity): void
     {
         $cart->increment('cart_count');
@@ -64,13 +72,13 @@ class CartRepository implements CartRepositoryInterface
 
         return $query
             ->with([
-                'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description_'.$lang.',main_image',
-                'storeProduct.store:id,name_'.$lang,
-                'storeProduct.product:id,category_id,name_'.$lang,
+                'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description_' . $lang . ',main_image',
+                'storeProduct.store:id,name_' . $lang,
+                'storeProduct.product:id,category_id,name_' . $lang,
                 'storeProduct.product.favoritedByUsers' => function ($query) {
                     $query->where('user_id', auth()->id());
                 },
-                'storeProduct.product.category:id,name_'.$lang,
+                'storeProduct.product.category:id,name_' . $lang,
             ])
             ->get()
             ->map(function ($cartProduct) use ($lang) {
@@ -85,10 +93,10 @@ class CartRepository implements CartRepositoryInterface
                         ? __('messages.only_available', ['quantity' => $availableStock])
                         : __('messages.available_now'));
 
-                $description = $storeProduct->{'description_'.$lang};
-                $productName = $storeProduct->product->{'name_'.$lang};
-                $storeName = $storeProduct->store->{'name_'.$lang};
-                $categoryName = $storeProduct->product->category->{'name_'.$lang};
+                $description = $storeProduct->{'description_' . $lang};
+                $productName = $storeProduct->product->{'name_' . $lang};
+                $storeName = $storeProduct->store->{'name_' . $lang};
+                $categoryName = $storeProduct->product->category->{'name_' . $lang};
 
                 $mainUrl = Storage::url($storeProduct->main_image);
 
@@ -122,6 +130,7 @@ class CartRepository implements CartRepositoryInterface
             ->whereIn('store_product_id', $storeProductIds)
             ->delete();
     }
+
     public function deleteAll(User $user)
     {
         DB::transaction(function () use ($user) {

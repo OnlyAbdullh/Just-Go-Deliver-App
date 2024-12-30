@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Cart;
+use App\Models\Store_Product;
 use App\Models\User;
 use App\Repositories\Contracts\CartRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
@@ -36,16 +37,21 @@ class CartService
 
         return ['success' => true, 'message' => __('messages.product_added_to_cart')];
     }
+    public function addProductsToCartAgain(Cart $cart, array $cartProducts): array
+    {
+        $this->cartRepository->addProductsToCartBatch($cart, $cartProducts);
+        return ['success' => true, 'message' => __('messages.product_added_to_cart')];
+    }
 
-    public function getAllProductsInCart(User $user,bool $onlyUnavailable): array
+    public function getAllProductsInCart(User $user, bool $onlyUnavailable): array
     {
         $cart = $user->cart;
 
-        if (! $cart) {
+        if (!$cart) {
             return ['message' => __('messages.cart_empty')];
         }
 
-        $products = $this->cartRepository->getCartProducts($cart,$onlyUnavailable);
+        $products = $this->cartRepository->getCartProducts($cart, $onlyUnavailable);
 
         if ($products->isEmpty()) {
             return ['message' => __('messages.cart_empty')];
@@ -120,9 +126,10 @@ class CartService
 
         return $this->cartRepository->deleteCartProducts($cart, $ids);
     }
+
     public function deleteAll()
     {
-        $user=Auth::user();
+        $user = Auth::user();
         $this->cartRepository->deleteAll($user);
     }
 }
