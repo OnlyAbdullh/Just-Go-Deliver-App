@@ -6,6 +6,7 @@ use App\Events\OrderCreated;
 use App\Models\Order;
 use App\Models\Order_Product;
 use App\Models\Store_Product;
+use App\Models\User;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 
 class OrderRepository implements OrderRepositoryInterface
@@ -32,5 +33,13 @@ class OrderRepository implements OrderRepositoryInterface
 
         event(new OrderCreated($orderProductsData));
         return ['order_count' => count($ordersData)];
+    }
+    public function getUserOrders(User $user)
+    {
+        return $user->orders()->withCount('orderProducts')->with([
+            'orderProducts.storeProduct' => function ($query) {
+                $query->select('id', 'main_image'); // Only select id and main_image
+            }
+        ])->get();
     }
 }

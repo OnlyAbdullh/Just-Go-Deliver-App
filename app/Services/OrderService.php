@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class OrderService
@@ -64,5 +65,28 @@ class OrderService
     private function generateOrderReference()
     {
         return 'ORD-' . now()->format('Ymd-His') . '-' . Str::random(6);
+    }
+    public function getUserOrders()
+    {
+        $user = Auth::user();
+        $orders = $this->orderRepository->getUserOrders($user);
+
+        return $orders->map(function ($order) {
+            $mainImage = $order->orderProducts->map(function ($orderProduct) {
+                return $orderProduct->storeProduct->main_image;
+            })->first();
+
+            $mainImage = $mainImage ? Storage::url($mainImage) : null;
+
+            return [
+                'id' => $order->id,
+                'order_date' => $order->order_date,
+                'status' => $order->status,
+                'total_price' => $order->total_price,
+                'order_reference' => $order->order_reference,
+                'number_of_products' => $order->order_products_count, // Product count
+                'image' => $mainImage ? asset($mainImage) : null,
+            ];
+        });
     }
 }

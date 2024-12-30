@@ -8,6 +8,8 @@ namespace App\Http\Controllers;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use App\Helpers\JsonResponseHelper;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -17,6 +19,7 @@ class OrderController extends Controller
     {
         $this->orderService = $orderService;
     }
+
     /**
      * @OA\Post(
      *     path="/api/orders/create",
@@ -110,6 +113,12 @@ class OrderController extends Controller
         $result = $this->orderService->createOrders($request->input('data'));
 
         return JsonResponseHelper::successResponse('Orders created successfully.', $result);
+    }
+
+    public function getUserOrders()
+    {
+        $orders = $this->orderService->getUserOrders();
+        return JsonResponseHelper::successResponse('', $orders);
     }
 }
 
