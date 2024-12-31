@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\JsonResponseHelper;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\Store;
 use App\Services\FavoriteService;
