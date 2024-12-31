@@ -124,7 +124,7 @@ class OrderController extends Controller
     }
 
     /**
-     * @OA\Post(
+     * @OA\Get(
      *     path="/api/orders",
      *     summary="Get user orders",
      *     description="Retrieve all orders for the authenticated user, including details like order date, status, total price, and the number of products in each order.",
@@ -279,6 +279,82 @@ class OrderController extends Controller
 
         return JsonResponseHelper::successResponse($response['message']);
     }
+    /**
+     * @OA\Get(
+     *     path="/orders/show/{orderId}",
+     *     summary="Get details of an order with its products",
+     *     description="Fetch a specific order by its ID along with its associated products and details.",
+     *     operationId="showOrder",
+     *     tags={"Order"},
+     *     @OA\Parameter(
+     *         name="orderId",
+     *         in="path",
+     *         description="ID of the order to fetch",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=1
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response with order and product details",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="successful",
+     *                 type="string",
+     *                 example="true"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="user_id", type="integer", example=2),
+     *                 @OA\Property(property="status", type="string", example="completed"),
+     *                 @OA\Property(property="total_price", type="number", format="float", example=150.75),
+     *                 @OA\Property(
+     *                     property="products",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="store_id", type="integer", example=3),
+     *                         @OA\Property(property="store_name", type="string", example="Tech Store"),
+     *                         @OA\Property(property="product_id", type="integer", example=10),
+     *                         @OA\Property(property="product_name", type="string", example="Smartphone"),
+     *                         @OA\Property(property="category_id", type="integer", example=5),
+     *                         @OA\Property(property="category_name", type="string", example="Electronics"),
+     *                         @OA\Property(property="price", type="number", format="float", example=499.99),
+     *                         @OA\Property(property="quantity", type="integer", example=2),
+     *                         @OA\Property(property="description", type="string", example="High-end smartphone with 128GB storage"),
+     *                         @OA\Property(property="is_favorite", type="boolean", example=1),
+     *                         @OA\Property(property="main_image", type="string", example="https://example.com/images/product.jpg"),
+     *                         )
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Order not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="successful",
+     *                 type="string",
+     *                 example="false"
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Order not found"
+     *             ),
+     *         )
+     *     )
+     * )
+     */
+
     public function showOrder(int $order_id)
     {
         $order = $this->orderService->getOrderWithProducts($order_id);
