@@ -8,4 +8,5 @@ Route::group(['middleware' => ['auth.jwt', 'blacklist', 'localization']], functi
     Route::post('orders/create', [OrderController::class, 'createOrders']);
     Route::get('orders', [OrderController::class, 'getUserOrders']);
     Route::delete('orders/{order_id}', [OrderController::class, 'cancelOrder']);
+    Route::get('/orders/show/{orderId}', [OrderController::class, 'showOrder']);
 });

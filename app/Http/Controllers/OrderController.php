@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 namespace App\Http\Controllers;
 
 use App\Helpers\JsonResponseHelper;
+use App\Http\Resources\OrderResource;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 
@@ -277,5 +278,14 @@ class OrderController extends Controller
         }
 
         return JsonResponseHelper::successResponse($response['message']);
+    }
+    public function showOrder(int $order_id)
+    {
+        $order = $this->orderService->getOrderWithProducts($order_id);
+
+        if (!$order) {
+            return JsonResponseHelper::errorResponse('Order not found',[],404);
+        }
+        return JsonResponseHelper::successResponse('',new OrderResource($order));
     }
 }

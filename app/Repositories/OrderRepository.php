@@ -79,4 +79,8 @@ class OrderRepository implements OrderRepositoryInterface
             ->where('id', $orderId)
             ->delete();
     }
+    public function findOrderWithProducts(int $orderId)
+    {
+        return Order::with(['orderProducts.storeProduct.product'])->find($orderId);
+    }
 }

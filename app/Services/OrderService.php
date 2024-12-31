@@ -118,4 +118,8 @@ class OrderService
 
         return ['success' => true, 'message' => 'Order cancelled and deleted successfully'];
     }
+    public function getOrderWithProducts(int $orderId)
+    {
+        return $this->orderRepository->findOrderWithProducts($orderId);
+    }
 }
