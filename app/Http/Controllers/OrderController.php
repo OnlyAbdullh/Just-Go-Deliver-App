@@ -4,14 +4,9 @@ namespace App\Http\Controllers;
 
 namespace App\Http\Controllers;
 
-
-use App\Events\OrderCancelled;
+use App\Helpers\JsonResponseHelper;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
-use App\Helpers\JsonResponseHelper;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -29,18 +24,23 @@ class OrderController extends Controller
      *     summary="Create new orders",
      *     description="Creates orders for grouped products from different stores. Requires authentication.",
      *     security={{"BearerAuth":{}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(
      *                     property="data",
      *                     type="array",
      *                     description="Array of products with store and quantity details",
+     *
      *                     @OA\Items(
      *                         type="object",
      *                         properties={
+     *
      *                             @OA\Property(
      *                                 property="store_product_id",
      *                                 type="integer",
@@ -67,12 +67,15 @@ class OrderController extends Controller
      *             required={"data"}
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Orders created successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(
      *                     property="message",
      *                     type="string",
@@ -93,12 +96,15 @@ class OrderController extends Controller
      *             }
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=500,
      *         description="Server error",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(
      *                     property="message",
      *                     type="string",
@@ -109,7 +115,6 @@ class OrderController extends Controller
      *     )
      * )
      */
-
     public function createOrders(Request $request)
     {
         $result = $this->orderService->createOrders($request->input('data'));
@@ -124,13 +129,17 @@ class OrderController extends Controller
      *     description="Retrieve all orders for the authenticated user, including details like order date, status, total price, and the number of products in each order.",
      *     tags={"Order"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of user orders retrieved successfully",
+     *
      *         @OA\JsonContent(
      *             type="array",
+     *
      *             @OA\Items(
      *                 type="object",
+     *
      * @OA\Property(
      *       property="id",
      *       type="integer",
@@ -179,30 +188,94 @@ class OrderController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=500,
      *         description="Server error"
      *     )
      * )
      */
-
     public function getUserOrders()
     {
         $orders = $this->orderService->getUserOrders();
+
         return JsonResponseHelper::successResponse('', $orders);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/orders/{orderId}",
+     *     summary="Cancel an order",
+     *     description="Allows the user to cancel a pending order. Only orders with a status of 'pending' can be cancelled and the products of the order will go again to the cart",
+     *     operationId="cancelOrder",
+     *     tags={"Order"},
+     *     security={{"BearerAuth":{}}},
+     *
+     *     @OA\Parameter(
+     *         name="orderId",
+     *         in="path",
+     *         description="The ID of the order to cancel",
+     *         required=true,
+     *
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=123
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Order cancelled successfully",
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Order cancelled and deleted successfully")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=404,
+     *         description="Order not found or does not belong to the user",
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Order not found or does not belong to the user")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=400,
+     *         description="Order cannot be cancelled",
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Order cannot be cancelled")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="An unexpected error occurred")
+     *         )
+     *     )
+     * )
+     */
     public function cancelOrder(int $orderId)
     {
         $response = $this->orderService->cancelOrder($orderId);
 
-        if (!$response['success']) {
+        if (! $response['success']) {
             return JsonResponseHelper::errorResponse($response['message'], [], $response['code'] ?? 400);
         }
 
         return JsonResponseHelper::successResponse($response['message']);
     }
-
-
 }
-

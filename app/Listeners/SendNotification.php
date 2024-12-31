@@ -9,7 +9,7 @@ use App\Services\FcmService;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendNotification implements ShouldQueue, ShouldHandleEventsAfterCommit
+class SendNotification implements ShouldHandleEventsAfterCommit, ShouldQueue
 {
     /**
      * Create the event listener.
@@ -38,7 +38,7 @@ class SendNotification implements ShouldQueue, ShouldHandleEventsAfterCommit
 
             $this->sendNotifications(
                 $user,
-                "Product Available",
+                'Product Available',
                 "The product '{$cartProduct->storeProduct->product->name}' is now available at store '{$cartProduct->storeProduct->store->name}' in the quantity you requested!"
             );
         }

@@ -25,7 +25,7 @@ class OrderService
 
         return DB::transaction(function () use ($data, $user, $now) {
             $groupedProducts = collect($data)->groupBy('store_id');
-            $storeProductIds = $groupedProducts->flatMap(fn($products) => $products->pluck('store_product_id'));
+            $storeProductIds = $groupedProducts->flatMap(fn ($products) => $products->pluck('store_product_id'));
 
             $storeProductDetails = $this->orderRepository->getStoreProductPrices($storeProductIds);
 
@@ -34,7 +34,7 @@ class OrderService
             $orderCounter = 0;
 
             foreach ($groupedProducts as $storeProducts) {
-                $totalPrice = $storeProducts->sum(fn($product) => $storeProductDetails[$product['store_product_id']] * $product['quantity']);
+                $totalPrice = $storeProducts->sum(fn ($product) => $storeProductDetails[$product['store_product_id']] * $product['quantity']);
 
                 $ordersData[$orderCounter] = [
                     'user_id' => $user->id,
@@ -66,7 +66,7 @@ class OrderService
 
     private function generateOrderReference()
     {
-        return 'ORD-' . now()->format('Ymd-His') . '-' . Str::random(6);
+        return 'ORD-'.now()->format('Ymd-His').'-'.Str::random(6);
     }
 
     public function getUserOrders()
@@ -93,7 +93,7 @@ class OrderService
 
         $order = $this->orderRepository->findUserOrder($orderId, $user->id);
 
-        if (!$order) {
+        if (! $order) {
             return [
                 'success' => false,
                 'message' => 'Order not found or does not belong to the user',

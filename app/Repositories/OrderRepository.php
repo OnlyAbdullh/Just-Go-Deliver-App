@@ -33,8 +33,10 @@ class OrderRepository implements OrderRepositoryInterface
         Order_Product::insert($orderProductsData);
 
         event(new OrderCreated($orderProductsData));
+
         return ['order_count' => count($ordersData)];
     }
+
     public function getUserOrders(User $user)
     {
         return DB::table('orders')
@@ -54,6 +56,7 @@ class OrderRepository implements OrderRepositoryInterface
             ->orderBy('orders.order_date', 'desc')
             ->get();
     }
+
     public function findUserOrder(int $orderId, int $userId): ?object
     {
         return DB::table('orders')

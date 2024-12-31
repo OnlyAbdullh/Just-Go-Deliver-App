@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\OrderCancelled;
 use App\Services\CartService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\DB;
 
 class RestockProducts
@@ -30,15 +28,15 @@ class RestockProducts
         $ids = [];
 
         foreach ($event->orderProducts as $product) {
-            $caseStatements[] = "WHEN id = ? THEN quantity + ?";
+            $caseStatements[] = 'WHEN id = ? THEN quantity + ?';
             $bindings[] = $product->store_product_id;
             $bindings[] = $product->quantity;
             $ids[] = $product->store_product_id;
         }
 
-        $query = "UPDATE store_products
-          SET quantity = CASE " . implode(' ', $caseStatements) . " END
-          WHERE id IN (" . implode(',', array_fill(0, count($ids), '?')) . ")";
+        $query = 'UPDATE store_products
+          SET quantity = CASE '.implode(' ', $caseStatements).' END
+          WHERE id IN ('.implode(',', array_fill(0, count($ids), '?')).')';
         $bindings = array_merge($bindings, $ids);
         DB::statement($query, $bindings);
 
@@ -54,7 +52,7 @@ class RestockProducts
             ];
         }
 
-        if (!empty($cartProducts)) {
+        if (! empty($cartProducts)) {
             $this->cartService->addProductsToCartAgain($cart, $cartProducts);
         }
     }

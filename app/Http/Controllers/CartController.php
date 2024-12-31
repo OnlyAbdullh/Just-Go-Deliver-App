@@ -8,7 +8,6 @@ use App\Models\Store;
 use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
@@ -146,7 +145,7 @@ class CartController extends Controller
     {
         $user = Auth::user();
 
-        $result = $this->cartService->getAllProductsInCart($user,$onlyUnavailable);
+        $result = $this->cartService->getAllProductsInCart($user, $onlyUnavailable);
 
         if (isset($result['message'])) {
             return JsonResponseHelper::successResponse($result['message']);
@@ -391,6 +390,7 @@ class CartController extends Controller
     public function deleteAll()
     {
         $this->cartService->deleteAll();
+
         return JsonResponseHelper::successResponse(__('messages.cart_products_deleted'));
     }
 

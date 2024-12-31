@@ -30,3 +30,4 @@ Route::get('/api/documentation', function () {
 
     return redirect('/swagger-ui');
 });
+// ./vendor/bin/pint

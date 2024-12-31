@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Cart;
-use App\Models\Store_Product;
 use App\Models\User;
 use App\Repositories\Contracts\CartRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
@@ -37,9 +36,11 @@ class CartService
 
         return ['success' => true, 'message' => __('messages.product_added_to_cart')];
     }
+
     public function addProductsToCartAgain(Cart $cart, array $cartProducts): array
     {
         $this->cartRepository->addProductsToCartBatch($cart, $cartProducts);
+
         return ['success' => true, 'message' => __('messages.product_added_to_cart')];
     }
 
@@ -47,7 +48,7 @@ class CartService
     {
         $cart = $user->cart;
 
-        if (!$cart) {
+        if (! $cart) {
             return ['message' => __('messages.cart_empty')];
         }
 
