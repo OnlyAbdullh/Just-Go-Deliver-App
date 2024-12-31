@@ -72,6 +72,15 @@ class ProductResource extends JsonResource
      *     )
      * )
      */
+
+    protected $isFavorite;
+
+    public function __construct($resource, $isFavorite = 0)
+    {
+        parent::__construct($resource);
+        $this->isFavorite = $isFavorite;
+    }
+
     public function toArray(Request $request): array
     {
         $mainUrl = Storage::url($this->main_image);
@@ -101,7 +110,7 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'quantity' => $this->quantity,
             'description' => $this->$description,
-            'is_favorite' => $this->is_favorite,
+            'is_favorite' => $this->is_favorite ?? $this->isFavorite,
             'main_image' => asset($mainUrl),
         ];
 

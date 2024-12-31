@@ -12,6 +12,7 @@ class OrderResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+
     public function toArray(Request $request): array
     {
         return [
@@ -19,7 +20,9 @@ class OrderResource extends JsonResource
             'user_id' => $this->user_id,
             'status' => $this->status,
             'total_price' => $this->total_price,
-            'products' => OrderProductResource::collection($this->orderProducts),
+            'products' => OrderProductResource::collection($this->orderProducts)->map(function ($orderProduct) {
+                return new OrderProductResource($orderProduct, $this->is_favorite);
+            }),
         ];
     }
 }

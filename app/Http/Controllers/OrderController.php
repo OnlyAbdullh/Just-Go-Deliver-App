@@ -363,6 +363,7 @@ class OrderController extends Controller
         if (!$order) {
             return JsonResponseHelper::errorResponse(__('messages.order_not_found'), [], 404);
         }
+        // return $order;
         return JsonResponseHelper::successResponse('', new OrderResource($order));
     }
 }

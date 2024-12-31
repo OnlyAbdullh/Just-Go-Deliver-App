@@ -12,13 +12,24 @@ class OrderProductResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+
+    protected $isFavorite;
+
+    public function __construct($resource, $isFavorite = 0)
+    {
+        parent::__construct($resource);
+        $this->isFavorite = $isFavorite;
+    }
     public function toArray(Request $request): array
     {
+
         return [
             'store_product_id' => $this->id,
             'quantity' => $this->quantity,
             'price' => $this->price,
-            'product_details' => new ProductResource($this->whenLoaded('storeProduct')),
+            'product_details' => $this->whenLoaded('storeProduct', function () {
+                return new ProductResource($this->storeProduct, $this->isFavorite);
+            }),
         ];
     }
 }
