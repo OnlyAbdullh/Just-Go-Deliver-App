@@ -50,6 +50,8 @@ return [
     'store_admin_only_create' => 'فقط مدير المتجر يمكنه إنشاء متجر',
     'store_admin_only_update' => 'فقط مدير المتجر يمكنه تحديث المتجر',
     'store_delete_unauthorized' => 'غير مصرح لك بحذف هذا المتجر',
+    'no_store' => "ليس لديك متجر",
+    'retrieve_all_stores' => ' تم استرجاع جميع المتاجر بنجاح',
     'category_unauthorized_action' => 'غير مصرح لك بتنفيذ هذا الإجراء. فقط المدير يمكنه ذلك',
     'not_authorized_to_update_image' => 'غير مصرح لك بتحديث الصورة',
     'not_authorized_to_add_image' => 'غير مصرح لك بإضافة صورة',

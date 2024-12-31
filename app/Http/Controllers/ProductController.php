@@ -102,6 +102,12 @@ class ProductController extends Controller
      *                         example=1
      *                     ),
      *                     @OA\Property(
+     *                         property="totalItems",
+     *                         type="integer",
+     *                         description="The total number of pages",
+     *                         example=22
+     *                     ),
+     *                     @OA\Property(
      *                         property="hasMorePage",
      *                         type="boolean",
      *                         description="Indicates if there are more pages available",
@@ -129,6 +135,7 @@ class ProductController extends Controller
             'pagination' => [
                 'currentPage' => $products->currentPage(),
                 'totalPages' => $products->lastPage(),
+                'totalItems' => $products->total(),
                 'hasMorePage' => $products->hasMorePages(),
             ],
             'status_code' => 200,
@@ -661,6 +668,11 @@ class ProductController extends Controller
      *                     example=5
      *                 ),
      *                 @OA\Property(
+     *                     property="totalItems",
+     *                     type="integer",
+     *                     example=5
+     *                 ),
+     *                 @OA\Property(
      *                     property="hasMorePage",
      *                     type="boolean",
      *                     example=true
@@ -689,6 +701,7 @@ class ProductController extends Controller
             return response()->json([
                 'successful' => false,
                 'message' => __('messages.no_products_available'),
+                'data' =>[],
                 'status_code' => 404,
             ]);
         }
@@ -702,6 +715,7 @@ class ProductController extends Controller
             'pagination' => [
                 'currentPage' => $products->currentPage(),
                 'totalPages' => $products->lastPage(),
+                'totalItems' => $products->total(),
                 'hasMorePage' => $products->hasMorePages(),
             ],
             'status_code' => 200,

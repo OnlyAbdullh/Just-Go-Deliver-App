@@ -15,6 +15,11 @@ class StoreService
         $this->storeRepository = $storeRepository;
     }
 
+    public function searchForStore($name, $items)
+    {
+        return $this->storeRepository->findByName($name, $items);
+    }
+
     public function getAllStores($items)
     {
         return $this->storeRepository->all_with_pagination($items);

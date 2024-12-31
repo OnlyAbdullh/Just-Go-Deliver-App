@@ -29,6 +29,8 @@ return [
     'store_displayed' => 'store has been displayed successfully',
     'store_deleted' => 'Store has been deleted successfully',
     'store_not_found' => 'Store not found',
+    'no_store' => "You don't have a store",
+    'retrieve_all_stores' => 'retrieved all stores successfully',
     'retrieve_all_products_success' => 'Retrieve all products successfully',
     'retrieve_all_categories_success' => 'Retrieve all categories successfully',
     'store_already_exists' => 'You already have a store and cannot create another one',

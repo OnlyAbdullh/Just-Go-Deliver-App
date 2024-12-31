@@ -20,7 +20,7 @@ class StoreSeeder extends Seeder
         DB::transaction(function () {
             $users = User::factory(10)->create();
             $categories = Category::factory(3)->create();
-            $stores = Store::factory(10)->create()->each(function ($store) use ($users) {
+            $stores = Store::factory(count: 10)->create()->each(function ($store) use ($users) {
                 $store->user_id = $users->random()->id;
                 $store->save();
             });

@@ -6,14 +6,12 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ProductController;
 use App\Models\Product;
 
-
 Route::middleware(['guest.auth', 'localization'])->group(function () {
     Route::get('stores/{store}/{product}/show', [ProductController::class, 'show'])->name('products.show')
         ->missing(fn(Request $request) => handleMissingRoute($request));
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
     Route::get('products/{name}', [ProductController::class, 'search']);
 });
-
 
 Route::middleware(['auth.jwt', 'localization', 'blacklist'])->group(function () {
     Route::post('stores/{store}', [ProductController::class, 'store'])

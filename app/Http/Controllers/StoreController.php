@@ -102,6 +102,12 @@ class StoreController extends Controller
      *                         example=1
      *                     ),
      *                     @OA\Property(
+     *                         property="totalItems",
+     *                         type="integer",
+     *                         description="The total number of pages",
+     *                         example=23
+     *                     ),
+     *                     @OA\Property(
      *                         property="hasMorePage",
      *                         type="boolean",
      *                         description="Indicates if there are more pages available",
@@ -133,13 +139,14 @@ class StoreController extends Controller
 
         return response()->json([
             'successful' => true,
-            'message' => 'retrieve all stores',
+            'message' => __('messages.retrieve_all_stores'),
             'data' => [
                 'stores' => StoreResource::collection($stores),
             ],
             'pagination' => [
                 'currentPage' => $stores->currentPage(),
                 'totalPages' => $stores->lastPage(),
+                'totalItems' => $stores->total(),
                 'hasMorePage' => $stores->hasMorePages(),
             ],
             'statuc_code' => 200,
@@ -476,6 +483,146 @@ class StoreController extends Controller
     public function show(Store $store): JsonResponse
     {
         return JsonResponseHelper::successResponse(__('messages.store_displayed'), StoreResource::make($store), 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/stores/search/{name}",
+     *     summary="Search stores by name",
+     *     description="Search for stores by name and retrieve a paginated list of stores along with their manager's name, description, and location.",
+     *     tags={"Stores"},
+     *     @OA\Parameter(
+     *         name="name",
+     *         in="path",
+     *         description="Name of the store to search for",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="items",
+     *         in="query",
+     *         description="Number of items per page",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=20
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of stores with pagination",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="successful",
+     *                 type="boolean",
+     *                 example=true
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Retrieve all stores"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="stores",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(
+     *                             property="store_id",
+     *                             type="integer",
+     *                             example=1
+     *                         ),
+     *                         @OA\Property(
+     *                             property="name",
+     *                             type="string",
+     *                             example="Store 1"
+     *                         ),
+     *                         @OA\Property(
+     *                             property="image_url",
+     *                             type="string",
+     *                             example="http://example.com/storage/logo1.png"
+     *                         ),
+     *                         @OA\Property(
+     *                             property="description",
+     *                             type="string",
+     *                             example="Description of store 1"
+     *                         ),
+     *                         @OA\Property(
+     *                             property="location",
+     *                             type="string",
+     *                             example="Location 1"
+     *                         ),
+     *                         @OA\Property(
+     *                             property="manager",
+     *                             type="string",
+     *                             example="John Doe"
+     *                         )
+     *                     )
+     *                 ),
+     *             ),
+     *             @OA\Property(
+     *                 property="pagination",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="currentPage",
+     *                     type="integer",
+     *                     example=1
+     *                 ),
+     *                 @OA\Property(
+     *                     property="totalPages",
+     *                     type="integer",
+     *                     example=5
+     *                 ),
+     *                 @OA\Property(
+     *                     property="totalItems",
+     *                     type="integer",
+     *                     example=100
+     *                 ),
+     *                 @OA\Property(
+     *                     property="hasMorePage",
+     *                     type="boolean",
+     *                     example=true
+     *                 )
+     *             ),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad Request",
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *     ),
+     * )
+     */
+
+    public function search(Request $request, $name)
+    {
+        $items = $request->query('items', 20);
+
+        $stores = $this->storeSrevice->searchForStore($name, $items);
+
+        return response()->json([
+            'successful' => true,
+            'message' => __('messages.retrieve_all_stores'),
+            'data' => [
+                'stores' => $stores->items(),
+            ],
+            'pagination' => [
+                'currentPage' => $stores->currentPage(),
+                'totalPages' => $stores->lastPage(),
+                'totalItems' => $stores->total(),
+                'hasMorePage' => $stores->hasMorePages(),
+            ],
+            'statuc_code' => 200,
+        ]);
     }
 
     /**
