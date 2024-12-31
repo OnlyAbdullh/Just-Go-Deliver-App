@@ -44,7 +44,7 @@ class FavoriteService
         return 'success';
     }
 
-    public function getFavoriteProducts(): array
+    public function getFavoriteProducts()
     {
         $user = Auth::user();
 

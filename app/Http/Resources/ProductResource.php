@@ -74,7 +74,6 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        \Log::info($request);
         $mainUrl = Storage::url($this->main_image);
 
         $lang = app()->getLocale();

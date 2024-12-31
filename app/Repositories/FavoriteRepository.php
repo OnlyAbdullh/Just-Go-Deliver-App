@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\Contracts\FavoriteRepositoryInterface;
@@ -23,11 +24,10 @@ class FavoriteRepository implements FavoriteRepositoryInterface
         $user->favoriteProducts()->wherePivot('store_id', $store_id)->detach($product_id);
     }
 
-    public function getAllFavorites(User $user): array
+    public function getAllFavorites(User $user)
     {
         $lang = app()->getLocale();
-
-        return DB::table('favorites')
+        $favorites = DB::table('favorites')
             ->join('products', 'favorites.product_id', '=', 'products.id')
             ->join('stores', 'favorites.store_id', '=', 'stores.id')
             ->join('store_products', function ($join) {
@@ -37,17 +37,20 @@ class FavoriteRepository implements FavoriteRepositoryInterface
             ->where('favorites.user_id', $user->id)
             ->select(
                 'products.id as product_id',
-                'products.name_'.$lang.' as product_name',
+                'products.name_' . $lang . ' as product_name',
                 'products.category_id',
                 'stores.id as store_id',
-                'stores.name_'.$lang.' as store_name',
+                'stores.name_' . $lang . ' as store_name',
                 'store_products.price',
                 'store_products.quantity',
-                'store_products.description_'.$lang,
+                'store_products.description_' . $lang . ' as description',
+                'store_products.main_image'
             )
             ->distinct()
-            ->get()->toArray();
+            ->get();
+        return $favorites;
     }
+
     /*    public function isProductInStore(int $productId, int $storeId): bool
         {
             $product = Product::find($productId);
