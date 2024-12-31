@@ -83,6 +83,14 @@ class ProductResource extends JsonResource
         $description = 'description_' . $lang;
         $categoryName = 'name_' . $lang;
 
+        $isfavorite = 0;
+        if (auth()->check()) {
+            $isfavorite = DB::table('favorites')
+                ->where('user_id', auth()->user()->id)
+                ->where('product_id', $this->product_id)
+                ->where('store_id', $this->store_id)->exists() ? 1 : 0;
+        }
+
         $data = [
             'store_id' => $this->store_id,
             'store_name' => $this->store->$storeName ?? null,
@@ -93,7 +101,7 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'quantity' => $this->quantity,
             'description' => $this->$description,
-            'is_favorite' => $this->product->favoritedByUsers->isNotEmpty() ? 1 : 0,
+            'is_favorite' => $this->is_favorite,
             'main_image' => asset($mainUrl),
         ];
 

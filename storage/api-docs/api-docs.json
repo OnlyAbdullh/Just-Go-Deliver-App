@@ -1651,6 +1651,353 @@
                 ]
             }
         },
+        "/api/dashboard/{user}": {
+            "get": {
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Retrieve all products for a store",
+                "description": "Get a paginated list of all products belonging to the store associated with the given user.",
+                "operationId": "dbab05c91fb092a6edde3cc70e5cfd29",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID of the user whose store products are to be retrieved",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "items",
+                        "in": "query",
+                        "description": "Number of products to retrieve per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of products with pagination",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Products retrieved successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "products": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "store_product_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "product_id": {
+                                                                "type": "integer",
+                                                                "example": 101
+                                                            },
+                                                            "product_name": {
+                                                                "type": "string",
+                                                                "example": "Product 1"
+                                                            },
+                                                            "category_id": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "category_name": {
+                                                                "type": "string",
+                                                                "example": "Category 1"
+                                                            },
+                                                            "main_image": {
+                                                                "type": "string",
+                                                                "example": "http://example.com/images/product1.jpg"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 100.5
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 20
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "This is a product description"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "currentPage": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "totalPages": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "totalItems": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "hasMorePage": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Store not found for the given user or user not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Store not found"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dashboard/product-statistics": {
+            "get": {
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Retrieve paginated product statistics for the store",
+                "operationId": "67a1b986d043d365b704c7e1280266aa",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "The language to return results in (ar for Arabic, en for English)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ar",
+                                "en"
+                            ],
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "items",
+                        "in": "query",
+                        "description": "Number of items per page for pagination (default: 20)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of product statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Products retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "products": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "store_product_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "main_image": {
+                                                                "type": "string",
+                                                                "example": "http://example.com/storage/image.jpg"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 99.99
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 50
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Product description in the current language."
+                                                            },
+                                                            "product_id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "product_name": {
+                                                                "type": "string",
+                                                                "example": "Product Name"
+                                                            },
+                                                            "category_id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "category_name": {
+                                                                "type": "string",
+                                                                "example": "Category Name"
+                                                            },
+                                                            "total_quantity_sold": {
+                                                                "type": "integer",
+                                                                "example": 100
+                                                            },
+                                                            "users_who_bought": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string",
+                                                                    "example": "John Doe"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "currentPage": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "totalPages": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "totalItems": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "hasMorePage": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Store not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No store found."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": []
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api//favorites/{store_id}/{product_id}": {
             "get": {
                 "tags": [
@@ -5093,6 +5440,10 @@
         {
             "name": "Categories",
             "description": "Categories"
+        },
+        {
+            "name": "Dashboard",
+            "description": "Dashboard"
         },
         {
             "name": "Favorites",

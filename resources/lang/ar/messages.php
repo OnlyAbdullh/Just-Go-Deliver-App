@@ -51,6 +51,8 @@ return [
     'store_admin_only_update' => 'فقط مدير المتجر يمكنه تحديث المتجر',
     'store_delete_unauthorized' => 'غير مصرح لك بحذف هذا المتجر',
     'no_store' => "ليس لديك متجر",
+    'order_not_found' => 'الطلب غير موجود',
+    "order_updated" => "تم تحديث الطلب بنجاح",
     'retrieve_all_stores' => ' تم استرجاع جميع المتاجر بنجاح',
     'category_unauthorized_action' => 'غير مصرح لك بتنفيذ هذا الإجراء. فقط المدير يمكنه ذلك',
     'not_authorized_to_update_image' => 'غير مصرح لك بتحديث الصورة',

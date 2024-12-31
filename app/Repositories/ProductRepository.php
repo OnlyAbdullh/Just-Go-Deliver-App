@@ -9,6 +9,7 @@ use App\Models\Store_Product;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -31,10 +32,18 @@ class ProductRepository implements ProductRepositoryInterface
             'store:id,name_' . $lang,
             'product:id,name_' . $lang . ',category_id',
             'product.category:id,name_' . $lang,
-            'product.favoritedByUsers' => function ($query) {
-                $query->where('user_id', auth()->id());
-            },
-        ])->select(['id', 'store_id', 'product_id', 'description_' . $lang, 'price', 'quantity', 'main_image'])
+        ])->select([
+            'id',
+            'store_id',
+            'product_id',
+            'description_' . $lang,
+            'price',
+            'quantity',
+            'main_image',
+            DB::raw('IF(' .
+                (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = ' . auth()->id() . ' AND product_id = store_products.product_id AND store_id = store_products.store_id)' : '0') .
+                ', 1, 0) AS is_favorite')
+        ])
             ->paginate($itemsPerPage);
     }
 
@@ -95,11 +104,18 @@ class ProductRepository implements ProductRepositoryInterface
                 'store:id,name_' . $lang,
                 'product:id,name_' . $lang . ',category_id',
                 'product.category:id,name_' . $lang,
-                'favorites' => function ($query) {
-                    $query->where('user_id', auth()->id());
-                },
             ])
-            ->select(['store_id', 'product_id', 'description_' . $lang, 'price', 'quantity', 'main_image'])
+            ->select([
+                'store_id',
+                'product_id',
+                'description_' . $lang,
+                'price',
+                'quantity',
+                'main_image',
+                DB::raw('IF(' .
+                    (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = ' . auth()->id() . ' AND product_id = store_products.product_id AND store_id = store_products.store_id)' : '0') .
+                    ', 1, 0) AS is_favorite')
+            ])
             ->paginate($items);
     }
 }
