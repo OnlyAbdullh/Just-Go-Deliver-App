@@ -112,4 +112,7 @@ return [
     'cart_products_deleted' => 'تم حذف جميع المنتجات من السلة',
     'cart_products_deleted_success' => 'تم حذف :count منتجًا من السلة بنجاح',
     'no_products_available' => 'لا توجد منتجات متاحة',
+    'order_not_found'=>'الطلب غير موجود',
+    'order_cannot_be_cancelled'=>'لا يمكن الغاء الطلب',
+    'order_cancelled'=>'تم الغاء الطلب بنجاح',
 ];

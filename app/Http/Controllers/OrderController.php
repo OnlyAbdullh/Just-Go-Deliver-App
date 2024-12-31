@@ -273,12 +273,13 @@ class OrderController extends Controller
     {
         $response = $this->orderService->cancelOrder($orderId);
 
-        if (! $response['success']) {
+        if (!$response['success']) {
             return JsonResponseHelper::errorResponse($response['message'], [], $response['code'] ?? 400);
         }
 
         return JsonResponseHelper::successResponse($response['message']);
     }
+
     /**
      * @OA\Get(
      *     path="/orders/show/{orderId}",
@@ -335,7 +336,7 @@ class OrderController extends Controller
      *             )
      *         )
      *     ),
-     *     @OA\Response(
+     * @OA\Response(
      *         response=404,
      *         description="Order not found",
      *         @OA\JsonContent(
@@ -360,8 +361,8 @@ class OrderController extends Controller
         $order = $this->orderService->getOrderWithProducts($order_id);
 
         if (!$order) {
-            return JsonResponseHelper::errorResponse('Order not found',[],404);
+            return JsonResponseHelper::errorResponse(__('messages.order_not_found'), [], 404);
         }
-        return JsonResponseHelper::successResponse('',new OrderResource($order));
+        return JsonResponseHelper::successResponse('', new OrderResource($order));
     }
 }

@@ -93,10 +93,10 @@ class OrderService
 
         $order = $this->orderRepository->findUserOrder($orderId, $user->id);
 
-        if (! $order) {
+        if (!$order) {
             return [
                 'success' => false,
-                'message' => 'Order not found or does not belong to the user',
+                'message' => __('messages.order_not_found'),
                 'code' => 404,
             ];
         }
@@ -104,7 +104,7 @@ class OrderService
         if ($order->status !== 'pending') {
             return [
                 'success' => false,
-                'message' => 'Order cannot be cancelled',
+                'message' => __('messages.order_cannot_be_cancelled'),
             ];
         }
 
@@ -116,7 +116,7 @@ class OrderService
             event(new OrderCancelled($user, $order, $orderProducts));
         });
 
-        return ['success' => true, 'message' => 'Order cancelled and deleted successfully'];
+        return ['success' => true, 'message' => __('messages.order_cancelled')];
     }
     public function getOrderWithProducts(int $orderId)
     {
