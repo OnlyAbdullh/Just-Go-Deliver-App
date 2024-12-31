@@ -92,11 +92,11 @@ class CartController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/carts",
+     *     path="/api/carts/{boolValue}",
      *     summary="Retrieve all products in the user's cart",
      *     tags={"Cart"},
      *     security={{"bearerAuth": {}}},
-     *     description="Fetch all products in the authenticated user's cart, including store and product details. Returns an empty array if the cart is empty.",
+     *     description="Fetch all products in the authenticated user's cart, boolValue=0 return all the products, boolValue=1 return just the products that are not available for now.",
      *
      *     @OA\Response(
      *         response=200,

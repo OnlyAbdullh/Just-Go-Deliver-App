@@ -81,6 +81,9 @@ class OrderRepository implements OrderRepositoryInterface
     }
     public function findOrderWithProducts(int $orderId)
     {
-        return Order::with(['orderProducts.storeProduct.product'])->find($orderId);
+        return Order::with([
+            'orderProducts.storeProduct.product.category',
+            'orderProducts.storeProduct.store',
+        ])->find($orderId);
     }
 }
