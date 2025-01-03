@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProductResource extends JsonResource
@@ -92,14 +93,6 @@ class ProductResource extends JsonResource
         $description = 'description_' . $lang;
         $categoryName = 'name_' . $lang;
 
-        $isfavorite = 0;
-        if (auth()->check()) {
-            $isfavorite = DB::table('favorites')
-                ->where('user_id', auth()->user()->id)
-                ->where('product_id', $this->product_id)
-                ->where('store_id', $this->store_id)->exists() ? 1 : 0;
-        }
-
         $data = [
             'store_id' => $this->store_id,
             'store_name' => $this->store->$storeName ?? null,
@@ -116,13 +109,8 @@ class ProductResource extends JsonResource
 
         if ($request->routeIs('products.show')) {
 
-            $quantityInCart = DB::table('cart_products')
-                ->join('carts', 'carts.id', '=', 'cart_products.cart_id')
-                ->where('cart_products.store_product_id', $this->id)
-                ->where('carts.user_id', auth()->id())
-                ->sum('cart_products.amount_needed');
-
-            $data['isInCart'] = $quantityInCart === 0 ? 0 : 1;
+            $quantityInCart = $this->total_amount_needed;
+            $data['isInCart'] = $quantityInCart !== null ? 1 : 0;
             $data['quantityInCart'] = (int) $quantityInCart;
 
             $data['sub_images'] = $this->whenLoaded('images', function () {
