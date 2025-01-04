@@ -8,9 +8,11 @@ use App\Http\Requests\UpdateStoreRequest;
 use App\Http\Resources\StoreResource;
 use App\Models\Store;
 use App\Models\User;
+use App\Repositories\StoreRepository;
 use App\Services\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\SecurityScheme(
@@ -480,9 +482,11 @@ class StoreController extends Controller
      *     )
      * )
      */
-    public function show(Store $store): JsonResponse
+    public function show(Store $store)
     {
-        return JsonResponseHelper::successResponse(__('messages.store_displayed'), StoreResource::make($store), 200);
+        $store =  $this->storeSrevice->getStore($store->id);
+
+        return JsonResponseHelper::successResponse(__('messages.store_displayed'), $store, 200);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class StoreResource extends JsonResource
@@ -31,25 +32,36 @@ class StoreResource extends JsonResource
     {
         $lang = $request->header('Accept-Language', 'en');
 
-        $name = 'name_'.$lang;
-        $description = 'description_'.$lang;
-        $location = 'location_'.$lang;
-
         $imagePath = $this->logo;
 
         $imageUrl = Storage::url($imagePath);
+        $logo =  asset($imageUrl);
+        $name = 'name_' . $lang;
+        $description = 'description_' . $lang;
+        $location = 'location_' . $lang;
 
+        $storeName = $this->$name;
+        $storeDescription = $this->$description;
+        $storeLocation = $this->$location;
         $manager = $this->user;
+        $managerName = $manager->first_name . ' ' . $manager->last_name;
 
-        return collect([
+        $data = [
             'id' => $this->id,
-            'manager' => $manager->first_name.' '.$manager->last_name,
-            'name' => $this->$name,
-            'image_url' => $this->logo ? asset($imageUrl) : null,
-            'location' => $this->$location,
-            'description' => $this->$description,
-        ])->filter(function ($value) {
-            return ! is_null($value);
-        })->toArray();
+            'manager' => $managerName,
+            'name' => $storeName,
+            'image_url' => $logo,
+            'location' => $storeLocation,
+            'description' => $storeDescription,
+        ];
+
+        return $data;
+        // return collect([
+
+        // ])->filter(function ($value) {
+        //     return ! is_null($value);
+        // })->toArray();
+
+
     }
 }

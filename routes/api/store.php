@@ -31,6 +31,6 @@ Route::middleware('localization')->group(function () {
       ->missing(function () {
          app()->setLocale(request()->header('Accept-Language', 'en'));
          return JsonResponseHelper::errorResponse(__('messages.store_not_found'), [], 401);
-      });
-   Route::get('stores/search/{name}', [StoreController::class, 'search']);
+      })->name('stores.show');
+   Route::get('stores/{name}', [StoreController::class, 'search']);
 });

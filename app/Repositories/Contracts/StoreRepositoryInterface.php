@@ -17,6 +17,8 @@ interface StoreRepositoryInterface
 
     public function findById(int $id);
 
+    public function  getStore(int $id);
+
     public function findByName($name,$items);
 
     public function delete(Store $store);
