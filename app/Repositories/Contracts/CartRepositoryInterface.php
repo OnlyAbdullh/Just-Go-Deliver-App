@@ -10,7 +10,7 @@ interface CartRepositoryInterface
 
     public function getStoreProduct(int $storeId, int $productId);
 
-    public function getCartProducts(Cart $cart);
+    public function getCartProducts(int $cartId);
 
     public function addProductToCart(Cart $cart, int $storeProductId, int $quantity): void;
 

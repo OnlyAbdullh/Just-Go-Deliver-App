@@ -261,7 +261,7 @@ class CartController extends Controller
     public function updateQuantities(Request $request)
     {
         $user = Auth::user();
-        $response = $this->cartService->updateCartQuantities($user->cart->id, $request->input('data'));
+        $response = $this->cartService->updateCartQuantities($user->cart, $request->input('data'));
 
         return JsonResponseHelper::successResponse('', $response);
     }

@@ -653,7 +653,7 @@
                     "Cart"
                 ],
                 "summary": "Retrieve all products in the user's cart",
-                "description": "Fetch all products in the authenticated user's cart,boolValue=0 return all the products,boolValue=1 return just the products that are not available for now.",
+                "description": "Fetch all products in the authenticated user's cart, boolValue=0 return all the products, boolValue=1 return just the products that are not available for now.",
                 "operationId": "a134725dbb5e0b6fdd1d78a41e32f02a",
                 "responses": {
                     "200": {
