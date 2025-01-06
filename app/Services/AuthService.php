@@ -144,7 +144,7 @@ class AuthService
         if (! $deviceExists) {
             throw new \Exception(__('messages.device_id_not_found'), 404);
         }
-        $accessToken = $this->authRepository->createAccessToken($user, $deviceId);
+        $accessToken = JWTAuth::claims(['fcm_token' => $deviceId])->fromUser($user);
 
         return [
             'access_token' => $accessToken,
