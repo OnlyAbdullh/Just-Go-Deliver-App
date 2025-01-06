@@ -63,9 +63,9 @@ class CartService
 
     public function updateCartQuantities(Cart $cart, array $items)
     {
-        //$responses = [];
         $updates = [];
         $cartId = $cart->id;
+        $updatedProductIds = [];
         foreach ($items as $item) {
             $storeId = $item['store_id'];
             $productId = $item['product_id'];
@@ -84,36 +84,45 @@ class CartService
                 'amount_needed' => $quantityToUpdate,
             ];
 
-            // $responses[] = $this->generateResponse($productId, $storeId, $requestedQuantity, $availableStock, $quantityToUpdate);
+            $updatedProductIds[] = $productId;
         }
 
         $this->cartRepository->UpdateCartProducts($updates);
-        return $this->cartRepository->getCartProducts($cartId);
 
+        $cartProducts = $this->cartRepository->getCartProducts($cartId);
+
+        $response = $cartProducts->map(function ($product) use ($updatedProductIds,$requestedQuantity) {
+
+            if (in_array($product['product_id'], $updatedProductIds)) {
+
+                $generatedResponse = $this->generateResponse(
+                    $requestedQuantity,
+                    $product['quantity'],
+                );
+
+                $product['message'] = $generatedResponse['message'];
+            }
+            return $product;
+        });
+
+        return $response;
     }
 
-    /*    private function generateResponse(int $productId, int $storeId, int $requestedQuantity, int $availableStock, int $quantityToUpdate): array
-        {
-            $message = match (true) {
-                $availableStock == 0 => __('messages.no_product_available', ['productId' => $productId]),
-                $requestedQuantity > $availableStock => __('messages.only_available_stock', [
-                    'availableStock' => $availableStock,
-                    'productId' => $productId,
-                    'quantityToUpdate' => $quantityToUpdate,
-                ]),
-                default => __('messages.updated_product_quantity', [
-                    'productId' => $productId,
-                    'quantityToUpdate' => $quantityToUpdate,
-                ]),
-            };
+    private function generateResponse(int $requestedQuantity, int $availableStock ): array
+    {
+        $message = match (true) {
+            $availableStock == 0 => __('messages.no_product_available'),
+            $requestedQuantity > $availableStock => __('messages.only_available_stock', [
+                'availableStock' => $availableStock,
+                'requestedQuantity' => $requestedQuantity,
+            ]),
+            default => __('messages.available_now' ),
+        };
+        return [
+            'message' => $message,
+        ];
+    }
 
-            return [
-                'message' => $message,
-                'product_id' => $productId,
-                'store_id' => $storeId,
-                'cart_amount' => $quantityToUpdate,
-            ];
-        }*/
 
     public function DeleteCartProducts(Cart $cart, array $items): int
     {
