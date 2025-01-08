@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Helpers\JsonResponseHelper;
 use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Http\Resources\ProductDetailResource;
-use Illuminate\Http\Request;
 use App\Models\User;
 use App\Services\DashboardService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -27,6 +27,7 @@ class DashBoardController extends Controller
      *     description="Get a paginated list of all products belonging to the store associated with the given user.",
      *     tags={"Dashboard"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\Parameter(
      *         name="Accept-Language",
      *         in="header",
@@ -35,30 +36,37 @@ class DashBoardController extends Controller
      *
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="user",
      *         in="path",
      *         description="ID of the user whose store products are to be retrieved",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
+     *
      *     @OA\Parameter(
      *         name="items",
      *         in="query",
      *         description="Number of products to retrieve per page",
      *         required=false,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             default=20
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of products with pagination",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="boolean",
@@ -75,8 +83,10 @@ class DashBoardController extends Controller
      *                 @OA\Property(
      *                     property="products",
      *                     type="array",
+     *
      *                     @OA\Items(
      *                         type="object",
+     *
      *                         @OA\Property(
      *                             property="store_product_id",
      *                             type="integer",
@@ -157,11 +167,14 @@ class DashBoardController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Store not found for the given user or user not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="boolean",
@@ -181,12 +194,11 @@ class DashBoardController extends Controller
      *     )
      * )
      */
-
     public function getProducts(Request $request, User $user)
     {
         $items = $request->query('items', 20);
 
-        if (!$store = $user->store) {
+        if (! $store = $user->store) {
             return JsonResponseHelper::errorResponse(__('messages.no_store'), [], 404);
         }
 
@@ -214,6 +226,7 @@ class DashBoardController extends Controller
      *     summary="Retrieve paginated product statistics for the store",
      *     tags={"Dashboard"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\Parameter(
      *         name="Accept-Language",
      *         in="header",
@@ -222,18 +235,23 @@ class DashBoardController extends Controller
      *
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="items",
      *         in="query",
      *         description="Number of items per page for pagination (default: 20)",
      *         required=false,
+     *
      *         @OA\Schema(type="integer", default=20)
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Successful retrieval of product statistics",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Products retrieved successfully."),
      *             @OA\Property(
@@ -242,8 +260,10 @@ class DashBoardController extends Controller
      *                 @OA\Property(
      *                     property="products",
      *                     type="array",
+     *
      *                     @OA\Items(
      *                         type="object",
+     *
      *                         @OA\Property(property="store_product_id", type="integer", example=1),
      *                         @OA\Property(property="main_image", type="string", example="http://example.com/storage/image.jpg"),
      *                         @OA\Property(property="price", type="number", format="float", example=99.99),
@@ -257,11 +277,13 @@ class DashBoardController extends Controller
      *                         @OA\Property(
      *                             property="users_who_bought",
      *                             type="array",
+     *
      *                             @OA\Items(type="string", example="John Doe")
      *                         )
      *                     )
      *                 )
      *             ),
+     *
      *             @OA\Property(
      *                 property="pagination",
      *                 type="object",
@@ -273,11 +295,14 @@ class DashBoardController extends Controller
      *             @OA\Property(property="status_code", type="integer", example=200)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Store not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="No store found."),
      *             @OA\Property(property="data", type="object", example={}),
@@ -286,12 +311,11 @@ class DashBoardController extends Controller
      *     )
      * )
      */
-
     public function getProductStatistics(Request $request, User $user)
     {
         $items = $request->query('items', 20);
 
-        if (!$store = $user->store) {
+        if (! $store = $user->store) {
             return JsonResponseHelper::errorResponse(__('messages.no_store'), [], 404);
         }
 
@@ -315,7 +339,7 @@ class DashBoardController extends Controller
 
     public function getOrdersForStore(Request $request)
     {
-        if (!$store = auth()->user()->store) {
+        if (! $store = auth()->user()->store) {
             return JsonResponseHelper::errorResponse(__('messages.no_store'), [], 404);
         }
 
@@ -357,7 +381,7 @@ class DashBoardController extends Controller
                 'updated_at' => Carbon::now(),
             ]);
 
-        if (!$order) {
+        if (! $order) {
             return JsonResponseHelper::errorResponse(__('messages.order_not_found'), [], 404);
         }
 

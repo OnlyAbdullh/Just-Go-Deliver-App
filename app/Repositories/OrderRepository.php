@@ -79,6 +79,7 @@ class OrderRepository implements OrderRepositoryInterface
             ->where('id', $orderId)
             ->delete();
     }
+
     public function findOrderWithProducts(int $orderId)
     {
         $lang = app()->getLocale();
@@ -94,13 +95,13 @@ class OrderRepository implements OrderRepositoryInterface
                 'order_products.store_product_id',
                 'store_products.store_id',
                 'store_products.product_id',
-                'store_products.description_' . $lang,
+                'store_products.description_'.$lang,
                 'store_products.price',
                 'store_products.quantity',
                 'store_products.main_image',
-                DB::raw('IF(' .
-                    (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = ' . auth()->id() . ' AND product_id = store_products.product_id AND store_id = store_products.store_id AND user_id = orders.user_id)' : '0') .
-                    ', 1, 0) AS is_favorite')
+                DB::raw('IF('.
+                    (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = '.auth()->id().' AND product_id = store_products.product_id AND store_id = store_products.store_id AND user_id = orders.user_id)' : '0').
+                    ', 1, 0) AS is_favorite'),
             ])
             ->where('orders.id', $orderId)
             ->first();

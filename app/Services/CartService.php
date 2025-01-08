@@ -48,7 +48,7 @@ class CartService
     {
         $cart = $user->cart;
 
-        if (!$cart) {
+        if (! $cart) {
             return ['message' => __('messages.cart_empty')];
         }
 
@@ -91,7 +91,7 @@ class CartService
 
         $cartProducts = $this->cartRepository->getCartProducts($cartId);
 
-        $response = $cartProducts->map(function ($product) use ($updatedProductIds,$requestedQuantity) {
+        $response = $cartProducts->map(function ($product) use ($updatedProductIds, $requestedQuantity) {
 
             if (in_array($product['product_id'], $updatedProductIds)) {
 
@@ -102,13 +102,14 @@ class CartService
 
                 $product['message'] = $generatedResponse['message'];
             }
+
             return $product;
         });
 
         return $response;
     }
 
-    private function generateResponse(int $requestedQuantity, int $availableStock ): array
+    private function generateResponse(int $requestedQuantity, int $availableStock): array
     {
         $message = match (true) {
             $availableStock == 0 => __('messages.no_product_available'),
@@ -116,13 +117,13 @@ class CartService
                 'availableStock' => $availableStock,
                 'requestedQuantity' => $requestedQuantity,
             ]),
-            default => __('messages.available_now' ),
+            default => __('messages.available_now'),
         };
+
         return [
             'message' => $message,
         ];
     }
-
 
     public function DeleteCartProducts(Cart $cart, array $items): int
     {

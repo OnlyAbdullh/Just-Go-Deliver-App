@@ -14,11 +14,11 @@ class ProductDetailResource extends JsonResource
      * @return array<string, mixed>
      */
 
-
     /**
      * @OASchema(
      *     schema="ProductDetailResource",
      *     type="object",
+     *
      *     @OAProperty(property="store_product_id", type="integer", example=1),
      *     @OAProperty(property="product_id", type="integer", example=101),
      *     @OAProperty(property="product_name", type="string", example="Sample Product"),

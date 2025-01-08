@@ -29,7 +29,7 @@ return [
     'store_displayed' => 'store has been displayed successfully',
     'store_deleted' => 'Store has been deleted successfully',
     'store_not_found' => 'Store not found',
-    "order_updated" => "Order updated successfully",
+    'order_updated' => 'Order updated successfully',
     'no_store' => "You don't have a store",
     'retrieve_all_stores' => 'retrieved all stores successfully',
     'retrieve_all_products_success' => 'Retrieve all products successfully',
@@ -110,6 +110,6 @@ return [
     'cart_products_deleted' => 'All products have been deleted from the cart.',
     'cart_products_deleted_success' => ':count products were deleted from the cart successfully.',
     'order_not_found' => 'order is not exist',
-    'order_cannot_be_cancelled'=>'the order cannot be cancelled',
-    'order_cancelled'=>'order cancelled successfully',
+    'order_cannot_be_cancelled' => 'the order cannot be cancelled',
+    'order_cancelled' => 'order cancelled successfully',
 ];

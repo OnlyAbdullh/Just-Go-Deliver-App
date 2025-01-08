@@ -1,13 +1,11 @@
 <?php
 
-namespace   App\Services;
+namespace App\Services;
 
-use App\Models\Store;
 use App\Repositories\Contracts\DashboardRepositoryInterface;
 
 class DashboardService
 {
-
     private $dashboardRepository;
 
     public function __construct(DashboardRepositoryInterface $dashboardRepository)

@@ -6,5 +6,5 @@ interface DashboardRepositoryInterface
 {
     public function getAllProductsForStore($items, $storeId);
 
-    public function getProductStatistics($items,$storeId);
+    public function getProductStatistics($items, $storeId);
 }

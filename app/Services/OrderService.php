@@ -93,7 +93,7 @@ class OrderService
 
         $order = $this->orderRepository->findUserOrder($orderId, $user->id);
 
-        if (!$order) {
+        if (! $order) {
             return [
                 'success' => false,
                 'message' => __('messages.order_not_found'),
@@ -118,6 +118,7 @@ class OrderService
 
         return ['success' => true, 'message' => __('messages.order_cancelled')];
     }
+
     public function getOrderWithProducts(int $orderId)
     {
         return $this->orderRepository->findOrderWithProducts($orderId);

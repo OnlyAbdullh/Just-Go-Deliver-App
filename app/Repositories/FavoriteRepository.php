@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Http\Resources\FavoriteResource;
-use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\Contracts\FavoriteRepositoryInterface;
@@ -36,11 +35,28 @@ class FavoriteRepository implements FavoriteRepositoryInterface
             })
             ->join('categories', 'products.category_id', '=', 'categories.id')
             ->where('favorites.user_id', $user->id)
+            ->select(
+                'favorites.store_id',
+                'stores.name_ar as store_name_ar',
+                'stores.name_en as store_name_en',
+                'favorites.product_id',
+                'products.name_ar as product_name_ar',
+                'products.name_en as product_name_en',
+                'products.category_id',
+                'categories.name_ar as category_name_ar',
+                'categories.name_en as category_name_en',
+                'store_products.price',
+                'store_products.quantity',
+                'store_products.description_ar',
+                'store_products.description_en',
+                'store_products.main_image'
+            )
             ->distinct()
             ->get();
 
         return FavoriteResource::collection($favorites);
     }
+
 
     /*    public function isProductInStore(int $productId, int $storeId): bool
         {

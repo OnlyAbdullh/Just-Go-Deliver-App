@@ -29,20 +29,20 @@ class ProductRepository implements ProductRepositoryInterface
         $lang = app()->getLocale();
 
         return Store_Product::with([
-            'store:id,name_' . $lang,
-            'product:id,name_' . $lang . ',category_id',
-            'product.category:id,name_' . $lang,
+            'store:id,name_'.$lang,
+            'product:id,name_'.$lang.',category_id',
+            'product.category:id,name_'.$lang,
         ])->select([
             'id',
             'store_id',
             'product_id',
-            'description_' . $lang,
+            'description_'.$lang,
             'price',
             'quantity',
             'main_image',
-            DB::raw('IF(' .
-                (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = ' . auth()->id() . ' AND product_id = store_products.product_id AND store_id = store_products.store_id)' : '0') .
-                ', 1, 0) AS is_favorite')
+            DB::raw('IF('.
+                (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = '.auth()->id().' AND product_id = store_products.product_id AND store_id = store_products.store_id)' : '0').
+                ', 1, 0) AS is_favorite'),
         ])->paginate($itemsPerPage);
     }
 
@@ -58,9 +58,9 @@ class ProductRepository implements ProductRepositoryInterface
         return Store_Product::where('store_id', $storeId)
             ->where('product_id', $productId)
             ->with([
-                'store:id,name_' . $lang,
-                'product:id,name_' . $lang . ',category_id',
-                'product.category:id,name_' . $lang,
+                'store:id,name_'.$lang,
+                'product:id,name_'.$lang.',category_id',
+                'product.category:id,name_'.$lang,
                 'images' => function ($query) use ($storeId) {
                     $query->where('store_id', $storeId)
                         ->select('id', 'store_id', 'product_id', 'image');
@@ -69,19 +69,19 @@ class ProductRepository implements ProductRepositoryInterface
                 'id',
                 'store_id',
                 'product_id',
-                'description_' . $lang,
+                'description_'.$lang,
                 'price',
                 'quantity',
                 'main_image',
-                DB::raw('IF(' .
-                    (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = ' . auth()->id() . ' AND product_id = store_products.product_id AND store_id = store_products.store_id)' : '0') .
+                DB::raw('IF('.
+                    (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = '.auth()->id().' AND product_id = store_products.product_id AND store_id = store_products.store_id)' : '0').
                     ', 1, 0) AS is_favorite'),
 
                 DB::raw('(SELECT SUM(cart_products.amount_needed)
                   FROM cart_products
                   JOIN carts ON carts.id = cart_products.cart_id
                   WHERE cart_products.store_product_id = store_products.id
-                  AND carts.user_id = ' . (auth()->check() ? auth()->id() : 'NULL') . ') AS total_amount_needed')
+                  AND carts.user_id = '.(auth()->check() ? auth()->id() : 'NULL').') AS total_amount_needed'),
             ])
             ->first();
     }
@@ -113,23 +113,23 @@ class ProductRepository implements ProductRepositoryInterface
 
         return Store_Product::query()
             ->whereHas('product', function ($query) use ($name, $lang) {
-                $query->where('name_' . $lang, 'like', '%' . $name . '%');
+                $query->where('name_'.$lang, 'like', '%'.$name.'%');
             })
             ->with([
-                'store:id,name_' . $lang,
-                'product:id,name_' . $lang . ',category_id',
-                'product.category:id,name_' . $lang,
+                'store:id,name_'.$lang,
+                'product:id,name_'.$lang.',category_id',
+                'product.category:id,name_'.$lang,
             ])
             ->select([
                 'store_id',
                 'product_id',
-                'description_' . $lang,
+                'description_'.$lang,
                 'price',
                 'quantity',
                 'main_image',
-                DB::raw('IF(' .
-                    (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = ' . auth()->id() . ' AND product_id = store_products.product_id AND store_id = store_products.store_id)' : '0') .
-                    ', 1, 0) AS is_favorite')
+                DB::raw('IF('.
+                    (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = '.auth()->id().' AND product_id = store_products.product_id AND store_id = store_products.store_id)' : '0').
+                    ', 1, 0) AS is_favorite'),
             ])
             ->paginate($items);
     }

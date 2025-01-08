@@ -273,7 +273,7 @@ class OrderController extends Controller
     {
         $response = $this->orderService->cancelOrder($orderId);
 
-        if (!$response['success']) {
+        if (! $response['success']) {
             return JsonResponseHelper::errorResponse($response['message'], [], $response['code'] ?? 400);
         }
 
@@ -287,21 +287,26 @@ class OrderController extends Controller
      *     description="Fetch a specific order by its ID along with its associated products and details.",
      *     operationId="showOrder",
      *     tags={"Order"},
+     *
      *     @OA\Parameter(
      *         name="orderId",
      *         in="path",
      *         description="ID of the order to fetch",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             example=1
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Successful response with order and product details",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="string",
@@ -317,8 +322,10 @@ class OrderController extends Controller
      *                 @OA\Property(
      *                     property="products",
      *                     type="array",
+     *
      *                     @OA\Items(
      *                         type="object",
+     *
      *                         @OA\Property(property="store_id", type="integer", example=3),
      *                         @OA\Property(property="store_name", type="string", example="Tech Store"),
      *                         @OA\Property(property="product_id", type="integer", example=10),
@@ -336,11 +343,14 @@ class OrderController extends Controller
      *             )
      *         )
      *     ),
+     *
      * @OA\Response(
      *         response=404,
      *         description="Order not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="string",
@@ -355,14 +365,14 @@ class OrderController extends Controller
      *     )
      * )
      */
-
     public function showOrder(int $order_id)
     {
         $order = $this->orderService->getOrderWithProducts($order_id);
 
-        if (!$order) {
+        if (! $order) {
             return JsonResponseHelper::errorResponse(__('messages.order_not_found'), [], 404);
         }
+
         // return $order;
         return JsonResponseHelper::successResponse('', new OrderResource($order));
     }

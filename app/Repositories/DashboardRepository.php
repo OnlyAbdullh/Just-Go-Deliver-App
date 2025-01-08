@@ -18,13 +18,13 @@ class DashboardRepository implements DashboardRepositoryInterface
             ->select([
                 'store_products.id as store_product_id',
                 'store_products.product_id',
-                'products.name_' . $lang . ' as product_name',
+                'products.name_'.$lang.' as product_name',
                 'products.category_id',
-                'categories.name_' . $lang . ' as category_name',
+                'categories.name_'.$lang.' as category_name',
                 'store_products.main_image',
                 'store_products.price',
                 'store_products.quantity',
-                'store_products.description_' . $lang . ' as description',
+                'store_products.description_'.$lang.' as description',
             ])
             ->paginate($items);
     }
@@ -43,15 +43,15 @@ class DashboardRepository implements DashboardRepositoryInterface
             ->select([
                 'store_products.id as store_product_id',
                 'products.id as product_id',
-                'products.name_' . $lang . ' as product_name',
-                DB::raw('CONCAT("' . asset('storage/') . '/", store_products.main_image) as main_image'),
+                'products.name_'.$lang.' as product_name',
+                DB::raw('CONCAT("'.asset('storage/').'/", store_products.main_image) as main_image'),
                 'store_products.price',
                 'store_products.quantity',
-                'store_products.description_' . $lang . ' as description',
+                'store_products.description_'.$lang.' as description',
                 'products.category_id',
-                'categories.name_' . $lang . ' as category_name',
+                'categories.name_'.$lang.' as category_name',
                 DB::raw('COALESCE(CAST(SUM(order_products.quantity) AS INTEGER), 0) as total_quantity_sold'),
-                DB::raw('GROUP_CONCAT(CONCAT(users.first_name, " ", users.last_name) SEPARATOR ", ") as users_who_bought')
+                DB::raw('GROUP_CONCAT(CONCAT(users.first_name, " ", users.last_name) SEPARATOR ", ") as users_who_bought'),
             ])
             ->groupBy(
                 'store_products.id',
@@ -59,11 +59,11 @@ class DashboardRepository implements DashboardRepositoryInterface
                 'store_products.price',
                 'store_products.quantity',
                 'store_products.sold_quantity',
-                'store_products.description_' . $lang,
+                'store_products.description_'.$lang,
                 'products.id',
-                'products.name_' . $lang,
+                'products.name_'.$lang,
                 'products.category_id',
-                'categories.name_' . $lang
+                'categories.name_'.$lang
             )
             ->orderBy('store_products.id')
             ->paginate($items);
@@ -71,6 +71,7 @@ class DashboardRepository implements DashboardRepositoryInterface
         $products->transform(function ($product) {
             // Convert the users_who_bought to an array
             $product->users_who_bought = $product->users_who_bought ? explode(', ', $product->users_who_bought) : [];
+
             return $product;
         });
 

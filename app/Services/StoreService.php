@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Store;
 use App\Repositories\Contracts\StoreRepositoryInterface;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class StoreService
@@ -25,7 +24,9 @@ class StoreService
     {
         return $this->storeRepository->all_with_pagination($items);
     }
-    public function getStore($id){
+
+    public function getStore($id)
+    {
         return $this->storeRepository->getStore($id);
     }
 

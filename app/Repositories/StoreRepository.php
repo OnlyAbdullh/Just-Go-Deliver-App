@@ -7,7 +7,6 @@ use App\Repositories\Contracts\StoreRepositoryInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class StoreRepository implements StoreRepositoryInterface
 {
@@ -19,9 +18,9 @@ class StoreRepository implements StoreRepositoryInterface
             $query->select('id', 'first_name', 'last_name');
         }])->select([
             'id',
-            'name_' . $lang,
-            'description_' . $lang,
-            'location_' . $lang,
+            'name_'.$lang,
+            'description_'.$lang,
+            'location_'.$lang,
             'user_id',
             'logo',
         ])->paginate($items);
@@ -52,7 +51,7 @@ class StoreRepository implements StoreRepositoryInterface
     public function getStore(int $id)
     {
         $lang = app()->getLocale();
-        $stores =  DB::table('stores')
+        $stores = DB::table('stores')
             ->where('stores.id', $id)
             ->join('users', 'stores.user_id', '=', 'users.id')
             ->join('store_products', 'stores.id', '=', 'store_products.store_id')
@@ -60,41 +59,41 @@ class StoreRepository implements StoreRepositoryInterface
             ->join('categories', 'products.category_id', '=', 'categories.id')
             ->select([
                 'stores.id as store_id',
-                'stores.name_' . $lang . ' as store_name',
-                'stores.description_' . $lang . ' as store_description',
-                'stores.location_' . $lang . ' as location',
-                DB::raw('CONCAT("' . asset('storage/') . '/", stores.logo) as logo'),
+                'stores.name_'.$lang.' as store_name',
+                'stores.description_'.$lang.' as store_description',
+                'stores.location_'.$lang.' as location',
+                DB::raw('CONCAT("'.asset('storage/').'/", stores.logo) as logo'),
                 'users.id',
                 DB::raw('GROUP_CONCAT(CONCAT(users.first_name, " ", users.last_name) SEPARATOR ", ") as manager'),
                 'store_products.id as store_product_id',
                 'products.id as product_id',
-                'products.name_' . $lang . ' as product_name',
-                DB::raw('CONCAT("' . asset('storage/') . '/", store_products.main_image) as main_image'),
+                'products.name_'.$lang.' as product_name',
+                DB::raw('CONCAT("'.asset('storage/').'/", store_products.main_image) as main_image'),
 
-                DB::raw('IF(' .
-                    (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = ' . auth()->id() . ' AND product_id = store_products.product_id AND store_id = store_products.store_id)' : '0') .
+                DB::raw('IF('.
+                    (auth()->check() ? 'EXISTS (SELECT 1 FROM favorites WHERE user_id = '.auth()->id().' AND product_id = store_products.product_id AND store_id = store_products.store_id)' : '0').
                     ', 1, 0) AS is_favorite'),
                 'store_products.price',
                 'store_products.quantity',
-                'store_products.description_' . $lang . ' as product_description',
+                'store_products.description_'.$lang.' as product_description',
                 'products.category_id',
-                'categories.name_' . $lang . ' as category_name',
+                'categories.name_'.$lang.' as category_name',
             ])->groupBy([
                 'stores.id',
-                'stores.name_' . $lang,
-                'stores.description_' . $lang,
-                'stores.location_' . $lang,
+                'stores.name_'.$lang,
+                'stores.description_'.$lang,
+                'stores.location_'.$lang,
                 'stores.logo',
                 'users.id',
                 'store_products.id',
                 'products.id',
-                'products.name_' . $lang,
+                'products.name_'.$lang,
                 'store_products.main_image',
                 'store_products.price',
                 'store_products.quantity',
-                'store_products.description_' . $lang,
+                'store_products.description_'.$lang,
                 'products.category_id',
-                'categories.name_' . $lang,
+                'categories.name_'.$lang,
             ])
             ->get();
 
@@ -139,15 +138,15 @@ class StoreRepository implements StoreRepositoryInterface
         $lang = app()->getLocale();
 
         return DB::table('stores')
-            ->where('name_' . $lang, 'like', '%' . $name . '%')
+            ->where('name_'.$lang, 'like', '%'.$name.'%')
             ->join('users', 'stores.user_id', '=', 'users.id')
             ->select([
                 'stores.id',
-                'stores.name_' . $lang . ' as name',
+                'stores.name_'.$lang.' as name',
                 DB::raw('CONCAT(users.first_name, " ", users.last_name) as manager'),
-                DB::raw('CONCAT("' . asset('storage/') . '/", stores.logo) as image_url'),
-                'stores.description_' . $lang . ' as description',
-                'stores.location_' . $lang . ' as location',
+                DB::raw('CONCAT("'.asset('storage/').'/", stores.logo) as image_url'),
+                'stores.description_'.$lang.' as description',
+                'stores.location_'.$lang.' as location',
             ])
             ->paginate($items);
     }

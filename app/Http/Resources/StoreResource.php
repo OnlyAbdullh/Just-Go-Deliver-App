@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class StoreResource extends JsonResource
@@ -35,16 +34,16 @@ class StoreResource extends JsonResource
         $imagePath = $this->logo;
 
         $imageUrl = Storage::url($imagePath);
-        $logo =  asset($imageUrl);
-        $name = 'name_' . $lang;
-        $description = 'description_' . $lang;
-        $location = 'location_' . $lang;
+        $logo = asset($imageUrl);
+        $name = 'name_'.$lang;
+        $description = 'description_'.$lang;
+        $location = 'location_'.$lang;
 
         $storeName = $this->$name;
         $storeDescription = $this->$description;
         $storeLocation = $this->$location;
         $manager = $this->user;
-        $managerName = $manager->first_name . ' ' . $manager->last_name;
+        $managerName = $manager->first_name.' '.$manager->last_name;
 
         $data = [
             'id' => $this->id,
@@ -61,7 +60,6 @@ class StoreResource extends JsonResource
         // ])->filter(function ($value) {
         //     return ! is_null($value);
         // })->toArray();
-
 
     }
 }

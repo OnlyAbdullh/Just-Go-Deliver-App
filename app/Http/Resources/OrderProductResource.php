@@ -12,7 +12,6 @@ class OrderProductResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-
     protected $isFavorite;
 
     public function __construct($resource, $isFavorite = 0)
@@ -20,6 +19,7 @@ class OrderProductResource extends JsonResource
         parent::__construct($resource);
         $this->isFavorite = $isFavorite;
     }
+
     public function toArray(Request $request): array
     {
 

@@ -8,11 +8,9 @@ use App\Http\Requests\UpdateStoreRequest;
 use App\Http\Resources\StoreResource;
 use App\Models\Store;
 use App\Models\User;
-use App\Repositories\StoreRepository;
 use App\Services\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\SecurityScheme(
@@ -484,7 +482,7 @@ class StoreController extends Controller
      */
     public function show(Store $store)
     {
-        $store =  $this->storeSrevice->getStore($store->id);
+        $store = $this->storeSrevice->getStore($store->id);
 
         return JsonResponseHelper::successResponse(__('messages.store_displayed'), $store, 200);
     }
@@ -495,30 +493,37 @@ class StoreController extends Controller
      *     summary="Search stores by name",
      *     description="Search for stores by name and retrieve a paginated list of stores along with their manager's name, description, and location.",
      *     tags={"Stores"},
+     *
      *     @OA\Parameter(
      *         name="name",
      *         in="path",
      *         description="Name of the store to search for",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="string"
      *         )
      *     ),
+     *
      *     @OA\Parameter(
      *         name="items",
      *         in="query",
      *         description="Number of items per page",
      *         required=false,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             default=20
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of stores with pagination",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="boolean",
@@ -535,8 +540,10 @@ class StoreController extends Controller
      *                 @OA\Property(
      *                     property="stores",
      *                     type="array",
+     *
      *                     @OA\Items(
      *                         type="object",
+     *
      *                         @OA\Property(
      *                             property="store_id",
      *                             type="integer",
@@ -596,6 +603,7 @@ class StoreController extends Controller
      *             ),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=400,
      *         description="Bad Request",
@@ -606,7 +614,6 @@ class StoreController extends Controller
      *     ),
      * )
      */
-
     public function search(Request $request, $name)
     {
         $items = $request->query('items', 20);

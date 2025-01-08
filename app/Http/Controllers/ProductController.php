@@ -701,7 +701,7 @@ class ProductController extends Controller
             return response()->json([
                 'successful' => false,
                 'message' => __('messages.no_products_available'),
-                'data' =>[],
+                'data' => [],
                 'status_code' => 404,
             ]);
         }

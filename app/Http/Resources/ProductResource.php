@@ -4,8 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProductResource extends JsonResource
@@ -73,7 +71,6 @@ class ProductResource extends JsonResource
      *     )
      * )
      */
-
     protected $isFavorite;
 
     public function __construct($resource, $isFavorite = 0)
@@ -88,10 +85,10 @@ class ProductResource extends JsonResource
 
         $lang = app()->getLocale();
 
-        $productName = 'name_' . $lang;
-        $storeName = 'name_' . $lang;
-        $description = 'description_' . $lang;
-        $categoryName = 'name_' . $lang;
+        $productName = 'name_'.$lang;
+        $storeName = 'name_'.$lang;
+        $description = 'description_'.$lang;
+        $categoryName = 'name_'.$lang;
 
         $data = [
             'store_id' => $this->store_id,
