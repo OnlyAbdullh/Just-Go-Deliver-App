@@ -92,9 +92,9 @@ class CartService
 
         $this->cartRepository->UpdateCartProducts($updates);
 
-        $cartProducts = $this->cartRepository->getCartProducts($cartId);
-
-        $response = $cartProducts->map(function ($product) use ($updatedProductIds, $requestedQuantity) {
+        $cartProducts = $this->cartRepository->getCartProducts($cart);
+        $products = $cartProducts['products'];
+        $response = $products->map(function ($product) use ($updatedProductIds, $requestedQuantity) {
 
             if (in_array($product['product_id'], $updatedProductIds)) {
 
@@ -108,8 +108,8 @@ class CartService
 
             return $product;
         });
-
-        return $response;
+        $cart->refresh();
+        return ['products' => $response, 'total_price' => $cart->total_price];
     }
 
     private function generateResponse(int $requestedQuantity, int $availableStock): array

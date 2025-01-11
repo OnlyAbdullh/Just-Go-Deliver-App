@@ -264,7 +264,7 @@ class CartController extends Controller
         $cart=$user->cart;
         $response = $this->cartService->updateCartQuantities($cart, $request->input('data'));
 
-        return JsonResponseHelper::successResponse('', ['data'=>$response['data'],'total_price'=> $response['total_price']]);
+        return JsonResponseHelper::successResponse('', $response);
     }
 
     /**
