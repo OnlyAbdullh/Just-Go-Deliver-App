@@ -150,7 +150,7 @@ class CartController extends Controller
         if (isset($result['message'])) {
             return JsonResponseHelper::successResponse($result['message']);
         } else {
-            return JsonResponseHelper::successResponse('', $result['data']);
+            return JsonResponseHelper::successResponse('', $result);
         }
     }
 
@@ -261,9 +261,10 @@ class CartController extends Controller
     public function updateQuantities(Request $request)
     {
         $user = Auth::user();
-        $response = $this->cartService->updateCartQuantities($user->cart, $request->input('data'));
+        $cart=$user->cart;
+        $response = $this->cartService->updateCartQuantities($cart, $request->input('data'));
 
-        return JsonResponseHelper::successResponse('', $response);
+        return JsonResponseHelper::successResponse('', ['data'=>$response['data'],'total_price'=> $response['total_price']]);
     }
 
     /**
@@ -338,9 +339,10 @@ class CartController extends Controller
     public function DeleteProducts(Request $request)
     {
         $user = Auth::user();
-        $RowsDeleted = $this->cartService->DeleteCartProducts($user->cart, $request->input('data'));
+        $cart=$user->cart;
+        $RowsDeleted = $this->cartService->DeleteCartProducts($cart, $request->input('data'));
 
-        return JsonResponseHelper::successResponse(__('messages.cart_products_deleted_success', ['count' => $RowsDeleted]));
+        return JsonResponseHelper::successResponse(__('messages.cart_products_deleted_success', ['count' => $RowsDeleted]),['total_price'=>$user->cart->total_price]);
     }
 
     /**

@@ -48,17 +48,20 @@ class CartService
     {
         $cart = $user->cart;
 
-        if (! $cart) {
+        if (!$cart) {
             return ['message' => __('messages.cart_empty')];
         }
 
-        $products = $this->cartRepository->getCartProducts($cart->id, $onlyUnavailable);
+        $cartData = $this->cartRepository->getCartProducts($cart, $onlyUnavailable);
 
-        if ($products->isEmpty()) {
+        if (empty($cartData['products'])) {
             return ['message' => __('messages.cart_empty')];
         }
 
-        return ['data' => $products];
+        return [
+            'products' => $cartData['products'],
+            'total_price' => $cartData['total_price'],
+        ];
     }
 
     public function updateCartQuantities(Cart $cart, array $items)
