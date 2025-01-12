@@ -146,7 +146,7 @@ class CartController extends Controller
         if (isset($result['message'])) {
             return JsonResponseHelper::successResponse($result['message']);
         } else {
-            return response()->json(['data' => $result['products'], 'total_price' => $result['total_price']]);
+            return response()->json(['data' => $result['products'], 'total_price' => (float)$result['total_price']]);
         }
     }
 
@@ -259,8 +259,7 @@ class CartController extends Controller
         $user = Auth::user();
         $cart = $user->cart;
         $response = $this->cartService->updateCartQuantities($cart, $request->input('data'));
-
-        return response()->json([$response['products'], $response['total_price']]);
+        return response()->json([$response['products'], (float)$response['total_price']]);
     }
 
     /**
