@@ -101,36 +101,35 @@ class StoreRepository implements StoreRepositoryInterface
             ])
             ->get();
 
-            return $stores;
-        // $groupedData = $stores->groupBy('id')->map(function ($storeProducts) {
-        //     $firstProduct = $storeProducts->first();
+        $groupedData = $stores->groupBy('id')->map(function ($storeProducts) {
+            $firstProduct = $storeProducts->first();
 
-        //     return [
-        //         'id' => $firstProduct->id,
-        //         'manager' => $firstProduct->manager,
-        //         'name' => $firstProduct->store_name,
-        //         'image_url' => $firstProduct->logo,
-        //         'location' => $firstProduct->location,
-        //         'description' => $firstProduct->store_description,
-        //         'products' => $storeProducts->map(function ($product) use ($firstProduct) {
-        //             return [
-        //                 'store_id' => $firstProduct->store_id,
-        //                 'store_name' => $firstProduct->store_name,
-        //                 'product_id' => $product->product_id,
-        //                 'product_name' => $product->product_name,
-        //                 'main_image' => $product->main_image,
-        //                 'price' => $product->price,
-        //                 'quantity' => $product->quantity,
-        //                 'description' => $product->product_description,
-        //                 'is_favorite' => $product->is_favorite,
-        //                 'category_id' => $product->category_id,
-        //                 'category_name' => $product->category_name,
-        //             ];
-        //         })->toArray(),
-        //     ];
-        // })->values();
+            return [
+                'id' => $firstProduct->id,
+                'manager' => $firstProduct->manager,
+                'name' => $firstProduct->store_name,
+                'image_url' => $firstProduct->logo,
+                'location' => $firstProduct->location,
+                'description' => $firstProduct->store_description,
+                'products' => $storeProducts->map(function ($product) use ($firstProduct) {
+                    return [
+                        'store_id' => $firstProduct->store_id,
+                        'store_name' => $firstProduct->store_name,
+                        'product_id' => $product->product_id,
+                        'product_name' => $product->product_name,
+                        'main_image' => $product->main_image,
+                        'price' => $product->price,
+                        'quantity' => $product->quantity,
+                        'description' => $product->product_description,
+                        'is_favorite' => $product->is_favorite,
+                        'category_id' => $product->category_id,
+                        'category_name' => $product->category_name,
+                    ];
+                })->toArray(),
+            ];
+        })->values();
 
-        // return $groupedData;
+        return $groupedData;
     }
 
     public function delete(Store $store): bool
