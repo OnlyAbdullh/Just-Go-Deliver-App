@@ -66,6 +66,8 @@ class StoreRepository implements StoreRepositoryInterface
                 'users.id',
                 DB::raw('GROUP_CONCAT(CONCAT(users.first_name, " ", users.last_name) SEPARATOR ", ") as manager'),
                 'store_products.id as store_product_id',
+                'store_products.product_id', 
+                'store_products.store_id',  
                 'products.id as product_id',
                 'products.name_'.$lang.' as product_name',
                 DB::raw('CONCAT("'.asset('storage/').'/", store_products.main_image) as main_image'),
@@ -86,6 +88,8 @@ class StoreRepository implements StoreRepositoryInterface
                 'stores.logo',
                 'users.id',
                 'store_products.id',
+                'store_products.product_id',
+                'store_products.store_id',   
                 'products.id',
                 'products.name_'.$lang,
                 'store_products.main_image',
@@ -97,35 +101,36 @@ class StoreRepository implements StoreRepositoryInterface
             ])
             ->get();
 
-        $groupedData = $stores->groupBy('id')->map(function ($storeProducts) {
-            $firstProduct = $storeProducts->first();
+            return $stores;
+        // $groupedData = $stores->groupBy('id')->map(function ($storeProducts) {
+        //     $firstProduct = $storeProducts->first();
 
-            return [
-                'id' => $firstProduct->id,
-                'manager' => $firstProduct->manager,
-                'name' => $firstProduct->store_name,
-                'image_url' => $firstProduct->logo,
-                'location' => $firstProduct->location,
-                'description' => $firstProduct->store_description,
-                'products' => $storeProducts->map(function ($product) use ($firstProduct) {
-                    return [
-                        'store_id' => $firstProduct->store_id,
-                        'store_name' => $firstProduct->store_name,
-                        'product_id' => $product->product_id,
-                        'product_name' => $product->product_name,
-                        'main_image' => $product->main_image,
-                        'price' => $product->price,
-                        'quantity' => $product->quantity,
-                        'description' => $product->product_description,
-                        'is_favorite' => $product->is_favorite,
-                        'category_id' => $product->category_id,
-                        'category_name' => $product->category_name,
-                    ];
-                })->toArray(),
-            ];
-        })->values();
+        //     return [
+        //         'id' => $firstProduct->id,
+        //         'manager' => $firstProduct->manager,
+        //         'name' => $firstProduct->store_name,
+        //         'image_url' => $firstProduct->logo,
+        //         'location' => $firstProduct->location,
+        //         'description' => $firstProduct->store_description,
+        //         'products' => $storeProducts->map(function ($product) use ($firstProduct) {
+        //             return [
+        //                 'store_id' => $firstProduct->store_id,
+        //                 'store_name' => $firstProduct->store_name,
+        //                 'product_id' => $product->product_id,
+        //                 'product_name' => $product->product_name,
+        //                 'main_image' => $product->main_image,
+        //                 'price' => $product->price,
+        //                 'quantity' => $product->quantity,
+        //                 'description' => $product->product_description,
+        //                 'is_favorite' => $product->is_favorite,
+        //                 'category_id' => $product->category_id,
+        //                 'category_name' => $product->category_name,
+        //             ];
+        //         })->toArray(),
+        //     ];
+        // })->values();
 
-        return $groupedData;
+        // return $groupedData;
     }
 
     public function delete(Store $store): bool
