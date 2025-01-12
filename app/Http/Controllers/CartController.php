@@ -6,6 +6,7 @@ use App\Helpers\JsonResponseHelper;
 use App\Models\Product;
 use App\Models\Store;
 use App\Services\CartService;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -83,7 +84,7 @@ class CartController extends Controller
 
         $result = $this->cartService->addProductToCart($store_id, $product_id, $request->input('quantity'));
 
-        if (! $result['success']) {
+        if (!$result['success']) {
             return JsonResponseHelper::errorResponse('', $result['message']);
         }
 
@@ -103,15 +104,11 @@ class CartController extends Controller
      *         description="Successful retrieval of cart products",
      *
      *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true, description="Indicates if the operation was successful"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
      *                 description="List of products in the cart",
-     *
      *                 @OA\Items(
-     *
      *                     @OA\Property(property="store_id", type="integer", example=1, description="ID of the store"),
      *                     @OA\Property(property="store_name", type="string", example="Ali", description="Name of the store"),
      *                     @OA\Property(property="order_quantity", type="integer", example=2, description="Quantity ordered"),
@@ -135,7 +132,6 @@ class CartController extends Controller
      *                     )
      *                 )
      *             ),
-     *             @OA\Property(property="status_code", type="integer", example=200, description="HTTP status code of the response"),
      *             @OA\Property(property="total_price", type="integer", example=2750, description="Total price of all products in the cart")
      *         )
      *     )
@@ -150,7 +146,7 @@ class CartController extends Controller
         if (isset($result['message'])) {
             return JsonResponseHelper::successResponse($result['message']);
         } else {
-            return JsonResponseHelper::successResponse('', $result);
+            return response()->json(['data' => $result['products'], 'total_price' => $result['total_price']]);
         }
     }
 
@@ -261,10 +257,10 @@ class CartController extends Controller
     public function updateQuantities(Request $request)
     {
         $user = Auth::user();
-        $cart=$user->cart;
+        $cart = $user->cart;
         $response = $this->cartService->updateCartQuantities($cart, $request->input('data'));
 
-        return JsonResponseHelper::successResponse('', $response);
+        return response()->json([$response['products'], $response['total_price']]);
     }
 
     /**
@@ -339,10 +335,10 @@ class CartController extends Controller
     public function DeleteProducts(Request $request)
     {
         $user = Auth::user();
-        $cart=$user->cart;
+        $cart = $user->cart;
         $RowsDeleted = $this->cartService->DeleteCartProducts($cart, $request->input('data'));
 
-        return JsonResponseHelper::successResponse(__('messages.cart_products_deleted_success', ['count' => $RowsDeleted]),['total_price'=>$user->cart->total_price]);
+        return JsonResponseHelper::successResponse(__('messages.cart_products_deleted_success', ['count' => $RowsDeleted]), ['total_price' => $user->cart->total_price]);
     }
 
     /**

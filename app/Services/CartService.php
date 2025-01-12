@@ -58,10 +58,7 @@ class CartService
             return ['message' => __('messages.cart_empty')];
         }
 
-        return [
-            'products' => $cartData['products'],
-            'total_price' => $cartData['total_price'],
-        ];
+        return $cartData;
     }
 
     public function updateCartQuantities(Cart $cart, array $items)
