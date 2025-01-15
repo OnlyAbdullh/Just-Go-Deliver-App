@@ -105,14 +105,15 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
 
-        if (! Gate::allows('assign-role', User::class)) {
+        if (!Gate::allows('assign-role', User::class)) {
             return JsonResponseHelper::errorResponse(__('messages.only_manager_can_assign_roles'), [], 403);
         }
+        $this->revokeRoleForUser($request->user_id, 'user');
         $result = $this->roleService->assignRoleForUser($request->user_id, $request->role);
 
         if ($result === 'has role') {
             return JsonResponseHelper::successResponse(__('messages.role_already_assigned'));
-        } elseif (! $result) {
+        } elseif (!$result) {
             return JsonResponseHelper::errorResponse(__('messages.user_not_found'), [], 404);
         }
 
@@ -204,7 +205,7 @@ class RoleController extends Controller
      */
     public function delete(RoleRequest $request)
     {
-        if (! Gate::allows('revokeRole', User::class)) {
+        if (!Gate::allows('revokeRole', User::class)) {
             return JsonResponseHelper::errorResponse(__('messages.only_manager_can_revoke_roles'), [], 403);
         }
 
@@ -212,7 +213,7 @@ class RoleController extends Controller
 
         if ($result === 'has not role') {
             return JsonResponseHelper::successResponse(__('messages.role_already_revoked'));
-        } elseif (! $result) {
+        } elseif (!$result) {
             return JsonResponseHelper::errorResponse(__('messages.user_not_found'), [], 404);
         }
 

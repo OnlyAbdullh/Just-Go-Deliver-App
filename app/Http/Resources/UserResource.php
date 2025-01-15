@@ -24,9 +24,7 @@ class UserResource extends JsonResource
             'location' => $this->location,
             'phone_number' => $this->phone_number,
             'image_url' => asset($mainUrl),
-            'role' => $this->whenLoaded('roles', function () {
-                return $this->roles->pluck('name')->first() ?? 'No Role';
-            }),
+            'role' => $this->roles->pluck('name')->first(),
         ];
     }
 }
