@@ -34,7 +34,6 @@ class OrderRepository implements OrderRepositoryInterface
 
         event(new OrderCreated($orderProductsData));
 
-        return ['order_count' => count($ordersData)];
     }
 
     public function getUserOrders(User $user)

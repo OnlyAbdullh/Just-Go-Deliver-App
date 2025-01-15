@@ -76,23 +76,32 @@ class OrderController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
-     *
      *                 @OA\Property(
      *                     property="message",
      *                     type="string",
      *                     example="Orders created successfully."
      *                 ),
+     *             }
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad Request - Some items in your cart are out of stock",
+     *
+     *         @OA\JsonContent(
+     *             type="object",
+     *             properties={
+     *
      *                 @OA\Property(
-     *                     property="data",
-     *                     type="object",
-     *                     properties={
-     *                         @OA\Property(
-     *                             property="order_count",
-     *                             type="integer",
-     *                             description="Number of orders created",
-     *                             example=2
-     *                         )
-     *                     }
+     *                     property="state",
+     *                     type="string",
+     *                     example="false"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="message",
+     *                     type="string",
+     *                     example="Order Failed, Some Items in Your Cart Are Out of Stock"
      *                 )
      *             }
      *         )
@@ -100,19 +109,7 @@ class OrderController extends Controller
      *
      *     @OA\Response(
      *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *             type="object",
-     *             properties={
-     *
-     *                 @OA\Property(
-     *                     property="message",
-     *                     type="string",
-     *                     example="Failed to create orders."
-     *                 )
-     *             }
-     *         )
+     *         description="Internal Server Error - Quantity in the request is different from the quentity in the cart",
      *     )
      * )
      */
@@ -120,7 +117,10 @@ class OrderController extends Controller
     {
         $result = $this->orderService->createOrders($request->input('data'));
 
-        return JsonResponseHelper::successResponse('Orders created successfully.', $result);
+        if (isset($result['state'])) {
+            return JsonResponseHelper::errorResponse($result['message']);
+        }
+        return JsonResponseHelper::successResponse('Orders created successfully.');
     }
 
     /**
@@ -273,7 +273,7 @@ class OrderController extends Controller
     {
         $response = $this->orderService->cancelOrder($orderId);
 
-        if (! $response['success']) {
+        if (!$response['success']) {
             return JsonResponseHelper::errorResponse($response['message'], [], $response['code'] ?? 400);
         }
 
@@ -369,7 +369,7 @@ class OrderController extends Controller
     {
         $order = $this->orderService->getOrderWithProducts($order_id);
 
-        if (! $order) {
+        if (!$order) {
             return JsonResponseHelper::errorResponse(__('messages.order_not_found'), [], 404);
         }
 

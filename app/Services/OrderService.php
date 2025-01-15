@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\OrderCancelled;
+use App\Repositories\Contracts\CartRepositoryInterface;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -12,20 +13,26 @@ use Illuminate\Support\Str;
 class OrderService
 {
     private $orderRepository;
+    private $cartRepository;
 
-    public function __construct(OrderRepositoryInterface $orderRepository)
+    public function __construct(OrderRepositoryInterface $orderRepository, CartRepositoryInterface $cartRepository)
     {
         $this->orderRepository = $orderRepository;
+        $this->cartRepository = $cartRepository;
     }
 
     public function createOrders(array $data)
     {
         $user = Auth::user();
         $now = now();
+        $result = $this->cartRepository->getCartProducts($user->cart, true);
 
+        if (!$result['products']->isEmpty()) {
+            return ['state' => 'false', 'message'=>'Order Failed, Some Items in Your Cart Are Out of Stock'];
+        }
         return DB::transaction(function () use ($data, $user, $now) {
             $groupedProducts = collect($data)->groupBy('store_id');
-            $storeProductIds = $groupedProducts->flatMap(fn ($products) => $products->pluck('store_product_id'));
+            $storeProductIds = $groupedProducts->flatMap(fn($products) => $products->pluck('store_product_id'));
 
             $storeProductDetails = $this->orderRepository->getStoreProductPrices($storeProductIds);
 
@@ -34,7 +41,7 @@ class OrderService
             $orderCounter = 0;
 
             foreach ($groupedProducts as $storeProducts) {
-                $totalPrice = $storeProducts->sum(fn ($product) => $storeProductDetails[$product['store_product_id']] * $product['quantity']);
+                $totalPrice = $storeProducts->sum(fn($product) => $storeProductDetails[$product['store_product_id']] * $product['quantity']);
 
                 $ordersData[$orderCounter] = [
                     'user_id' => $user->id,
@@ -60,13 +67,13 @@ class OrderService
                 $orderCounter++;
             }
 
-            return $this->orderRepository->createOrders($ordersData, $orderProductsData);
+              $this->orderRepository->createOrders($ordersData, $orderProductsData);
         });
     }
 
     private function generateOrderReference()
     {
-        return 'ORD-'.now()->format('Ymd-His').'-'.Str::random(6);
+        return 'ORD-' . now()->format('Ymd-His') . '-' . Str::random(6);
     }
 
     public function getUserOrders()
@@ -93,7 +100,7 @@ class OrderService
 
         $order = $this->orderRepository->findUserOrder($orderId, $user->id);
 
-        if (! $order) {
+        if (!$order) {
             return [
                 'success' => false,
                 'message' => __('messages.order_not_found'),

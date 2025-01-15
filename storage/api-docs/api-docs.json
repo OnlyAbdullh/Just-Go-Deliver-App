@@ -662,11 +662,6 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "description": "Indicates if the operation was successful",
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "data": {
                                             "description": "List of products in the cart",
                                             "type": "array",
@@ -730,11 +725,6 @@
                                                 },
                                                 "type": "object"
                                             }
-                                        },
-                                        "status_code": {
-                                            "description": "HTTP status code of the response",
-                                            "type": "integer",
-                                            "example": 200
                                         },
                                         "total_price": {
                                             "description": "Total price of all products in the cart",
@@ -3054,16 +3044,26 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Orders created successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Some items in your cart are out of stock",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "state": {
+                                            "type": "string",
+                                            "example": "false"
                                         },
-                                        "data": {
-                                            "properties": {
-                                                "order_count": {
-                                                    "description": "Number of orders created",
-                                                    "type": "integer",
-                                                    "example": 2
-                                                }
-                                            },
-                                            "type": "object"
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order Failed, Some Items in Your Cart Are Out of Stock"
                                         }
                                     },
                                     "type": "object"
@@ -3072,20 +3072,7 @@
                         }
                     },
                     "500": {
-                        "description": "Server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Failed to create orders."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Internal Server Error - Quantity in the request is different from the quentity in the cart"
                     }
                 },
                 "security": [
