@@ -44,7 +44,7 @@ class CartService
         return ['success' => true, 'message' => __('messages.product_added_to_cart')];
     }
 
-    public function getAllProductsInCart(User $user, bool $onlyUnavailable): array
+    public function getAllProductsInCart(User $user): array
     {
         $cart = $user->cart;
 
@@ -52,7 +52,7 @@ class CartService
             return ['message' => __('messages.cart_empty')];
         }
 
-        $cartData = $this->cartRepository->getCartProducts($cart, $onlyUnavailable);
+        $cartData = $this->cartRepository->getCartProducts($cart);
 
         if (empty($cartData['products'])) {
             return ['message' => __('messages.cart_empty')];

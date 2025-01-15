@@ -93,12 +93,11 @@ class CartController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/carts/{boolValue}",
+     *     path="/api/carts/products",
      *     summary="Retrieve all products in the user's cart",
      *     tags={"Cart"},
      *     security={{"bearerAuth": {}}},
-     *     description="Fetch all products in the authenticated user's cart, boolValue=0 return all the products, boolValue=1 return just the products that are not available for now.",
-     *
+     *     description="Fetch all products in the authenticated user's cart  return all the products in the cart.",
      *     @OA\Response(
      *         response=200,
      *         description="Successful retrieval of cart products",
@@ -137,11 +136,11 @@ class CartController extends Controller
      *     )
      * )
      */
-    public function getCartProducts(bool $onlyUnavailable)
+    public function getCartProducts()
     {
         $user = Auth::user();
 
-        $result = $this->cartService->getAllProductsInCart($user, $onlyUnavailable);
+        $result = $this->cartService->getAllProductsInCart($user);
 
         if (isset($result['message'])) {
             return JsonResponseHelper::successResponse($result['message']);
