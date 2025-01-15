@@ -105,10 +105,10 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
 
-        if (!Gate::allows('assign-role', User::class)) {
+        if (!auth()->user()->hasRole('manager')) {
             return JsonResponseHelper::errorResponse(__('messages.only_manager_can_assign_roles'), [], 403);
         }
-        $this->revokeRoleForUser($request->user_id, 'user');
+        $this->roleService->revokeRoleForUser($request->user_id, 'user');
         $result = $this->roleService->assignRoleForUser($request->user_id, $request->role);
 
         if ($result === 'has role') {
@@ -205,7 +205,7 @@ class RoleController extends Controller
      */
     public function delete(RoleRequest $request)
     {
-        if (!Gate::allows('revokeRole', User::class)) {
+        if (!auth()->user()->hasRole('manager')) {
             return JsonResponseHelper::errorResponse(__('messages.only_manager_can_revoke_roles'), [], 403);
         }
 
