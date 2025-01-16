@@ -27,8 +27,14 @@ class OrderService
         $now = now();
         $result = $this->cartRepository->getCartProducts($user->cart, true);
 
-        if (count($result['products']) !== count($data)) {
-            return ['state' => 'false', 'message'=>'Order Failed, Some Items in Your Cart Are Out of Stock'];
+        $requestedProductIds = collect($data)->pluck('store_product_id')->sort()->values();
+        $cartProductIds = collect($result['products'])->pluck('store_product_id')->sort()->values();
+
+        if ($requestedProductIds->diff($cartProductIds)->isNotEmpty() || $cartProductIds->diff($requestedProductIds)->isNotEmpty()) {
+            return [
+                'state' => false,
+                'message' => 'Order Failed, Some Items in Your Request Are Not in Your Cart or Are Out of Stock'
+            ];
         }
         return DB::transaction(function () use ($data, $user, $now) {
             $groupedProducts = collect($data)->groupBy('store_id');
