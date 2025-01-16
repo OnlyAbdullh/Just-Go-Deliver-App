@@ -66,7 +66,7 @@ class CartRepository implements CartRepositoryInterface
 
         if ($onlyUnavailable) {
             $query->whereHas('storeProduct', function ($query) {
-                $query->whereColumn('quantity', '<', 'amount_needed');
+                $query->whereColumn('quantity', '>=', 'amount_needed');
             });
         }
 

@@ -27,7 +27,7 @@ class OrderService
         $now = now();
         $result = $this->cartRepository->getCartProducts($user->cart, true);
 
-        if (!$result['products']->isEmpty()) {
+        if (count($result['products']) !== count($data)) {
             return ['state' => 'false', 'message'=>'Order Failed, Some Items in Your Cart Are Out of Stock'];
         }
         return DB::transaction(function () use ($data, $user, $now) {
