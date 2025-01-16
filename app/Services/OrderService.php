@@ -33,7 +33,7 @@ class OrderService
         if ($requestedProductIds->diff($cartProductIds)->isNotEmpty() || $cartProductIds->diff($requestedProductIds)->isNotEmpty()) {
             return [
                 'state' => false,
-                'message' => 'Order Failed, Some Items in Your Request Are Not in Your Cart or Are Out of Stock'
+                'message' => 'Order Failed, Some Items in Your Cart Are Out of Stock'
             ];
         }
         return DB::transaction(function () use ($data, $user, $now) {
