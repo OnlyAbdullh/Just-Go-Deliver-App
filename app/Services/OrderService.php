@@ -122,11 +122,11 @@ class OrderService
         }
 
         DB::transaction(function () use ($order, $user) {
-            $orderProducts = $this->orderRepository->getOrderProducts($order->id);
+          //  $orderProducts = $this->orderRepository->getOrderProducts($order->id);
 
             $this->orderRepository->deleteOrder($order->id);
 
-            event(new OrderCancelled($user, $order, $orderProducts));
+          //  event(new OrderCancelled($user, $order, $orderProducts));
         });
 
         return ['success' => true, 'message' => __('messages.order_cancelled')];
