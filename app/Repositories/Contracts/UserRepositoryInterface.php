@@ -6,7 +6,7 @@ use App\Models\User;
 
 interface UserRepositoryInterface
 {
-    public function getAllUsers($perPage);
+    public function getAllUsers();
 
     public function getUserDetails(User $user);
 

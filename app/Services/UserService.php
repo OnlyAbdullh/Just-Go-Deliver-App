@@ -16,7 +16,7 @@ class UserService
 
     public function getAllUsers()
     {
-        return $this->userRepository->getAllUsers(20);
+        return $this->userRepository->getAllUsers();
     }
 
     public function getUserDetails(User $user)

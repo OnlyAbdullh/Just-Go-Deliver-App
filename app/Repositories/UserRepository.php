@@ -8,7 +8,7 @@ use App\Repositories\Contracts\UserRepositoryInterface;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function getAllUsers($perPage)
+    public function getAllUsers()
     {
         $users = User::select([
             'id',
@@ -18,7 +18,7 @@ class UserRepository implements UserRepositoryInterface
             'location',
             'phone_number',
             'image',
-        ])->paginate($perPage);
+        ])->get();
 
         return UserResource::collection($users);
     }
