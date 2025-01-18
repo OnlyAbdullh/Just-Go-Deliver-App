@@ -112,4 +112,5 @@ return [
     'order_not_found' => 'order is not exist',
     'order_cannot_be_cancelled' => 'the order cannot be cancelled',
     'order_cancelled' => 'order cancelled successfully',
+    'orders_fetched' => 'orders fetched successfully',
 ];

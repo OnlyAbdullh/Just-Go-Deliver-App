@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Repositories\Contracts\DashboardRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DashboardRepository implements DashboardRepositoryInterface
@@ -76,5 +77,42 @@ class DashboardRepository implements DashboardRepositoryInterface
         });
 
         return $products;
+    }
+
+    public function getOrdersForStore($storeId){
+        return DB::table('orders')
+        ->join('order_products', 'orders.id', '=', 'order_products.order_id')
+        ->join('users', 'orders.user_id', '=', 'users.id')
+        ->join('store_products', 'order_products.store_product_id', '=', 'store_products.id')
+        ->where('store_products.id', $storeId)
+        ->select([
+            'orders.id',
+            'order_products.store_product_id',
+            'orders.status',
+            'order_products.quantity',
+            'orders.total_price',
+            'orders.order_date',
+            DB::raw('GROUP_CONCAT(CONCAT(users.first_name, " ", users.last_name) SEPARATOR ", ") as owner_order'),
+        ])->groupBy(
+            'orders.id',
+            'order_products.store_product_id',
+            'orders.status',
+            'order_products.quantity',
+            'orders.total_price',
+            'orders.order_date'
+        )
+        ->orderBy('orders.order_date', 'asc')
+        ->get();
+    }
+
+    public function updateOrderStatus($orderId,$status){
+        return DB::table('orders')
+            ->where('orders.id', $orderId)
+            // ->where('orders.user_id', $validated['seller_id'])
+            ->select('orders.id', 'users.id')
+            ->update([
+                'status' => $status,
+                'updated_at' => Carbon::now(),
+            ]);
     }
 }

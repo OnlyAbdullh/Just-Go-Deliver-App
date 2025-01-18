@@ -22,4 +22,12 @@ class DashboardService
     {
         return $this->dashboardRepository->getProductStatistics($items, $storeId);
     }
+
+    public function getAllOrdersForStore($storeId){
+        return $this->dashboardRepository->getOrdersForStore($storeId);
+    }
+
+    public function  updateOrder($orderId,$status){
+        return $this->dashboardRepository->updateOrderStatus($orderId,$status);
+    }
 }

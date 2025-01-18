@@ -337,49 +337,138 @@ class DashBoardController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/dashboard/orders",
+     *     summary="Get orders for the authenticated user's store",
+     *     tags={"Dashboard"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Orders fetched successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="successful",
+     *                 type="boolean",
+     *                 example=true
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="تم جلب الطلبات بنجاح"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=2),
+     *                     @OA\Property(property="store_product_id", type="integer", example=1),
+     *                     @OA\Property(property="status", type="string", example="pending"),
+     *                     @OA\Property(property="quantity", type="integer", example=2),
+     *                     @OA\Property(property="total_price", type="string", example="14000.00"),
+     *                     @OA\Property(property="order_date", type="string", example="2024-12-29"),
+     *                     @OA\Property(property="owner_order", type="string", example="Hasan Zaeter")
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="status_code",
+     *                 type="integer",
+     *                 example=200
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Store not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="successful",
+     *                 type="boolean",
+     *                 example=false
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="No store found"
+     *             ),
+
+     *             @OA\Property(
+     *                 property="status_code",
+     *                 type="integer",
+     *                 example=404
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function getOrdersForStore(Request $request)
     {
         if (! $store = auth()->user()->store) {
             return JsonResponseHelper::errorResponse(__('messages.no_store'), [], 404);
         }
 
-        return DB::table('orders')
-            ->join('order_products', 'orders.id', '=', 'order_products.order_id')
-            ->join('users', 'orders.user_id', '=', 'users.id')
-            ->join('store_products', 'order_products.store_product_id', '=', 'store_products.id')
-            ->where('store_products.id', $store->id)
-            ->select([
-                'orders.id',
-                'order_products.store_product_id',
-                'orders.status',
-                'order_products.quantity',
-                'orders.total_price',
-                'orders.order_date',
-                DB::raw('GROUP_CONCAT(CONCAT(users.first_name, " ", users.last_name) SEPARATOR ", ") as owner_order'),
-            ])->groupBy(
-                'orders.id',
-                'order_products.store_product_id',
-                'orders.status',
-                'order_products.quantity',
-                'orders.total_price',
-                'orders.order_date'
-            )
-            ->orderBy('orders.order_date', 'asc')
-            ->get();
+        $orders = $this->dashboardService->getAllOrdersForStore($store->id);
+        return JsonResponseHelper::successResponse(__('messages.orders_fetched'), $orders);
     }
 
+    /**
+     * @OA\put(
+     *     path="/dashboard/orders/update",
+     *     summary="Update the status of an order",
+     *     tags={"Dashboard"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"order_id", "status"},
+     *                 @OA\Property(property="order_id", type="integer", example=2, description="The ID of the order"),
+     *                 @OA\Property(property="status", type="string", example="approved", description="The new status of the order", enum={"pending", "approved", "rejected", "delivered"})
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Order status updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="successful", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Order updated successfully"),
+     *             @OA\Property(property="status_code", type="integer", example=200)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="successful", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validation error"),
+     *             @OA\Property(property="data", type="object", example={"order_id": "The order_id field is required."}),
+     *             @OA\Property(property="status_code", type="integer", example=400)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Order not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="successful", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Order not found"),
+     *             @OA\Property(property="status_code", type="integer", example=404)
+     *         )
+     *     )
+     * )
+     */
     public function updateOrderStatus(UpdateOrderStatusRequest $request)
     {
         $validated = $request->validated();
-
-        $order = DB::table('orders')
-            ->where('orders.id', $validated['order_id'])
-            ->where('orders.user_id', $validated['seller_id'])
-            ->select('orders.id', 'users.id')
-            ->update([
-                'status' => $validated['status'],
-                'updated_at' => Carbon::now(),
-            ]);
+        
+        $order = $this->dashboardService->updateOrder($validated['order_id'],$validated['status']);
 
         if (! $order) {
             return JsonResponseHelper::errorResponse(__('messages.order_not_found'), [], 404);

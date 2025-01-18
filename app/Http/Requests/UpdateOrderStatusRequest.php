@@ -14,7 +14,10 @@ class UpdateOrderStatusRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        if(auth()->user()->hasRole('store_admin')){
+            return true;
+        }    
+        return false;
     }
 
     /**
@@ -25,7 +28,7 @@ class UpdateOrderStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'seller_id' => 'required|exists:users,id',
+            // 'seller_id' => 'required|exists:users,id',
             'order_id' => 'required|exists:orders,id',
             'status' => 'required|in:pending,approved,rejected,delivered',
         ];

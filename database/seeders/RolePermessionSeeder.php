@@ -25,7 +25,7 @@ class RolePermessionSeeder extends Seeder
             'last_name' => 'Zaeter',
             'location' => 'medain',
             'email' => 'hzaeter01@gmail.com',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('admin12345'),
             'phone_number' => '0935917557',
         ]);
 

@@ -112,4 +112,5 @@ return [
     'order_not_found' => 'الطلب غير موجود',
     'order_cannot_be_cancelled' => 'لا يمكن الغاء الطلب',
     'order_cancelled' => 'تم الغاء الطلب بنجاح',
+    'orders_fetched' => 'تم جلب الطلبات بنجاح'
 ];
