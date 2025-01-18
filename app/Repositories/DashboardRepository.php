@@ -115,4 +115,20 @@ class DashboardRepository implements DashboardRepositoryInterface
                 'updated_at' => Carbon::now(),
             ]);
     }
+
+    public function getUserAndDeviceTokens($orderId){
+        
+        $userDevices = DB::table('orders') 
+        ->join('device_tokens','orders.user_id', '=','device_tokens.user_id')
+        ->where('orders.id',$orderId)
+        ->select(['orders.user_id','device_tokens.fcm_token'])
+        ->get();
+        
+        if($userDevices->isNotEmpty()){
+            $userTokens = $userDevices->pluck('fcm_token')->toArray();
+            return $userTokens;
+        }
+
+        return null;
+    }
 }

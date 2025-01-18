@@ -112,5 +112,7 @@ return [
     'order_not_found' => 'الطلب غير موجود',
     'order_cannot_be_cancelled' => 'لا يمكن الغاء الطلب',
     'order_cancelled' => 'تم الغاء الطلب بنجاح',
-    'orders_fetched' => 'تم جلب الطلبات بنجاح'
+    'orders_fetched' => 'تم جلب الطلبات بنجاح',
+    'order_status_changed' => 'تم تغيير حالة الطلب إلى :status',
+    'order_status' => 'حالة الطلب',
 ];

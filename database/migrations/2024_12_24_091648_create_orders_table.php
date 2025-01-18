@@ -19,7 +19,6 @@ return new class extends Migration
             $table->enum('status', ['pending', 'approved', 'rejected', 'delivered'])->default('pending');
             $table->date('order_date');
             $table->timestamps();
-
             $table->index('user_id');
             $table->index('status');
         });

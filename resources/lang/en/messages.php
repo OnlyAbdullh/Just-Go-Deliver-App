@@ -113,4 +113,6 @@ return [
     'order_cannot_be_cancelled' => 'the order cannot be cancelled',
     'order_cancelled' => 'order cancelled successfully',
     'orders_fetched' => 'orders fetched successfully',
+    'order_status_changed' => 'The Order Status has been changed to :status',
+    'order_status' => 'Order Status',
 ];
