@@ -194,11 +194,11 @@ class DashBoardController extends Controller
      *     )
      * )
      */
-    public function getProducts(Request $request, User $user)
+    public function getProducts(Request $request)
     {
         $items = $request->query('items', 20);
 
-        if (! $store = $user->store) {
+        if (! $store = auth()->user()->store) {
             return JsonResponseHelper::errorResponse(__('messages.no_store'), [], 404);
         }
 

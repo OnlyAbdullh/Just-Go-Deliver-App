@@ -30,7 +30,7 @@ class UpdateOrderStatusRequest extends FormRequest
         return [
             // 'seller_id' => 'required|exists:users,id',
             'order_id' => 'required|exists:orders,id',
-            'status' => 'required|in:pending,approved,rejected,delivered',
+            'status' => 'required|in:pending,approved,rejected,delivered,transit,processing',
         ];
     }
 

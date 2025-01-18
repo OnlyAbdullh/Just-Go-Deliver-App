@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth.jwt', 'blacklist', 'localization'])->group(function () {
     Route::get('dashboard/orders', [DashBoardController::class, 'getOrdersForStore']);
 
-    Route::get('dashboard/{user}', [DashBoardController::class, 'getProducts'])
+    Route::get('dashboard', [DashBoardController::class, 'getProducts'])
         ->missing(function (Request $request) {
             app()->setLocale($request->header('Accept-Language', 'en'));
 
