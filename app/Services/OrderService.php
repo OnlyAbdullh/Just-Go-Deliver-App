@@ -25,7 +25,8 @@ class OrderService
     {
         $user = Auth::user();
         $now = now();
-        $result = $this->cartRepository->getCartProducts($user->cart, true);
+        $cart = $user->cart;
+        $result = $this->cartRepository->getCartProducts($cart, true);
 
         $requestedProductIds = collect($data)->pluck('store_product_id')->sort()->values();
         $cartProductIds = collect($result['products'])->pluck('store_product_id')->sort()->values();
@@ -36,7 +37,7 @@ class OrderService
                 'message' => 'Order Failed, Some Items in Your Cart Are Out of Stock'
             ];
         }
-        return DB::transaction(function () use ($data, $user, $now) {
+        return DB::transaction(function () use ($data, $user, $now, $cart) {
             $groupedProducts = collect($data)->groupBy('store_id');
             $storeProductIds = $groupedProducts->flatMap(fn($products) => $products->pluck('store_product_id'));
 
@@ -45,7 +46,7 @@ class OrderService
             $ordersData = [];
             $orderProductsData = [];
             $orderCounter = 0;
-
+            $DeleteIds = [];
             foreach ($groupedProducts as $storeProducts) {
                 $totalPrice = $storeProducts->sum(fn($product) => $storeProductDetails[$product['store_product_id']] * $product['quantity']);
 
@@ -60,6 +61,7 @@ class OrderService
                 ];
 
                 foreach ($storeProducts as $product) {
+                    $DeleteIds[] = $product['store_product_id'];
                     $orderProductsData[] = [
                         'store_product_id' => $product['store_product_id'],
                         'quantity' => $product['quantity'],
@@ -73,7 +75,9 @@ class OrderService
                 $orderCounter++;
             }
 
-              $this->orderRepository->createOrders($ordersData, $orderProductsData);
+            $this->orderRepository->createOrders($ordersData, $orderProductsData);
+
+            $this->cartRepository->deleteCartProducts($cart, $DeleteIds);
         });
     }
 
@@ -122,11 +126,11 @@ class OrderService
         }
 
         DB::transaction(function () use ($order, $user) {
-          //  $orderProducts = $this->orderRepository->getOrderProducts($order->id);
+            $orderProducts = $this->orderRepository->getOrderProducts($order->id);
 
             $this->orderRepository->deleteOrder($order->id);
 
-          //  event(new OrderCancelled($user, $order, $orderProducts));
+            event(new OrderCancelled($user, $order, $orderProducts));
         });
 
         return ['success' => true, 'message' => __('messages.order_cancelled')];
