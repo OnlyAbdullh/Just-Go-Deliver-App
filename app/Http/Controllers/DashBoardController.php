@@ -364,12 +364,11 @@ class DashBoardController extends Controller
      *                 @OA\Items(
      *                     type="object",
      *                     @OA\Property(property="id", type="integer", example=2),
-     *                     @OA\Property(property="store_product_id", type="integer", example=1),
      *                     @OA\Property(property="status", type="string", example="pending"),
-     *                     @OA\Property(property="quantity", type="integer", example=2),
+     *                     @OA\Property(property="order_date", type="string", example="2024-01-01"),
+     *                     @OA\Property(property="owner_order", type="string", example="Hasan Zaeter"),
      *                     @OA\Property(property="total_price", type="string", example="14000.00"),
-     *                     @OA\Property(property="order_date", type="string", example="2024-12-29"),
-     *                     @OA\Property(property="owner_order", type="string", example="Hasan Zaeter")
+     *                     @OA\Property(property="number_of_products", type="intger", example="2"),
      *                 )
      *             ),
      *             @OA\Property(

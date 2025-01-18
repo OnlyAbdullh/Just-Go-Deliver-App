@@ -31,7 +31,7 @@ class DashboardService
     public function  updateOrder($orderId,$status){
         $order =  $this->dashboardRepository->updateOrderStatus($orderId,$status);
 
-        // $tokens =  $this->dashboardRepository->getUserAndDeviceTokens($orderId);
+        $tokens =  $this->dashboardRepository->getUserAndDeviceTokens($orderId);
 
         // if($tokens){
         //     $this->fcmService->sendNotification($tokens,__('messages.order_status'),__('messages.order_status_changed',['status' =>$status]));

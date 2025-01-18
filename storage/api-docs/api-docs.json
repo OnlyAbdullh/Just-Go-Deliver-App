@@ -2018,29 +2018,25 @@
                                                         "type": "integer",
                                                         "example": 2
                                                     },
-                                                    "store_product_id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
                                                     "status": {
                                                         "type": "string",
                                                         "example": "pending"
                                                     },
-                                                    "quantity": {
-                                                        "type": "integer",
-                                                        "example": 2
+                                                    "order_date": {
+                                                        "type": "string",
+                                                        "example": "2024-01-01"
+                                                    },
+                                                    "owner_order": {
+                                                        "type": "string",
+                                                        "example": "Hasan Zaeter"
                                                     },
                                                     "total_price": {
                                                         "type": "string",
                                                         "example": "14000.00"
                                                     },
-                                                    "order_date": {
-                                                        "type": "string",
-                                                        "example": "2024-12-29"
-                                                    },
-                                                    "owner_order": {
-                                                        "type": "string",
-                                                        "example": "Hasan Zaeter"
+                                                    "number_of_products": {
+                                                        "type": "intger",
+                                                        "example": "2"
                                                     }
                                                 },
                                                 "type": "object"

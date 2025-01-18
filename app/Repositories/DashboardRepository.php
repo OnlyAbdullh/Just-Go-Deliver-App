@@ -80,78 +80,32 @@ class DashboardRepository implements DashboardRepositoryInterface
     }
 
     public function getOrdersForStore($storeId){
-        $orders = DB::table('orders')
+        $orders = $orders = DB::table('orders')
         ->join('order_products', 'orders.id', '=', 'order_products.order_id')
         ->join('store_products', 'order_products.store_product_id', '=', 'store_products.id')
+        ->join('users', 'orders.user_id', '=', 'users.id')
         ->where('store_products.store_id', $storeId)
         ->orderBy('orders.order_date', 'asc')
         ->select(
             'orders.id as order_id',
-            'orders.order_reference',
-            'orders.user_id',
-            'orders.total_price',
             'orders.status',
             'orders.order_date',
-            'orders.created_at as order_created_at',
-            'orders.updated_at as order_updated_at',
-            'order_products.id as order_product_id',
-            'order_products.quantity as order_product_quantity',
-            'order_products.price as order_product_price',
-            'order_products.created_at as order_product_created_at',
-            'order_products.updated_at as order_product_updated_at',
-            'store_products.id as store_product_id',
-            'store_products.store_id',
-            'store_products.product_id',
-            'store_products.main_image',
-            'store_products.price as store_product_price',
-            'store_products.quantity as store_product_quantity',
-            'store_products.description_en',
-            'store_products.description_ar',
-            'store_products.sold_quantity',
-            'store_products.created_at as store_product_created_at',
-            'store_products.updated_at as store_product_updated_at'
+            'orders.total_price',
+            DB::raw('CONCAT(users.first_name, " ", users.last_name) as owner_order'),
+            DB::raw('COUNT(order_products.id) as number_of_products')
         )
+        ->groupBy('orders.id', 'orders.status', 'orders.order_date', 'orders.total_price', 'users.first_name', 'users.last_name')
         ->get()
-        ->groupBy('order_id') 
-        ->map(function ($orderGroup) {
-            $firstOrder = $orderGroup->first();
-    
+        ->map(function ($order) {
             return [
-                'id' => $firstOrder->order_id,
-                'order_reference' => $firstOrder->order_reference,
-                'user_id' => $firstOrder->user_id,
-                'total_price' => $firstOrder->total_price,
-                'status' => $firstOrder->status,
-                'order_date' => $firstOrder->order_date,
-                'created_at' => $firstOrder->order_created_at,
-                'updated_at' => $firstOrder->order_updated_at,
-                'order_products' => $orderGroup->map(function ($item) {
-                    return [
-                        'id' => $item->order_product_id,
-                        'order_id' => $item->order_id,
-                        'store_product_id' => $item->store_product_id,
-                        'quantity' => $item->order_product_quantity,
-                        'price' => $item->order_product_price,
-                        'created_at' => $item->order_product_created_at,
-                        'updated_at' => $item->order_product_updated_at,
-                        'store_product' => [
-                            'id' => $item->store_product_id,
-                            'store_id' => $item->store_id,
-                            'product_id' => $item->product_id,
-                            'main_image' => $item->main_image,
-                            'price' => $item->store_product_price,
-                            'quantity' => $item->store_product_quantity,
-                            'description_en' => $item->description_en,
-                            'description_ar' => $item->description_ar,
-                            'sold_quantity' => $item->sold_quantity,
-                            'created_at' => $item->store_product_created_at,
-                            'updated_at' => $item->store_product_updated_at,
-                        ],
-                    ];
-                })->values(), // Reset keys for order_products array
+                'id' => $order->order_id,
+                'status' => $order->status,
+                'order_date' => $order->order_date,
+                'owner_order' => $order->owner_order,
+                'total_price' => $order->total_price,
+                'number_of_products' => $order->number_of_products,
             ];
-        })
-        ->values();
+        });
 
         return $orders;
     }
@@ -165,5 +119,20 @@ class DashboardRepository implements DashboardRepositoryInterface
                 'status' => $status,
                 'updated_at' => Carbon::now(),
             ]);
+    }
+
+    public function getUserAndDeviceTokens($orderId){
+        
+        $userDevices = DB::table('orders') 
+        ->join('device_tokens','orders.user_id', '=','device_tokens.user_id')
+        ->where('orders.id',$orderId)
+        ->select(['orders.user_id','device_tokens.fcm_token'])
+        ->get();
+        
+        if($userDevices->isNotEmpty()){
+            $userTokens = $userDevices->pluck('fcm_token')->toArray();
+            return $userTokens;
+        }
+        return null;
     }
 }
