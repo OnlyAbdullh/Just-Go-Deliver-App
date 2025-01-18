@@ -12,5 +12,5 @@ interface DashboardRepositoryInterface
 
     public function updateOrderStatus($orderId,$status);
 
-    public function getUserAndDeviceTokens($orderId);
+    // public function getUserAndDeviceTokens($orderId);
 }
