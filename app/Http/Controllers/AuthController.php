@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\JsonResponseHelper;
 use App\Models\TemporaryRegistration;
+use App\Models\User;
 use App\Repositories\ProductRepository;
 use App\Services\AuthService;
 use App\Services\OTPService;
@@ -382,4 +383,107 @@ class AuthController extends Controller
             );
         }
     }
+
+    /**
+     * @OA\Post(
+     *     path="api/dashboard/login/{role_needed}",
+     *     summary="Authenticate store_admin or manager and generate tokens",
+     *     tags={"Authentication"},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="securepassword")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User logged in successfully",
+     *
+     *         @OA\JsonContent(
+     *             @OA\Property(property="successful", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="User logged in successfully"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."),
+     *                 @OA\Property(property="refresh_token", type="string", example="eyJpdiI6IkZVNlF2ZVVIZ25JWkVqaXgxUmFRRHc9PS..."),
+     *                 @OA\Property(property="user", type="object",
+     *                     @OA\Property(property="id", type="integer", example=26),
+     *                     @OA\Property(property="first_name", type="string", example="abdullah"),
+     *                     @OA\Property(property="last_name", type="string", example="alkasm"),
+     *                     @OA\Property(property="email", type="string", example="abdallaalksm9@gmail.com"),
+     *                     @OA\Property(property="location", type="string", example="location 1"),
+     *                     @OA\Property(property="image", type="string", nullable=true, example="any path"),
+     *                     @OA\Property(property="role", type="string", example="user"),
+     *                     @OA\Property(property="fcm_token", type="string", nullable=true, example=3231),
+     *                     @OA\Property(property="phone_number", type="string", example="0969090711")
+     *                 )
+     *             ),
+     *             @OA\Property(property="status_code", type="integer", example=200)
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Invalid credentials",
+     *
+     *         @OA\JsonContent(
+     *             @OA\Property(property="successful", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Invalid credentials"),
+     *             @OA\Property(property="status_code", type="integer", example=401)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=409,
+     *         description="User already logged in on this device",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="successful", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="You have already logged in on this device."),
+     *             @OA\Property(property="status_code", type="integer", example=409)
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *          response=500,
+     *          description="Unexpected error occurred.",
+     *
+     *          @OA\JsonContent(
+     *
+     *              @OA\Property(property="successful", type="boolean", example=false),
+     *              @OA\Property(property="message", type="string", example="An unexpected error occurred"),
+     *              @OA\Property(property="status_code", type="integer", example=500)
+     *          )
+     *      ),
+     * )
+     */
+    public function dashboardLogin(Request $request, $role_needed)
+    {
+        $credentials = $request->only(['email', 'password']);
+        $deviceId = $request->header('Device-ID');
+        $user = User::where('email', $credentials['email'])->get();
+        $role = $user->rolse->pluck('name')->first();
+
+        if ($role_needed !== $role) {
+            return JsonResponseHelper::errorResponse(__('messages.permission'), [], 403);
+        }
+
+        $result = $this->userService->login($credentials, $deviceId);
+        if ($result['successful']) {
+            return JsonResponseHelper::successResponse(
+                __('messages.user_logged_in_successfully'),
+                [
+                    'access_token' => $result['access_token'],
+                    'refresh_token' => $result['refresh_token'],
+                    'user' => $result['user'],
+                ],
+            );
+        }
+
+        return JsonResponseHelper::errorResponse(
+            $result['message'],
+            [],
+            $result['status_code']
+        );
+    }
+
 }

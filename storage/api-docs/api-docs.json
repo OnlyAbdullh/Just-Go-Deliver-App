@@ -553,6 +553,191 @@
                 }
             }
         },
+        "api/dashboard/login/{role_needed}": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Authenticate store_admin or manager and generate tokens",
+                "operationId": "9597296387d29d08db4c9f54f126065f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "securepassword"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User logged in successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User logged in successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "access_token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                                                },
+                                                "refresh_token": {
+                                                    "type": "string",
+                                                    "example": "eyJpdiI6IkZVNlF2ZVVIZ25JWkVqaXgxUmFRRHc9PS..."
+                                                },
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 26
+                                                        },
+                                                        "first_name": {
+                                                            "type": "string",
+                                                            "example": "abdullah"
+                                                        },
+                                                        "last_name": {
+                                                            "type": "string",
+                                                            "example": "alkasm"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "abdallaalksm9@gmail.com"
+                                                        },
+                                                        "location": {
+                                                            "type": "string",
+                                                            "example": "location 1"
+                                                        },
+                                                        "image": {
+                                                            "type": "string",
+                                                            "example": "any path",
+                                                            "nullable": true
+                                                        },
+                                                        "role": {
+                                                            "type": "string",
+                                                            "example": "user"
+                                                        },
+                                                        "fcm_token": {
+                                                            "type": "string",
+                                                            "example": 3231,
+                                                            "nullable": true
+                                                        },
+                                                        "phone_number": {
+                                                            "type": "string",
+                                                            "example": "0969090711"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid credentials"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "User already logged in on this device",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You have already logged in on this device."
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 409
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected error occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successful": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred"
+                                        },
+                                        "status_code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/carts/{store}/{product}": {
             "post": {
                 "tags": [

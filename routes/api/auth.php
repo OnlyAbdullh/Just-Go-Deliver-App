@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('localization')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
+    Route::post('dashboard/login/{role_needed}', [AuthController::class, 'dashboardLogin']);
     Route::post('refresh', [AuthController::class, 'refresh']);
 
     Route::group(['middleware' => ['auth.jwt', 'blacklist']], function () {

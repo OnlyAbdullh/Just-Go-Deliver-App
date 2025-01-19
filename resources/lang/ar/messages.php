@@ -115,4 +115,6 @@ return [
     'orders_fetched' => 'تم جلب الطلبات بنجاح',
     'order_status_changed' => 'تم تغيير حالة الطلب إلى :status',
     'order_status' => 'حالة الطلب',
+    'order_failed'=>'فشل الطلب، بعض المنتجات في سلتك غير متوفر كميتها',
+    'permission'=>'لا تملك الصلاحية لتسجيل الدخول',
 ];
