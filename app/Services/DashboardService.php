@@ -30,7 +30,7 @@ class DashboardService
 
     public function  updateOrder($orderId,$status){
         $order =  $this->dashboardRepository->updateOrderStatus($orderId,$status);
-
+        
         $tokens =  $this->dashboardRepository->getUserAndDeviceTokens($orderId);
 
         // if($tokens){
