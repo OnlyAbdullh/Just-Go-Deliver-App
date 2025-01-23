@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\Contracts\DashboardRepositoryInterface;
+use Illuminate\Support\Facades\Log;
 
 class DashboardService
 {
@@ -33,9 +34,7 @@ class DashboardService
         
         $tokens =  $this->dashboardRepository->getUserAndDeviceTokens($orderId);
 
-        // if($tokens){
-        //     $this->fcmService->sendNotification($tokens,__('messages.order_status'),__('messages.order_status_changed',['status' =>$status]));
-        // }
+         $this->fcmService->sendNotification($tokens,__('messages.order_status'),__('messages.order_status_changed',['status' =>$status]));
 
         return $order;
     }

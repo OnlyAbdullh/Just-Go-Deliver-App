@@ -80,7 +80,7 @@ class DashboardRepository implements DashboardRepositoryInterface
     }
 
     public function getOrdersForStore($storeId){
-        $orders = DB::table('orders')
+        $orders = $orders = DB::table('orders')
         ->join('order_products', 'orders.id', '=', 'order_products.order_id')
         ->join('store_products', 'order_products.store_product_id', '=', 'store_products.id')
         ->join('users', 'orders.user_id', '=', 'users.id')
@@ -111,28 +111,13 @@ class DashboardRepository implements DashboardRepositoryInterface
     }
 
     public function updateOrderStatus($orderId,$status){
-        $order =  DB::table('orders')
-            ->join('users','orders.user_id','=','users.id')
+        return DB::table('orders')
             ->where('orders.id', $orderId)
-            ->select('orders.id', 'users.id','orders.status')
-            ->first();
-
-        
-        if(!$order){
-            return 'no order';
-        }
-        else if($order->status == 'rejected'){
-            return 'you can not update status';
-        }
-
-        DB::table('orders')
-        ->where('id', $orderId)
-        ->update([
-            'status' => $status,
-            'updated_at' => Carbon::now(),
-        ]);
-
-        return 'status updated';
+            ->select('orders.id', 'users.id')
+            ->update([
+                'status' => $status,
+                'updated_at' => Carbon::now(),
+            ]);
     }
 
     public function getUserAndDeviceTokens($orderId){

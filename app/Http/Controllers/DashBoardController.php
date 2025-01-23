@@ -440,16 +440,6 @@ class DashBoardController extends Controller
      *             @OA\Property(property="status_code", type="integer", example=200)
      *         )
      *     ),
-     *      @OA\Response(
-     *         response=401,
-     *         description="Cannot update status (e.g., order is rejected)",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="successful", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Status order is rejected, you cannot change it"),
-     *             @OA\Property(property="status_code", type="integer", example=401)
-     *         )
-     *     ),
      *     @OA\Response(
      *         response=400,
      *         description="Validation error",
@@ -479,12 +469,10 @@ class DashBoardController extends Controller
 
         $order = $this->dashboardService->updateOrder($validated['order_id'], $validated['status']);
 
-        if ($order == 'no order') {
+        if (! $order) {
             return JsonResponseHelper::errorResponse(__('messages.order_not_found'), [], 404);
-        } else if ($order == 'you can not update status') {
-            return JsonResponseHelper::errorResponse('status order is rejected , you can not change it ', [], 401);
-        } else {
-            return JsonResponseHelper::successResponse(__('messages.order_updated', [], 200));
         }
+
+        return JsonResponseHelper::successResponse(__('messages.order_updated', [], 200));
     }
 }
