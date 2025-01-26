@@ -196,25 +196,19 @@ class DashBoardController extends Controller
      */
     public function getProducts(Request $request)
     {
-        $items = $request->query('items', 20);
+        // $items = $request->query('items', 20);
 
         if (! $store = auth()->user()->store) {
             return JsonResponseHelper::errorResponse(__('messages.no_store'), [], 404);
         }
 
-        $products = $this->dashboardService->getAllProductForStore($items, $store->id);
+        $products = $this->dashboardService->getAllProductForStore($store->id);
 
         return response()->json([
             'successful' => true,
             'message' => __('messages.retrieve_all_products_success'),
             'data' => [
                 'products' => ProductDetailResource::collection($products),
-            ],
-            'pagination' => [
-                'currentPage' => $products->currentPage(),
-                'totalPages' => $products->lastPage(),
-                'totalItems' => $products->total(),
-                'hasMorePage' => $products->hasMorePages(),
             ],
             'status_code' => 200,
         ]);

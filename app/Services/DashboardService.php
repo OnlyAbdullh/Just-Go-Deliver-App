@@ -3,21 +3,23 @@
 namespace App\Services;
 
 use App\Repositories\Contracts\DashboardRepositoryInterface;
+use App\Repositories\Contracts\StoreRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 
 class DashboardService
 {
-    private $dashboardRepository,$fcmService;
+    private $dashboardRepository,$fcmService,$storeRepository;
 
-    public function __construct(DashboardRepositoryInterface $dashboardRepository,FcmService $fcmService)
+    public function __construct(DashboardRepositoryInterface $dashboardRepository,FcmService $fcmService,StoreRepositoryInterface $storeRepository,)
     {
         $this->dashboardRepository = $dashboardRepository;
         $this->fcmService = $fcmService;
+        $this->storeRepository = $storeRepository;
     }
 
-    public function getAllProductForStore($items, $storeId)
+    public function getAllProductForStore($storeId)
     {
-        return $this->dashboardRepository->getAllProductsForStore($items, $storeId);
+        return $this->storeRepository->getStore($storeId);
     }
 
     public function getProductStatistics($items, $storeId)
