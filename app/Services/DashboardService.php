@@ -19,7 +19,7 @@ class DashboardService
 
     public function getAllProductForStore($storeId)
     {
-        return $this->storeRepository->getStore($storeId);
+        return $this->dashboardRepository->getAllProductsForStore($storeId);
     }
 
     public function getProductStatistics($items, $storeId)
