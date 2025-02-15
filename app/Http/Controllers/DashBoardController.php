@@ -22,9 +22,9 @@ class DashBoardController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/dashboard/{user}",
+     *     path="/api/dashboard",
      *     summary="Retrieve all products for a store",
-     *     description="Get a paginated list of all products belonging to the store associated with the given user.",
+     *     description="Get a list of all products belonging to the store associated with the given user.",
      *     tags={"Dashboard"},
      *     security={{"bearerAuth": {}}},
      *
@@ -33,7 +33,6 @@ class DashBoardController extends Controller
      *         in="header",
      *         description="The language to return results in (ar for Arabic, en for English)",
      *         required=false,
-     *
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *     ),
      *
@@ -42,31 +41,14 @@ class DashBoardController extends Controller
      *         in="path",
      *         description="ID of the user whose store products are to be retrieved",
      *         required=true,
-     *
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="items",
-     *         in="query",
-     *         description="Number of products to retrieve per page",
-     *         required=false,
-     *
-     *         @OA\Schema(
-     *             type="integer",
-     *             default=20
-     *         )
+     *         @OA\Schema(type="integer")
      *     ),
      *
      *     @OA\Response(
      *         response=200,
-     *         description="List of products with pagination",
-     *
+     *         description="List of products with store details",
      *         @OA\JsonContent(
      *             type="object",
-     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="boolean",
@@ -75,89 +57,115 @@ class DashBoardController extends Controller
      *             @OA\Property(
      *                 property="message",
      *                 type="string",
-     *                 example="Products retrieved successfully"
+     *                 example="تم جلب جميع المنتجات بنجاح"
      *             ),
      *             @OA\Property(
      *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="products",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(
-     *                             property="store_product_id",
-     *                             type="integer",
-     *                             example=1
-     *                         ),
-     *                         @OA\Property(
-     *                             property="product_id",
-     *                             type="integer",
-     *                             example=101
-     *                         ),
-     *                         @OA\Property(
-     *                             property="product_name",
-     *                             type="string",
-     *                             example="Product 1"
-     *                         ),
-     *                         @OA\Property(
-     *                             property="category_id",
-     *                             type="integer",
-     *                             example=10
-     *                         ),
-     *                         @OA\Property(
-     *                             property="category_name",
-     *                             type="string",
-     *                             example="Category 1"
-     *                         ),
-     *                         @OA\Property(
-     *                             property="main_image",
-     *                             type="string",
-     *                             example="http://example.com/images/product1.jpg"
-     *                         ),
-     *                         @OA\Property(
-     *                             property="price",
-     *                             type="number",
-     *                             format="float",
-     *                             example=100.50
-     *                         ),
-     *                         @OA\Property(
-     *                             property="quantity",
-     *                             type="integer",
-     *                             example=20
-     *                         ),
-     *                         @OA\Property(
-     *                             property="description",
-     *                             type="string",
-     *                             example="This is a product description"
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="id",
+     *                         type="integer",
+     *                         example=22
+     *                     ),
+     *                     @OA\Property(
+     *                         property="manager",
+     *                         type="string",
+     *                         example="hasan zaeter"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="email",
+     *                         type="string",
+     *                         example="hasan@gmail.com"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="phone_number",
+     *                         type="string",
+     *                         example="0935917556"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="name",
+     *                         type="string",
+     *                         example="النضر"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="image_url",
+     *                         type="string",
+     *                         example="http://127.0.0.1:8000/storage/stores/FaZiIVnwZA66POD9BQ40rEc71mfCdHsouTTmZIYu.jpg"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="location",
+     *                         type="string",
+     *                         example="ميدان"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="description",
+     *                         type="string",
+     *                         example="أفضل متجر"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="products",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="object",
+     *                             @OA\Property(
+     *                                 property="store_id",
+     *                                 type="integer",
+     *                                 example=11
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="store_name",
+     *                                 type="string",
+     *                                 example="النضر"
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="product_id",
+     *                                 type="integer",
+     *                                 example=101
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="product_name",
+     *                                 type="string",
+     *                                 example="كيبورد"
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="main_image",
+     *                                 type="string",
+     *                                 example="http://127.0.0.1:8000/storage/products/0hQqWfvMzKmP3SLyeh0JFUedUMLVTlNEWzMX4f5R.jpg"
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="price",
+     *                                 type="string",
+     *                                 example="1200.00"
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="quantity",
+     *                                 type="integer",
+     *                                 example=10
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="description",
+     *                                 type="string",
+     *                                 example="كيبورد غيمنغ"
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="is_favorite",
+     *                                 type="integer",
+     *                                 example=0
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="category_id",
+     *                                 type="integer",
+     *                                 example=4
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="category_name",
+     *                                 type="string",
+     *                                 example="اجهزة"
+     *                             )
      *                         )
      *                     )
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="pagination",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="currentPage",
-     *                     type="integer",
-     *                     example=1
-     *                 ),
-     *                 @OA\Property(
-     *                     property="totalPages",
-     *                     type="integer",
-     *                     example=5
-     *                 ),
-     *                 @OA\Property(
-     *                     property="totalItems",
-     *                     type="integer",
-     *                     example=100
-     *                 ),
-     *                 @OA\Property(
-     *                     property="hasMorePage",
-     *                     type="boolean",
-     *                     example=true
      *                 )
      *             ),
      *             @OA\Property(
@@ -171,10 +179,8 @@ class DashBoardController extends Controller
      *     @OA\Response(
      *         response=404,
      *         description="Store not found for the given user or user not found",
-     *
      *         @OA\JsonContent(
      *             type="object",
-     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="boolean",
@@ -196,28 +202,13 @@ class DashBoardController extends Controller
      */
     public function getProducts(Request $request)
     {
-        $items = $request->query('items', 20);
-
         if (! $store = auth()->user()->store) {
             return JsonResponseHelper::errorResponse(__('messages.no_store'), [], 404);
         }
 
-        $products = $this->dashboardService->getAllProductForStore($items, $store->id);
+        $products = $this->dashboardService->getAllProductForStore($store->id);
 
-        return response()->json([
-            'successful' => true,
-            'message' => __('messages.retrieve_all_products_success'),
-            'data' => [
-                'products' => ProductDetailResource::collection($products),
-            ],
-            'pagination' => [
-                'currentPage' => $products->currentPage(),
-                'totalPages' => $products->lastPage(),
-                'totalItems' => $products->total(),
-                'hasMorePage' => $products->hasMorePages(),
-            ],
-            'status_code' => 200,
-        ]);
+        return JsonResponseHelper::successResponse(__('messages.retrieve_all_products_success'), $products);
     }
 
     /**
