@@ -6,7 +6,6 @@ use App\Helpers\JsonResponseHelper;
 use App\Http\Requests\RoleRequest;
 use App\Models\User;
 use App\Services\RoleService;
-use Illuminate\Support\Facades\Gate;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -105,7 +104,7 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
 
-        if (!auth()->user()->hasRole('manager')) {
+        if (! auth()->user()->hasRole('manager')) {
             return JsonResponseHelper::errorResponse(__('messages.only_manager_can_assign_roles'), [], 403);
         }
         $this->roleService->revokeRoleForUser($request->user_id, 'user');
@@ -113,7 +112,7 @@ class RoleController extends Controller
 
         if ($result === 'has role') {
             return JsonResponseHelper::successResponse(__('messages.role_already_assigned'));
-        } elseif (!$result) {
+        } elseif (! $result) {
             return JsonResponseHelper::errorResponse(__('messages.user_not_found'), [], 404);
         }
 
@@ -205,7 +204,7 @@ class RoleController extends Controller
      */
     public function delete(RoleRequest $request)
     {
-        if (!auth()->user()->hasRole('manager')) {
+        if (! auth()->user()->hasRole('manager')) {
             return JsonResponseHelper::errorResponse(__('messages.only_manager_can_revoke_roles'), [], 403);
         }
 
@@ -213,7 +212,7 @@ class RoleController extends Controller
 
         if ($result === 'has not role') {
             return JsonResponseHelper::successResponse(__('messages.role_already_revoked'));
-        } elseif (!$result) {
+        } elseif (! $result) {
             return JsonResponseHelper::errorResponse(__('messages.user_not_found'), [], 404);
         }
 

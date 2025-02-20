@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 class OrderService
 {
     private $orderRepository;
+
     private $cartRepository;
 
     public function __construct(OrderRepositoryInterface $orderRepository, CartRepositoryInterface $cartRepository)
@@ -34,12 +35,13 @@ class OrderService
         if ($requestedProductIds->diff($cartProductIds)->isNotEmpty() || $cartProductIds->diff($requestedProductIds)->isNotEmpty()) {
             return [
                 'state' => false,
-                'message' => __('messages.order_failed')
+                'message' => __('messages.order_failed'),
             ];
         }
+
         return DB::transaction(function () use ($data, $user, $now, $cart) {
             $groupedProducts = collect($data)->groupBy('store_id');
-            $storeProductIds = $groupedProducts->flatMap(fn($products) => $products->pluck('store_product_id'));
+            $storeProductIds = $groupedProducts->flatMap(fn ($products) => $products->pluck('store_product_id'));
 
             $storeProductDetails = $this->orderRepository->getStoreProductPrices($storeProductIds);
 
@@ -48,7 +50,7 @@ class OrderService
             $orderCounter = 0;
             $DeleteIds = [];
             foreach ($groupedProducts as $storeProducts) {
-                $totalPrice = $storeProducts->sum(fn($product) => $storeProductDetails[$product['store_product_id']] * $product['quantity']);
+                $totalPrice = $storeProducts->sum(fn ($product) => $storeProductDetails[$product['store_product_id']] * $product['quantity']);
 
                 $ordersData[$orderCounter] = [
                     'user_id' => $user->id,
@@ -83,7 +85,7 @@ class OrderService
 
     private function generateOrderReference()
     {
-        return 'ORD-' . now()->format('Ymd-His') . '-' . Str::random(6);
+        return 'ORD-'.now()->format('Ymd-His').'-'.Str::random(6);
     }
 
     public function getUserOrders()
@@ -110,7 +112,7 @@ class OrderService
 
         $order = $this->orderRepository->findUserOrder($orderId, $user->id);
 
-        if (!$order) {
+        if (! $order) {
             return [
                 'success' => false,
                 'message' => __('messages.order_not_found'),

@@ -16,7 +16,7 @@ class StoreControllerTest extends TestCase
     public function test_show_list_of_stores_with_pagination()
     {
         Store::factory(6)->create();
-        //User::factory()->count(10)->withStore()->create();
+        // User::factory()->count(10)->withStore()->create();
 
         $response = $this->getJson(route('stores.index', ['page' => 1, 'items' => 5]));
 
@@ -65,7 +65,7 @@ class StoreControllerTest extends TestCase
         Storage::fake('public');
 
         $user = User::factory()->create();
-        //$store = Store::factory()->create();
+        // $store = Store::factory()->create();
 
         $data = [
             'user_id' => $user->id,

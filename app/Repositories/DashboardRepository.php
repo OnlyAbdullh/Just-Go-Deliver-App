@@ -28,8 +28,8 @@ class DashboardRepository implements DashboardRepositoryInterface
                 'users.email',
                 'users.phone_number',
                 'store_products.id as store_product_id',
-                'store_products.product_id', 
-                'store_products.store_id',  
+                'store_products.product_id',
+                'store_products.store_id',
                 'products.id as product_id',
                 'products.name_'.$lang.' as product_name',
                 DB::raw('CONCAT("'.asset('storage/').'/", store_products.main_image) as main_image'),
@@ -50,7 +50,7 @@ class DashboardRepository implements DashboardRepositoryInterface
                 'users.phone_number',
                 'store_products.id',
                 'store_products.product_id',
-                'store_products.store_id',   
+                'store_products.store_id',
                 'products.id',
                 'products.name_'.$lang,
                 'store_products.main_image',
@@ -143,38 +143,40 @@ class DashboardRepository implements DashboardRepositoryInterface
         return $products;
     }
 
-    public function getOrdersForStore($storeId){
+    public function getOrdersForStore($storeId)
+    {
         $orders = $orders = DB::table('orders')
-        ->join('order_products', 'orders.id', '=', 'order_products.order_id')
-        ->join('store_products', 'order_products.store_product_id', '=', 'store_products.id')
-        ->join('users', 'orders.user_id', '=', 'users.id')
-        ->where('store_products.store_id', $storeId)
-        ->orderBy('orders.order_date', 'asc')
-        ->select(
-            'orders.id as order_id',
-            'orders.status',
-            'orders.order_date',
-            'orders.total_price',
-            DB::raw('CONCAT(users.first_name, " ", users.last_name) as owner_order'),
-            DB::raw('COUNT(order_products.id) as number_of_products')
-        )
-        ->groupBy('orders.id', 'orders.status', 'orders.order_date', 'orders.total_price', 'users.first_name', 'users.last_name')
-        ->get()
-        ->map(function ($order) {
-            return [
-                'id' => $order->order_id,
-                'status' => $order->status,
-                'order_date' => $order->order_date,
-                'owner_order' => $order->owner_order,
-                'total_price' => $order->total_price,
-                'number_of_products' => $order->number_of_products,
-            ];
-        });
+            ->join('order_products', 'orders.id', '=', 'order_products.order_id')
+            ->join('store_products', 'order_products.store_product_id', '=', 'store_products.id')
+            ->join('users', 'orders.user_id', '=', 'users.id')
+            ->where('store_products.store_id', $storeId)
+            ->orderBy('orders.order_date', 'asc')
+            ->select(
+                'orders.id as order_id',
+                'orders.status',
+                'orders.order_date',
+                'orders.total_price',
+                DB::raw('CONCAT(users.first_name, " ", users.last_name) as owner_order'),
+                DB::raw('COUNT(order_products.id) as number_of_products')
+            )
+            ->groupBy('orders.id', 'orders.status', 'orders.order_date', 'orders.total_price', 'users.first_name', 'users.last_name')
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'id' => $order->order_id,
+                    'status' => $order->status,
+                    'order_date' => $order->order_date,
+                    'owner_order' => $order->owner_order,
+                    'total_price' => $order->total_price,
+                    'number_of_products' => $order->number_of_products,
+                ];
+            });
 
         return $orders;
     }
 
-    public function updateOrderStatus($orderId,$status){
+    public function updateOrderStatus($orderId, $status)
+    {
         return DB::table('orders')
             ->where('orders.id', $orderId)
             ->select('orders.id', 'users.id')
@@ -184,18 +186,21 @@ class DashboardRepository implements DashboardRepositoryInterface
             ]);
     }
 
-    public function getUserAndDeviceTokens($orderId){
-        
-        $userDevices = DB::table('orders') 
-        ->join('device_tokens','orders.user_id', '=','device_tokens.user_id')
-        ->where('orders.id',$orderId)
-        ->select(['orders.user_id','device_tokens.fcm_token'])
-        ->get();
-        
-        if($userDevices->isNotEmpty()){
+    public function getUserAndDeviceTokens($orderId)
+    {
+
+        $userDevices = DB::table('orders')
+            ->join('device_tokens', 'orders.user_id', '=', 'device_tokens.user_id')
+            ->where('orders.id', $orderId)
+            ->select(['orders.user_id', 'device_tokens.fcm_token'])
+            ->get();
+
+        if ($userDevices->isNotEmpty()) {
             $userTokens = $userDevices->pluck('fcm_token')->toArray();
+
             return $userTokens;
         }
+
         return null;
     }
 }

@@ -392,16 +392,20 @@ class AuthController extends Controller
      *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="securepassword")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="User logged in successfully",
      *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="User logged in successfully"),
      *             @OA\Property(property="data", type="object",
@@ -428,15 +432,19 @@ class AuthController extends Controller
      *         description="Invalid credentials",
      *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Invalid credentials"),
      *             @OA\Property(property="status_code", type="integer", example=401)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=409,
      *         description="User already logged in on this device",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="You have already logged in on this device."),
      *             @OA\Property(property="status_code", type="integer", example=409)
@@ -485,5 +493,4 @@ class AuthController extends Controller
             $result['status_code']
         );
     }
-
 }

@@ -14,9 +14,10 @@ class UpdateOrderStatusRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if(auth()->user()->hasRole('store_admin')){
+        if (auth()->user()->hasRole('store_admin')) {
             return true;
-        }    
+        }
+
         return false;
     }
 

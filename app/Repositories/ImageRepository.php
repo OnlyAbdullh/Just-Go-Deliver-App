@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Image;
 use App\Repositories\Contracts\ImageRepositoryInterface;
-use Illuminate\Support\Facades\Log;
 
 class ImageRepository implements ImageRepositoryInterface
 {

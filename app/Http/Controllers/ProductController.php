@@ -121,7 +121,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        //$lang = $request->header('Accept-Language', 'en');
+        // $lang = $request->header('Accept-Language', 'en');
         $items = $request->query('items', 20);
 
         $products = $this->productService->getAllProduct($items);

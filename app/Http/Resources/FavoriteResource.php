@@ -32,5 +32,4 @@ class FavoriteResource extends JsonResource
             'main_image' => asset($mainUrl),
         ];
     }
-
 }

@@ -115,6 +115,6 @@ return [
     'orders_fetched' => 'orders fetched successfully',
     'order_status_changed' => 'The Order Status has been changed to :status',
     'order_status' => 'Order Status',
-    'order_failed'=>'Order Failed, Some Items in Your Cart Are Out of Stock',
-    'permission'=>'You do not have Permission to login',
+    'order_failed' => 'Order Failed, Some Items in Your Cart Are Out of Stock',
+    'permission' => 'You do not have Permission to login',
 ];

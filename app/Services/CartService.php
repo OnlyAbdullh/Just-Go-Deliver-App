@@ -48,7 +48,7 @@ class CartService
     {
         $cart = $user->cart;
 
-        if (!$cart) {
+        if (! $cart) {
             return ['message' => __('messages.cart_empty')];
         }
 
@@ -106,6 +106,7 @@ class CartService
             return $product;
         });
         $cart->refresh();
+
         return ['products' => $response, 'total_price' => $cart->total_price];
     }
 

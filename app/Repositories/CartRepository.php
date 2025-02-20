@@ -72,16 +72,16 @@ class CartRepository implements CartRepositoryInterface
 
         $mappedProducts = $query
             ->with([
-                'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description_' . $lang . ',main_image',
-                'storeProduct.store:id,name_' . $lang,
-                'storeProduct.product:id,category_id,name_' . $lang,
+                'storeProduct:id,store_id,product_id,price,quantity,sold_quantity,description_'.$lang.',main_image',
+                'storeProduct.store:id,name_'.$lang,
+                'storeProduct.product:id,category_id,name_'.$lang,
                 'storeProduct.product.favoritedByUsers' => function ($query) {
                     $query->where('user_id', auth()->id());
                 },
-                'storeProduct.product.category:id,name_' . $lang,
+                'storeProduct.product.category:id,name_'.$lang,
             ])
             ->get()
-            ->map(function ($cartProduct) use ($lang, $cart, &$total_price) {
+            ->map(function ($cartProduct) use ($lang, &$total_price) {
                 $storeProduct = $cartProduct->storeProduct;
                 $isFavorite = $storeProduct->product->favoritedByUsers->isNotEmpty() ? 1 : 0;
                 $order_amount = $cartProduct->amount_needed;
@@ -96,10 +96,10 @@ class CartRepository implements CartRepositoryInterface
                 if ($availableStock >= $order_amount) {
                     $total_price += $order_amount * $storeProduct->price;
                 }
-                $description = $storeProduct->{'description_' . $lang};
-                $productName = $storeProduct->product->{'name_' . $lang};
-                $storeName = $storeProduct->store->{'name_' . $lang};
-                $categoryName = $storeProduct->product->category->{'name_' . $lang};
+                $description = $storeProduct->{'description_'.$lang};
+                $productName = $storeProduct->product->{'name_'.$lang};
+                $storeName = $storeProduct->store->{'name_'.$lang};
+                $categoryName = $storeProduct->product->category->{'name_'.$lang};
 
                 $mainUrl = Storage::url($storeProduct->main_image);
 
@@ -120,6 +120,7 @@ class CartRepository implements CartRepositoryInterface
                     'message' => $message,
                 ];
             });
+
         return
             [
                 'products' => $mappedProducts,

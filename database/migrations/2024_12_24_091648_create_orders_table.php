@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('order_reference')->unique();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->decimal('total_price', 10, 2);
-            $table->enum('status', ['pending', 'rejected', 'delivered','transit','processing'])->default('pending');
+            $table->enum('status', ['pending', 'rejected', 'delivered', 'transit', 'processing'])->default('pending');
             $table->date('order_date');
             $table->timestamps();
             $table->index('user_id');

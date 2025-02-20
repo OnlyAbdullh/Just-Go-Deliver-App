@@ -84,7 +84,7 @@ class CartController extends Controller
 
         $result = $this->cartService->addProductToCart($store_id, $product_id, $request->input('quantity'));
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return JsonResponseHelper::errorResponse('', $result['message']);
         }
 
@@ -98,16 +98,20 @@ class CartController extends Controller
      *     tags={"Cart"},
      *     security={{"bearerAuth": {}}},
      *     description="Fetch all products in the authenticated user's cart  return all the products in the cart.",
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Successful retrieval of cart products",
      *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
      *                 description="List of products in the cart",
+     *
      *                 @OA\Items(
+     *
      *                     @OA\Property(property="store_id", type="integer", example=1, description="ID of the store"),
      *                     @OA\Property(property="store_name", type="string", example="Ali", description="Name of the store"),
      *                     @OA\Property(property="order_quantity", type="integer", example=2, description="Quantity ordered"),
@@ -145,7 +149,7 @@ class CartController extends Controller
         if (isset($result['message'])) {
             return JsonResponseHelper::successResponse($result['message']);
         } else {
-            return response()->json(['data' => $result['products'], 'total_price' => (float)$result['total_price']]);
+            return response()->json(['data' => $result['products'], 'total_price' => (float) $result['total_price']]);
         }
     }
 
@@ -258,7 +262,8 @@ class CartController extends Controller
         $user = Auth::user();
         $cart = $user->cart;
         $response = $this->cartService->updateCartQuantities($cart, $request->input('data'));
-        return response()->json([$response['products'], (float)$response['total_price']]);
+
+        return response()->json([$response['products'], (float) $response['total_price']]);
     }
 
     /**

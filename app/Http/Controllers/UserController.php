@@ -48,7 +48,8 @@ class UserController extends Controller
     public function index()
     {
         $users = $this->userService->getAllUsers();
-       // return response()->json($users);
+
+        // return response()->json($users);
         return JsonResponseHelper::successResponse('', $users);
     }
 
@@ -229,13 +230,13 @@ class UserController extends Controller
 
         $image = $request->file('image');
 
-        if (!$image) {
+        if (! $image) {
             return JsonResponseHelper::errorResponse(__('messages.no_image_uploaded_or_invalid'));
         }
 
-        $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
+        $imageName = 'profile_'.time().'.'.$image->getClientOriginalExtension();
 
-        $path = storage_path('app/profiles/' . $imageName);
+        $path = storage_path('app/profiles/'.$imageName);
 
         $image->move(storage_path('app/profiles'), $imageName);
         $user->image = $path;

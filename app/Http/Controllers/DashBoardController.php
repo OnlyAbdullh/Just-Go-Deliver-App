@@ -4,17 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Helpers\JsonResponseHelper;
 use App\Http\Requests\UpdateOrderStatusRequest;
-use App\Http\Resources\ProductDetailResource;
 use App\Models\User;
 use App\Services\DashboardService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class DashBoardController extends Controller
 {
     private $dashboardService;
+
     public function __construct(DashboardService $dashboardService)
     {
         $this->dashboardService = $dashboardService;
@@ -33,6 +31,7 @@ class DashBoardController extends Controller
      *         in="header",
      *         description="The language to return results in (ar for Arabic, en for English)",
      *         required=false,
+     *
      *         @OA\Schema(type="string", enum={"ar", "en"}, example="en")
      *     ),
      *
@@ -41,14 +40,17 @@ class DashBoardController extends Controller
      *         in="path",
      *         description="ID of the user whose store products are to be retrieved",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
      *
      *     @OA\Response(
      *         response=200,
      *         description="List of products with store details",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="boolean",
@@ -62,8 +64,10 @@ class DashBoardController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(
      *                     type="object",
+     *
      *                     @OA\Property(
      *                         property="id",
      *                         type="integer",
@@ -107,8 +111,10 @@ class DashBoardController extends Controller
      *                     @OA\Property(
      *                         property="products",
      *                         type="array",
+     *
      *                         @OA\Items(
      *                             type="object",
+     *
      *                             @OA\Property(
      *                                 property="store_id",
      *                                 type="integer",
@@ -179,8 +185,10 @@ class DashBoardController extends Controller
      *     @OA\Response(
      *         response=404,
      *         description="Store not found for the given user or user not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="boolean",
@@ -334,11 +342,14 @@ class DashBoardController extends Controller
      *     summary="Get orders for the authenticated user's store",
      *     tags={"Dashboard"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Orders fetched successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="boolean",
@@ -352,8 +363,10 @@ class DashBoardController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(
      *                     type="object",
+     *
      *                     @OA\Property(property="id", type="integer", example=2),
      *                     @OA\Property(property="status", type="string", example="pending"),
      *                     @OA\Property(property="order_date", type="string", example="2024-01-01"),
@@ -369,11 +382,14 @@ class DashBoardController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Store not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="successful",
      *                 type="boolean",
@@ -401,6 +417,7 @@ class DashBoardController extends Controller
         }
 
         $orders = $this->dashboardService->getAllOrdersForStore($store->id);
+
         return JsonResponseHelper::successResponse(__('messages.orders_fetched'), $orders);
     }
 
@@ -410,43 +427,56 @@ class DashBoardController extends Controller
      *     summary="Update the status of an order",
      *     tags={"Dashboard"},
      *     security={{"bearerAuth": {}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
+     *
      *             @OA\Schema(
      *                 required={"order_id", "status"},
+     *
      *                 @OA\Property(property="order_id", type="integer", example=2, description="The ID of the order"),
      *                 @OA\Property(property="status", type="string", example="approved", description="The new status of the order", enum={"pending", "approved", "rejected", "delivered"})
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Order status updated successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="successful", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Order updated successfully"),
      *             @OA\Property(property="status_code", type="integer", example=200)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=400,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Validation error"),
      *             @OA\Property(property="data", type="object", example={"order_id": "The order_id field is required."}),
      *             @OA\Property(property="status_code", type="integer", example=400)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Order not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(property="successful", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Order not found"),
      *             @OA\Property(property="status_code", type="integer", example=404)

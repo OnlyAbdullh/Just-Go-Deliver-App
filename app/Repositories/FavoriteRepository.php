@@ -57,7 +57,6 @@ class FavoriteRepository implements FavoriteRepositoryInterface
         return FavoriteResource::collection($favorites);
     }
 
-
     /*    public function isProductInStore(int $productId, int $storeId): bool
         {
             $product = Product::find($productId);

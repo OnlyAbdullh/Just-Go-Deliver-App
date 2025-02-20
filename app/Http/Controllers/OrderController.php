@@ -76,6 +76,7 @@ class OrderController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             properties={
+     *
      *                 @OA\Property(
      *                     property="message",
      *                     type="string",
@@ -120,6 +121,7 @@ class OrderController extends Controller
         if (isset($result['state'])) {
             return JsonResponseHelper::errorResponse($result['message']);
         }
+
         return JsonResponseHelper::successResponse('Orders created successfully.');
     }
 
@@ -273,7 +275,7 @@ class OrderController extends Controller
     {
         $response = $this->orderService->cancelOrder($orderId);
 
-        if (!$response['success']) {
+        if (! $response['success']) {
             return JsonResponseHelper::errorResponse($response['message'], [], $response['code'] ?? 400);
         }
 
@@ -369,7 +371,7 @@ class OrderController extends Controller
     {
         $order = $this->orderService->getOrderWithProducts($order_id);
 
-        if (!$order) {
+        if (! $order) {
             return JsonResponseHelper::errorResponse(__('messages.order_not_found'), [], 404);
         }
 

@@ -10,7 +10,7 @@ interface DashboardRepositoryInterface
 
     public function getOrdersForStore($storeId);
 
-    public function updateOrderStatus($orderId,$status);
+    public function updateOrderStatus($orderId, $status);
 
     public function getUserAndDeviceTokens($orderId);
 }
